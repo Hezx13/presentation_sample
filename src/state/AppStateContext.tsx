@@ -9,12 +9,14 @@ import {
 import { Action } from "./actions"
 import { withInitialState } from "../utils/withInitialState"
 import { save } from "../api"
-import { DragItem } from "../DragItem"
+import { DragItem } from "../components/DragItem"
 
 type AppStateContextProps = {
   draggedItem: DragItem | null
   lists: List[]
+    archive: List[]
   getTasksByListId(id: string): Task[]
+    getTasksByArchiveId(id: string) : Task[]
   dispatch: React.Dispatch<Action>
 }
 
@@ -39,14 +41,17 @@ export const AppStateProvider =
         save(state)
       }, [state])
 
-      const { draggedItem, lists } = state
+      const { draggedItem, lists, archive } = state
       const getTasksByListId = (id: string) => {
         return lists.find((list) => list.id === id)?.tasks || []
       }
+        const getTasksByArchiveId = (id: string) => {
+            return archive.find((list) => list.id === id)?.tasks || []
+        }
 
       return (
         <AppStateContext.Provider
-          value={{ draggedItem, lists, getTasksByListId, dispatch }}
+          value={{ draggedItem, lists,archive, getTasksByListId,getTasksByArchiveId, dispatch }}
         >
           {children}
         </AppStateContext.Provider>

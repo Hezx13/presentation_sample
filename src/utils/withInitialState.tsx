@@ -19,6 +19,7 @@ export function withInitialState<TProps>(
   return (props: PropsWithoutInjected<TProps>) => {
     const [initialState, setInitialState] = useState<AppState>({
       lists: [],
+      archive: [],
       draggedItem: null
     });
     const [isLoading, setIsLoading] = useState(true);

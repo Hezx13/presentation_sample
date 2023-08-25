@@ -17,9 +17,9 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AddTaskDialog({listId}) {
-    const [open, setOpen] = React.useState(false);
-
+export default function AddTaskDialog({isOpen}) {
+    const [open, setOpen] = React.useState(isOpen);
+    console.log(open)
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -29,11 +29,8 @@ export default function AddTaskDialog({listId}) {
     };
 
     return (
-        <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Slide in alert dialog
-            </Button>
-            
-        </div>
+
+           <></>
+
         );
 }

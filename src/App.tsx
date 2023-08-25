@@ -1,24 +1,19 @@
-import { Column } from "./Column"
+import { Column } from "./components/Column"
 import { AppContainer } from "./styles"
 import { useAppState } from "./state/AppStateContext"
-import { AddNewItem } from "./AddNewItem"
-import { CustomDragLayer } from "./CustomDragLayer"
-import { addList } from "./state/actions"
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+import AppRouter from "./AppRouter"
 const App = () => {
   const { lists, dispatch } = useAppState()
 
   return (
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
     <AppContainer>
-      <CustomDragLayer />
-      {lists.map((list) => (
-        <Column id={list.id} text={list.text} key={list.id} />
-      ))}
-      <AddNewItem
-        toggleButtonText="+ Add another list"
-        onAdd={(text) => dispatch(addList(text))}
-      />
+      <AppRouter/>
     </AppContainer>
+      </LocalizationProvider>
   )
 }
 

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { AppState } from "./state/appStateReducer";
+import {response} from "express";
 
 export const save = async (payload: AppState) => {
     console.log(payload)
@@ -24,7 +25,6 @@ export const load = async () => {
                 Accept: "application/json",
             }
         });
-
         return response.data as AppState;
     } catch (error) {
         throw new Error("Error while loading the state.");
@@ -34,10 +34,16 @@ export const load = async () => {
 export const deleteTaskFromList  = async (listId: string, taskId: string) => {
   try {
     const response = await axios.delete(`http://localhost:3000/list/${listId}/task/${taskId}`);
-    console.log(response.data); // This will log the server response (e.g., a success message)
+    console.log("success");
     return response.data;
   } catch (error) {
     console.error('Error while deleting the task:', error);
     throw error;
   }
+}
+
+export const archiveList = async (listId: string) => {
+    axios.post('/archive', {listId})
+        .then((response) => console.log(response.data))
+        .catch((error) => console.error(error))
 }

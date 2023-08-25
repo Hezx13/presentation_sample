@@ -1,4 +1,4 @@
-import { DragItem } from "../DragItem"
+import { DragItem } from "../components/DragItem"
 
 export type Action =
   | {
@@ -15,17 +15,51 @@ export type Action =
         listId: string
       }
     }
+  |{
+    type: "MOVE_TO_ARCHIVE",
+    payload: {
+      listId: string
+    }
+    }
+| {
+  type: "MOVE_FROM_ARCHIVE",
+      payload: {
+  listId: string
+  }
+  }
   | {
       type: "ADD_TASK"
-      payload: { text: string, listId: string, price: string, quantity: number }
+      payload: {
+        text: string;
+        listId: string;
+        price: string;
+        quantity: number;
+        date: string;
+        unit: string;
+        comment: string;
+        deliveryDate: string;
+        orderedBy: string;
+        status: string;
+        payment: string;
+      }
     }
-  
-  | {
+
+
+    | {
       type: "EDIT_TASK"
       payload: {
+        id: string,
         listId: string,
-        taskId: string,
         text: string,
+        price: string,
+        quantity: number,
+        date: string,
+        unit: string,
+        comment: string,
+        deliveryDate: string,
+        orderedBy: string,
+        status: string,
+        payment: string,
       }
     }
   
@@ -76,15 +110,66 @@ export const moveList = (
   }
 })
 
-export const addTask = (text: string, listId: string, price: string, quantity: number): Action => ({
+export const addTask = (
+    text: string,
+    listId: string,
+    price: string,
+    quantity: number,
+    date: string,
+    unit: string,
+    comment: string,
+    deliveryDate: string,
+    orderedBy: string,
+    status: string,
+    payment: string
+): Action => ({
   type: "ADD_TASK",
   payload: {
     text,
     listId,
     price,
-    quantity
+    quantity,
+    date,
+    unit,
+    comment,
+    deliveryDate,
+    orderedBy,
+    status,
+    payment
   }
-})
+});
+
+export const editTask = (
+    id: string,
+    listId: string,
+    text: string,
+    price: string,
+    quantity: number,
+    date: string,
+    unit: string,
+    comment: string,
+    deliveryDate: string,
+    orderedBy: string,
+    status: string,
+    payment: string,
+) :Action => ({
+  type: "EDIT_TASK",
+  payload: {
+    id,
+    listId,
+    text,
+    price,
+    quantity,
+    date,
+    unit,
+    comment,
+    deliveryDate,
+    orderedBy,
+    status,
+    payment,
+  },
+});
+
 
 export const addList = (text: string): Action => ({
   type: "ADD_LIST",
@@ -98,6 +183,16 @@ export const removeList = (listId: string): Action => ({
   }
 })
 
+export const moveToArchive = (listId: string) : Action => ({
+  type: "MOVE_TO_ARCHIVE",
+  payload: {listId},
+});
+
+export const moveFromArchive = (listId: string) : Action => ({
+  type: "MOVE_FROM_ARCHIVE",
+  payload: {listId},
+});
+
 export const removeTask = (listId: string, taskId: string): Action => ({
   type: "REMOVE_TASK",
   payload:{
@@ -105,16 +200,6 @@ export const removeTask = (listId: string, taskId: string): Action => ({
   taskId
   }
 })
-
-export const editTask = (listId: string, taskId: string, text: string): Action => ({
-  type: "EDIT_TASK",
-  payload:{
-    listId,
-    taskId,
-    text
-  }
-})
-
 
 export const setDraggedItem = (
   draggedItem: DragItem | null

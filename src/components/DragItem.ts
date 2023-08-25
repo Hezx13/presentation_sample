@@ -2,6 +2,10 @@ export type CardDragItem = {
   id: string
   columnId: string
   text: string
+  price: string,
+  unit: string
+  status: string
+  quantity: number,
   type: "CARD"
 }
 

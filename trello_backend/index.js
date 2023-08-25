@@ -6,7 +6,7 @@ var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 var body_parser_1 = __importDefault(require("body-parser"));
 const db = require('./database'); // Import the database connection
-const List = require('./models/list'); // Import the List model
+const { List, Archive } = require('./models/list'); // Import the List model
 
 var app = express_1.default();
 
@@ -15,30 +15,17 @@ app.use(body_parser_1.default.json());
 
 var port = 4000;
 
-var lists = [
-    {
-      id: "0",
-      text: "To Do",
-      tasks: [{ id: "c0", text: "Generate app scaffold" }]
-    },
-    {
-      id: "1",
-      text: "In Progress",
-      tasks: [{ id: "c2", text: "Learn Typescript" }]
-    },
-    {
-      id: "2",
-      text: "Done",
-      tasks: [{ id: "c3", text: "Begin to use static typing" }]
-    }
-];
 
 app.post("/save", async function (req, res) {
     try {
         const newLists = req.body.lists;
-        lists = newLists;
+        const newArchives = req.body.archive
         await List.deleteMany(); // Delete existing documents
-        await List.insertMany(newLists); // Insert new documents
+        await Archive.deleteMany()
+        if (newLists.length) {
+            await List.insertMany(newLists); // Insert new documents only if newLists is not empty
+        }
+        newArchives.length && await Archive.insertMany(newArchives)
         return res.json({ success: true });
     } catch (error) {
         console.error(error);
@@ -49,7 +36,8 @@ app.post("/save", async function (req, res) {
 app.get("/load", async function (req, res) {
     try {
         const loadedLists = await List.find();
-        return res.json({ lists: loadedLists });
+        const loadedArchive = await Archive.find()
+        return res.json({ lists: loadedLists, archive: loadedArchive });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ error: 'Failed to load lists.' });
@@ -80,3 +68,29 @@ app.delete('/list/:listId/task/:taskId', async (req, res) => {
 app.listen(port, function () {
     return console.log("Kanban backend running on http://localhost:" + port + "!");
 });
+
+app.post("/archive", async function (req, res) {
+    try {
+        const { instanceId } = req.body;
+
+        // Find the instance in the 'lists' collection
+        const instance = await List.findOne({ id: instanceId });
+
+        if (!instance) {
+            return res.status(404).json({ error: 'Instance not found.' });
+        }
+
+        // Create a new document in the 'archive' collection with the same data
+        const archiveInstance = new Archive(instance.toObject());
+        await archiveInstance.save();
+
+        // Delete the instance from the 'lists' collection
+        await List.deleteOne({ _id: instanceId });
+
+        return res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Failed to archive instance.' });
+    }
+});
+

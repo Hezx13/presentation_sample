@@ -1,10 +1,10 @@
 import { useDragLayer } from "react-dnd"
-import { useAppState } from "./state/AppStateContext"
+import { useAppState } from "../state/AppStateContext"
 import { Column } from "./Column"
 import {
   CustomDragLayerContainer,
   DragPreviewWrapper
-} from "./styles"
+} from "../styles"
 import { Card } from "./Card"
 
 export const CustomDragLayer = () => {
@@ -26,6 +26,10 @@ export const CustomDragLayer = () => {
           <Card
             id={draggedItem.id}
             columnId={draggedItem.columnId}
+            price={draggedItem.price}
+            quantity={draggedItem.quantity}
+            status={draggedItem.status}
+            unit={draggedItem.unit}
             text={draggedItem.text}
             isPreview
           />

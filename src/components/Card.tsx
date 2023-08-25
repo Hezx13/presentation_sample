@@ -1,14 +1,19 @@
-import { useRef, useState } from "react"
-import { CardContainer, DeleteTaskButton, EditTaskButton } from "./styles"
-import { useItemDrag } from "./utils/useItemDrag"
+import {useEffect, useRef, useState} from "react"
+import { CardContainer, DeleteTaskButton, EditTaskButton } from "../styles"
+import {CardMainText, CardPriceText, CardQuantityText} from "../textStyles";
+import { useItemDrag } from "../utils/useItemDrag"
 import { useDrop } from "react-dnd"
-import { useAppState } from "./state/AppStateContext"
-import { isHidden } from "./utils/isHidden"
-import { moveTask, setDraggedItem, removeTask, editTask } from "./state/actions"
+import { useAppState } from "../state/AppStateContext"
+import { isHidden } from "../utils/isHidden"
+import { moveTask, setDraggedItem, removeTask, editTask } from "../state/actions"
 import { throttle } from "throttle-debounce-ts"
 type CardProps = {
   text: string
   id: string
+  price: string
+  quantity: number
+  status: string
+  unit: string
   columnId: string
   isPreview?: boolean
 }
@@ -16,18 +21,32 @@ type CardProps = {
 export const Card = ({
   text,
   id,
+  price,
+  quantity,
+  status,
+  unit,
   columnId,
   isPreview
 }: CardProps) => {
   const { draggedItem, dispatch } = useAppState()
   const ref = useRef<HTMLDivElement>(null)
   const [isEditing, setIsEditing] = useState(false);
+  const [isPriceSet, setIsPriceSet] = useState(false)
   const { drag } = useItemDrag({
     type: "CARD",
     id,
     text,
-    columnId
+    columnId,
+    quantity,
+    status,
+    price,
+    unit
   })
+
+  useEffect(() => {
+    let pr = parseFloat(price.split(' ')[0])
+    setIsPriceSet(!Number.isNaN(pr) || (status === "In process" || status === "Done"))
+  }, [price]);
 
   const [, drop] = useDrop(
     () => ({
@@ -59,10 +78,21 @@ export const Card = ({
       isHidden={isHidden(isPreview, draggedItem, "CARD", id)}
       isPreview={isPreview}
       ref={ref}
+      isPriceSet={isPriceSet}
     >
       <div>
-        {text}
-        
+        <CardMainText>
+          {text}
+        </CardMainText>
+        <span>
+          <CardPriceText>
+          {parseFloat(price) * quantity} AED
+        </CardPriceText>
+        <CardQuantityText>
+          {quantity && quantity.toString()} {unit}
+        </CardQuantityText>
+        </span>
+
       </div>
       <div
         style={{display: 'flex', gap: 1}}>
@@ -71,11 +101,6 @@ export const Card = ({
         >
           delete
         </DeleteTaskButton>
-        <EditTaskButton
-          onClick={() => setIsEditing(!isEditing)}
-          >
-          {isEditing ? 'save' : 'edit'}
-        </EditTaskButton>
       </div>
     </CardContainer>
   )

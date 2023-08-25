@@ -32,3 +32,26 @@ export const moveItem = <TItem>(
   const item = array[from]
   return insertItemAtIndex(removeItemAtIndex(array, from), item, to)
 }
+
+export const findTaskIndex = (id: string, draft: any) => {
+  // Check in lists
+  for (let i = 0; i < draft.lists.length; i++) {
+    const taskIndex = draft.lists[i].tasks.findIndex((task: any) => task.id === id);
+    if (taskIndex !== -1) {
+      return { location: 'lists', listIndex: i, taskIndex };
+    }
+  }
+
+  // Check in archive
+  for (let i = 0; i < draft.archive.length; i++) {
+    const taskIndex = draft.archive[i].tasks.findIndex((task: any) => task.id === id);
+    if (taskIndex !== -1) {
+      return { location: 'archive', listIndex: i, taskIndex };
+    }
+  }
+
+  // Task not found
+  return { location: 'none', listIndex: -1, taskIndex: -1 };
+};
+
+

@@ -1,4 +1,6 @@
 import styled from "styled-components"
+import {TableCell, TableContainer, TableRow} from "@mui/material";
+import {NavLink, NavLinkProps} from "react-router-dom";
 
 export const AppContainer = styled.div`
   align-items: flex-start;
@@ -38,11 +40,16 @@ export const DragPreviewWrapper = styled.div.attrs<DragPreviewWrapperProps>(
   })
 )<DragPreviewWrapperProps>``
 
-export const ColumnContainer = styled(DragPreviewContainer)`
+type ColumnContainerProps = {
+  isPriceSet?: boolean
+}
+
+export const ColumnContainer = styled(DragPreviewContainer)<ColumnContainerProps>`
   background-color: #ebecf0;
+
   width: 300px;
   min-height: 40px;
-  margin-right: 20px;
+  margin: 10px auto;
   border-radius: 3px;
   padding: 8px 8px;
   flex-grow: 0;
@@ -77,11 +84,11 @@ export const EditTaskButton = styled.button`
 cursor: pointer;
 `
 
-export const CardContainer = styled(DragPreviewContainer)`
+export const CardContainer = styled(DragPreviewContainer)<ColumnContainerProps>`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: ${(props) => (props.isPriceSet ? "#fff" : "#ffc9c9")};;
   cursor: pointer;
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
@@ -106,6 +113,8 @@ export const AddItemButton = styled.button<AddItemButtonProps>`
   max-width: 300px;
   padding: 10px 12px;
   text-align: left;
+  margin: 10px auto;
+  height: 35px;
   transition: background 85ms ease-in;
   width: 100%;
   &:hover {
@@ -115,6 +124,7 @@ export const AddItemButton = styled.button<AddItemButtonProps>`
 
 export const NewItemFormContainer = styled.div`
   max-width: 300px;
+  margin: 10px auto;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -127,7 +137,7 @@ export const NewItemInput = styled.input`
   box-shadow: #091e4240 0px 1px 0px 0px;
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
-  width: 100%;
+  width: clamp(250px,100%, 600px);
 `
 
 export const NewItemButton = styled.button`
@@ -138,15 +148,82 @@ export const NewItemButton = styled.button`
   color: #fff;
   padding: 6px 12px;
   text-align: center;
+  
 `
 
 export const CustomDragLayerContainer = styled.div`
   height: 100%;
   left: 0;
   pointer-events: none;
-  position: fixed;
+  position: absolute;
   top: 0;
-  width: 100%;
+  width: auto;
   z-index: 100;
 `
+export const StyledTableContainer = styled(TableContainer)`
+  border-radius: 10px;
+  background-color: #ffffff;
+  box-shadow: 8px 12px 15px -10px rgba(0, 0, 0, 0.2);
+`
+export const StyledTableRow = styled(TableRow)`
+  padding: 4px 16px;
+`
 
+export const StyledTableCell = styled(TableCell)`
+  padding: 4px 16px !important;
+`
+
+export const SyledListButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:hover{
+    text-decoration: underline;
+  }
+`
+
+export const Status = styled.span`
+    display: inline-block;
+  margin-right: 0.6rem;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: ${(props) => props.color || 'grey'};
+`;
+
+export const StyledNavBar = styled.div`
+  height: 40px;
+  width: 320px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 10px auto;
+  padding: 10px 0;
+  background-color: #ffffff09;
+  border-radius: 10px;
+  backdrop-filter: blur(50px);
+`
+
+export const StyledNavBarItem = styled.div`
+  color: #ffffff;
+  & > * {
+    color: #ffffff;
+    
+    
+  }
+`
+export const StyledLink = styled(NavLink)<{ isActive: boolean }>`
+    text-decoration: none;
+    color: #ffffff; // default color
+    text-decoration: none;
+    &:hover {
+      color: orange;
+    }
+    &.active {
+      text-decoration: underline orange;
+    }
+`;
