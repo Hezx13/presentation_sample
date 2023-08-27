@@ -19,7 +19,7 @@ export const DashboardPage = () => {
         let _totalPrice = 0;
         lists.forEach((list) => {
             list.tasks.forEach((task) => {
-                if (task.status !== "Done") {
+                if (task.status !== "Done" && task.payment === "cash") {
                     const price = parseFloat(task.price.split(' ')[0]);
                     const quantity = task.quantity;
 
