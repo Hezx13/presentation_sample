@@ -47,3 +47,19 @@ export const archiveList = async (listId: string) => {
         .then((response) => console.log(response.data))
         .catch((error) => console.error(error))
 }
+
+export const downloadExcel = () => {
+    axios({
+        method: 'GET',
+        url: `${process.env.REACT_APP_BACKEND_ENDPOINT}/download`,
+        responseType: 'blob',
+    })
+        .then((response) => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'MyWorkbook.xlsx');
+            document.body.appendChild(link);
+            link.click();
+        });
+};

@@ -13,7 +13,8 @@ import {StyledTableContainer, SyledListButton, StyledTableCell} from "../styles"
 import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
 import {CardPriceText} from "../textStyles";
-
+import DownloadIcon from '@mui/icons-material/Download';
+import {downloadExcel} from '../api'
 const ListRow = ({ list, index }) => {
     const navigate = useNavigate();
     const calculateTotal = () => {
@@ -120,7 +121,13 @@ const TableListsComponent = ({ lists }) => {
         <Table>
             <TableHead>
                 <TableRow>
-                    <TableCell></TableCell>
+                    <TableCell>
+                        <IconButton
+                            onClick={downloadExcel}
+                        >
+                            <DownloadIcon htmlColor="#008000"/>
+                        </IconButton>
+                    </TableCell>
                     <TableCell>Project</TableCell>
                     <TableCell>Total Paid</TableCell>
                     <TableCell>Total Pending</TableCell>
