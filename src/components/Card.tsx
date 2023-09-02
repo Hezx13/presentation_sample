@@ -44,7 +44,7 @@ export const Card = ({
   })
 
   useEffect(() => {
-    let pr = parseFloat(price.split(' ')[0])
+    let pr = parseFloat(price?.split(' ')[0] || price)
     setIsPriceSet(!Number.isNaN(pr) || (status === "In process" || status === "Done"))
   }, [price]);
 

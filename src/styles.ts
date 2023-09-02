@@ -105,20 +105,19 @@ type AddItemButtonProps = {
 }
 
 export const AddItemButton = styled.button<AddItemButtonProps>`
-  background-color: #ffffff3d;
+  background-color: #0000003d;
   border-radius: 3px;
   border: none;
   color: ${(props) => (props.dark ? "#000" : "#fff")};
   cursor: pointer;
-  max-width: 300px;
   padding: 10px 12px;
   text-align: left;
   margin: 10px auto;
   height: 35px;
   transition: background 85ms ease-in;
-  width: 100%;
+  width: 96%;
   &:hover {
-    background-color: #ffffff52;
+    background-color: #0000009d;
   }
 `
 
@@ -137,7 +136,7 @@ export const NewItemInput = styled.input`
   box-shadow: #091e4240 0px 1px 0px 0px;
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
-  width: clamp(250px,100%, 600px);
+  width: clamp(180px,100%, 600px);
 `
 
 export const NewItemButton = styled.button`
@@ -164,6 +163,7 @@ export const StyledTableContainer = styled(TableContainer)`
   border-radius: 10px;
   background-color: #ffffff;
   box-shadow: 8px 12px 15px -10px rgba(0, 0, 0, 0.2);
+  width: 100%;
 `
 export const StyledTableRow = styled(TableRow)`
   padding: 4px 16px;

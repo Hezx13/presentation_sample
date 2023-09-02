@@ -19,8 +19,9 @@ export const DashboardPage = () => {
         let _totalPrice = 0;
         lists.forEach((list) => {
             list.tasks.forEach((task) => {
-                if (task.status !== "Done" && task.payment === "cash") {
-                    const price = parseFloat(task.price.split(' ')[0]);
+                if (task.status !== "Done" && task.payment?.toLowerCase() === "cash") {
+                    const price = parseFloat(task.price.split(' ')[0] || task.price);
+                    console.log(price)
                     const quantity = task.quantity;
 
                     _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
@@ -63,7 +64,7 @@ export const DashboardPage = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={10} sx={{margin: '10px auto'}}>
-                        <TableListsComponent lists={lists}/>
+                        <TableListsComponent lists={lists} isArchive={false}/>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -75,7 +76,7 @@ export const DashboardPage = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={10} sx={{margin: '10px auto'}}>
-                            <TableListsComponent lists={archive}/>
+                            <TableListsComponent lists={archive} isArchive={true}/>
                         </Grid>
                     </Grid>
                 </Grid>

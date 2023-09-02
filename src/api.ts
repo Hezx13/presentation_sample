@@ -3,7 +3,6 @@ import { AppState } from "./state/appStateReducer";
 import {response} from "express";
 
 export const save = async (payload: AppState) => {
-    console.log(payload)
     try {
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/save`, payload, {
             headers: {
@@ -62,4 +61,20 @@ export const downloadExcel = () => {
             document.body.appendChild(link);
             link.click();
         });
+};
+
+export const onUpload = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/upload`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        console.log('Data imported successfully');
+    } catch (error) {
+        console.error('Failed to upload file');
+    }
 };

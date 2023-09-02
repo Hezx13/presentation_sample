@@ -5,6 +5,7 @@ import ListsPage from './listsPage';
 import TablesPage from './components/tablesPage'
 import ArchivePage from "./archivePage";
 import DashboardPage from "./dashboardPage";
+import VerticalTabs from "./projectsPage";
 
 const AppRouter = () => {
     return (
@@ -14,6 +15,7 @@ const AppRouter = () => {
                 <Route path="/table" element={<TablesPage/>}/>
                 <Route path="/archive" element={<ArchivePage/>}/>
                 <Route path="/dashboard" element={<DashboardPage/>}/>
+                <Route path="/projects" element={<VerticalTabs/>}/>
             </Routes>
         </Router>
         );

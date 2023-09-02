@@ -4,12 +4,15 @@ import {findItemIndexById} from "../utils/arrayUtils";
 import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
-import {editTask} from "../state/actions";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
 import { Task } from '../state/appStateReducer'
-import {StyledTableContainer, StyledTableRow, StyledTableCell, Status} from "../styles";
+import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, DeleteTaskButton} from "../styles";
 import {CardQuantityText, CardPriceText} from "../textStyles";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
+import {AddNewItem} from "./AddNewItem";
+import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
 
 type ColProps = {
     tableId: string
@@ -22,6 +25,7 @@ const TableComponent = ({tableId}: ColProps) =>{
     const [editing, setEditing] = useState<string | null>(null);
     const { lists, archive, dispatch } = useAppState()
     const [searchTerm, setSearchTerm] = useState('');
+
     useEffect(() => {
         const id_a = findItemIndexById(archive, tableId)
         const id_l =  findItemIndexById(lists, tableId)
@@ -31,7 +35,7 @@ const TableComponent = ({tableId}: ColProps) =>{
         else if (id_l > -1) {
             setTasks(lists[id_l].tasks)
         }
-    }, [tableId, editing]);
+    }, [tableId, editing,lists]);
 
     useEffect(() => {
         setFilteredTasks (tasks.filter(task => {
@@ -42,6 +46,24 @@ const TableComponent = ({tableId}: ColProps) =>{
     const handleEditClick = (task: any) => {
         setEditing(task.id);
         setEditedTask(task);
+    };
+
+    const handleRemoveClick = (target: Task) => {
+        const shouldRemove = window.confirm("Are you sure you want to remove " + target.text + " ?" );
+
+        if (shouldRemove) {
+            setTasks(tasks.filter((task) => task.id !== target.id));
+            dispatch(removeTask(tableId, target.id));
+        }
+    };
+
+    const isUrl = (string) => {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
     };
 
     const handleSaveClick = (listId: string) => {
@@ -154,7 +176,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             {editing === task.id ? (
                                                 <TextField value={editedTask.comment} onChange={(e) => handleInputChange('comment', e.target.value)} />
                                             ) : (
-                                                task.comment
+                                                isUrl(task.comment) ? <a href={task.comment} target="_blank" rel="noopener noreferrer">Link</a> : task.comment
                                             )}
                                         </StyledTableCell>
                                         <StyledTableCell>
@@ -216,19 +238,37 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         </StyledTableCell>
 
                                         {/* Similar for other fields */}
-                                        <StyledTableCell>
+                                        <StyledTableCell sx={{display: 'flex', justifyContent: 'space-between'}}>
                                             {editing === task.id ? (
                                                 <IconButton onClick={() => handleSaveClick(tableId)}>
-                                                    <SaveIcon />
+                                                    <SaveIcon htmlColor='green'/>
                                                 </IconButton>
                                             ) : (
                                                 <IconButton onClick={() => handleEditClick(task)}>
-                                                    <EditIcon />
+                                                    <EditIcon htmlColor='DarkOrange'/>
                                                 </IconButton>
                                             )}
+                                            <IconButton
+                                                onClick={() => handleRemoveClick(task)}>
+                                                <DeleteForeverIcon htmlColor='Crimson'/>
+                                            </IconButton>
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 ))}
+                                <StyledTableRow>
+                                    <StyledTableCell colSpan={12}>
+                                        <AddNewItem
+                                            toggleButtonText="+ Add another material"
+                                            onAdd={
+                                                (text, price, quantity, unit, comment, deliveryDate, orderedBy) => {
+                                                    dispatch(moveFromArchive(tableId))
+                                                    dispatch(addTask(text, tableId, price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+                                                }
+                                            }
+                                            dark
+                                        />
+                                    </StyledTableCell>
+                                </StyledTableRow>
                             </TableBody>
                         </Table>
                     </StyledTableContainer>

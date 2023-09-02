@@ -14,14 +14,20 @@ import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
 import {CardPriceText} from "../textStyles";
 import DownloadIcon from '@mui/icons-material/Download';
-import {downloadExcel} from '../api'
-const ListRow = ({ list, index }) => {
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import {downloadExcel, onUpload} from '../api'
+import {moveToArchive, removeList} from "../state/actions";
+import CloseIcon from "@mui/icons-material/Close";
+import ArchiveIcon from '@mui/icons-material/Archive';
+import {useAppState} from "../state/AppStateContext";
+const ListRow = ({ list, index, isArchive }) => {
     const navigate = useNavigate();
+    const {dispatch} = useAppState();
     const calculateTotal = () => {
         let _totalPrice = 0;
         list.tasks.forEach((task) => {
-                const price = parseFloat(task.price.split(' ')[0]);
-                const quantity = task.quantity;
+            const price = parseFloat(task.price?.split(' ')[0] || task.price);
+            const quantity = task.quantity;
                 _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
         });
         return _totalPrice.toFixed(2)
@@ -30,7 +36,7 @@ const ListRow = ({ list, index }) => {
         let _totalPrice = 0;
         list.tasks.forEach((task) => {
             if (task.status === "Done") {
-                const price = parseFloat(task.price.split(' ')[0]);
+                const price = parseFloat(task.price?.split(' ')[0] || task.price);
                 const quantity = task.quantity;
                 _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
             }
@@ -41,7 +47,8 @@ const ListRow = ({ list, index }) => {
         let _totalPrice = 0;
         list.tasks.forEach((task) => {
             if (task.status !== "Done") {
-                const price = parseFloat(task.price.split(' ')[0]);
+                const price = parseFloat(task.price?.split(' ')[0] || task.price);
+
                 const quantity = task.quantity;
                 _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
             }
@@ -63,6 +70,22 @@ const ListRow = ({ list, index }) => {
                 <StyledTableCell>
                     <IconButton size="small" onClick={() => setIsCollapsed(!isCollapsed)}>
                         {isCollapsed ? <ExpandMore /> : <ExpandLess />}
+                    </IconButton>
+                    <IconButton
+                        disableRipple
+                        onClick={()=> {
+                            isArchive ?
+                                dispatch(removeList(list.id))
+                                :
+                                dispatch(moveToArchive(list.id))
+                        }}
+                    >
+                        {isArchive ?
+                            <CloseIcon/>
+                            :
+                            <ArchiveIcon/>
+                        }
+
                     </IconButton>
                 </StyledTableCell>
                 <StyledTableCell>
@@ -101,7 +124,7 @@ const ListRow = ({ list, index }) => {
                                                         <CardPriceText>{task.price}</CardPriceText>
                                                 }
                                             </TableCell>
-                                            <TableCell>{task.quantity * parseFloat(task.price.split(' ')[0])} AED</TableCell>
+                                            <TableCell>{task.quantity * parseFloat(task.price?.split(' ')[0] || task.price)} AED</TableCell>
                                             {/* Other task fields here */}
                                         </TableRow>
                                     ))}
@@ -115,18 +138,38 @@ const ListRow = ({ list, index }) => {
     );
 };
 
-const TableListsComponent = ({ lists }) => {
+const TableListsComponent = ({ lists, isArchive }) => {
+
+    const [file, setFile] = useState(null);
+
+    const onFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
     return (
         <StyledTableContainer>
         <Table>
             <TableHead>
                 <TableRow>
                     <TableCell>
-                        <IconButton
-                            onClick={downloadExcel}
-                        >
-                            <DownloadIcon htmlColor="#008000"/>
-                        </IconButton>
+                        { !isArchive &&
+                            <>
+                                <IconButton
+                                    onClick={downloadExcel}
+                                >
+                                    <DownloadIcon htmlColor="#008000"/>
+                                </IconButton>
+                                <IconButton
+                                    onClick={() => {
+                                        onUpload(file)
+                                    }}
+                                >
+                                    <FileUploadIcon htmlColor="#008080"/>
+                                </IconButton>
+                                <input type="file" accept=".xlsx" onChange={onFileChange}/>
+                            </>
+                        }
+
                     </TableCell>
                     <TableCell>Project</TableCell>
                     <TableCell>Total Paid</TableCell>
@@ -136,7 +179,7 @@ const TableListsComponent = ({ lists }) => {
             </TableHead>
             <TableBody>
                 {lists.map((list, index) => (
-                    <ListRow key={index} list={list} index={index} />
+                    <ListRow key={index} list={list} index={index} isArchive={isArchive}/>
                 ))}
             </TableBody>
         </Table>
