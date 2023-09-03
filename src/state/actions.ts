@@ -32,6 +32,7 @@ export type Action =
       payload: {
         text: string;
         listId: string;
+        article: string;
         price: string;
         quantity: number;
         date: string;
@@ -51,6 +52,7 @@ export type Action =
         id: string,
         listId: string,
         text: string,
+        article: string,
         price: string,
         quantity: number,
         date: string,
@@ -113,6 +115,7 @@ export const moveList = (
 export const addTask = (
     text: string,
     listId: string,
+    article: string,
     price: string,
     quantity: number,
     date: string,
@@ -128,6 +131,7 @@ export const addTask = (
     text,
     listId,
     price,
+    article,
     quantity,
     date,
     unit,
@@ -143,6 +147,7 @@ export const editTask = (
     id: string,
     listId: string,
     text: string,
+    article: string,
     price: string,
     quantity: number,
     date: string,
@@ -158,6 +163,7 @@ export const editTask = (
     id,
     listId,
     text,
+    article,
     price,
     quantity,
     date,

@@ -8,11 +8,12 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 type NewItemFormProps = {
-    onAdd(text: string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
+    onAdd(text: string,article?:string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
 }
 
 export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
   const [text, setText] = useState("")
+  const [article, setArticle] = useState("")
   const [price, setPrice] = useState("")
   const [quantity, setQuantity] = useState<string>("")
     const [unit, setUnit] = useState("")
@@ -25,6 +26,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
 
   const resetValues = () =>{
     setText("")
+    setArticle("")
     setPrice("")
     setQuantity("")
       setUnit("")
@@ -37,7 +39,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
-      onAdd(text, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy)
+      onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy)
     }
   }
 
@@ -55,6 +57,13 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
         value={text}
         placeholder="Material"
         onChange={(e) => setText(e.target.value)}
+        onKeyPress={handleAddText}
+      />
+      <NewItemInput
+        ref={inputRef}
+        value={article}
+        placeholder="Article number"
+        onChange={(e) => setArticle(e.target.value)}
         onKeyPress={handleAddText}
       />
       <NewItemInput
@@ -94,7 +103,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
             onChange={(e) => setOrderedBy(e.target.value)}
             onKeyPress={handleAddText}
         />
-      <NewItemButton onClick={() => {onAdd(text, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy); resetValues(); }}>
+      <NewItemButton onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy); resetValues(); }}>
         Create
       </NewItemButton>
     </NewItemFormContainer>

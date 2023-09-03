@@ -73,7 +73,8 @@ export const onUpload = async (file) => {
                 'Content-Type': 'multipart/form-data',
             },
         });
-        console.log('Data imported successfully');
+        window.alert('Data imported successfully');
+        window.location.reload();
     } catch (error) {
         console.error('Failed to upload file');
     }

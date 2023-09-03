@@ -18,6 +18,28 @@ type ColProps = {
     tableId: string
 }
 
+const CollapsibleText = ({ text, maxLength }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    const toggleExpanded = () => {
+        setIsExpanded(!isExpanded);
+    };
+
+    const shouldDisplayButton = text.length > maxLength;
+    const displayText = isExpanded ? text : `${text.substring(0, maxLength)}`;
+
+    return (
+        <span>
+      {displayText}
+            {shouldDisplayButton && (
+                <span onClick={toggleExpanded} style={{fontWeight: 700, cursor: 'pointer', color: 'blue'}}>
+                    {isExpanded ? ' <<' : ' ...'}
+                </span>
+            )}
+    </span>
+    );
+};
+
 const TableComponent = ({tableId}: ColProps) =>{
     const [tasks, setTasks] = useState<Task[]>([])
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
@@ -71,6 +93,7 @@ const TableComponent = ({tableId}: ColProps) =>{
             editedTask.id,
             listId,
             editedTask.text,
+            editedTask.article,
             editedTask.price,
             editedTask.quantity,
             editedTask.date,
@@ -88,6 +111,8 @@ const TableComponent = ({tableId}: ColProps) =>{
         setEditedTask({ ...editedTask, [field]: value });
     };
 
+
+
     return(
         <>
                     <StyledTableContainer>
@@ -95,6 +120,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                             <TableHead>
                                 <StyledTableRow>
                                     <StyledTableCell>Date ordered</StyledTableCell>
+                                    <StyledTableCell>{tasks.some((task) => task.article !== '') ? 'Article number' : ''}</StyledTableCell>
                                     <StyledTableCell>Material</StyledTableCell>
                                     <StyledTableCell>Quantity</StyledTableCell>
                                     <StyledTableCell>Price</StyledTableCell>
@@ -141,9 +167,16 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         </StyledTableCell>
                                         <StyledTableCell>
                                             {editing === task.id ? (
+                                                <TextField value={editedTask.article} onChange={(e) => handleInputChange('article', e.target.value)} />
+                                            ) : (
+                                                task.article
+                                            )}
+                                        </StyledTableCell>
+                                        <StyledTableCell>
+                                            {editing === task.id ? (
                                                 <TextField value={editedTask.text} onChange={(e) => handleInputChange('text', e.target.value)} />
                                             ) : (
-                                                task.text
+                                                <CollapsibleText text={task.text} maxLength={60} />
                                             )}
                                         </StyledTableCell>
                                         <StyledTableCell>
@@ -260,9 +293,9 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         <AddNewItem
                                             toggleButtonText="+ Add another material"
                                             onAdd={
-                                                (text, price, quantity, unit, comment, deliveryDate, orderedBy) => {
+                                                (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
                                                     dispatch(moveFromArchive(tableId))
-                                                    dispatch(addTask(text, tableId, price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
                                                 }
                                             }
                                             dark

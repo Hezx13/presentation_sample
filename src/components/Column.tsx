@@ -131,9 +131,9 @@ export const Column = ({ text, id, isArchive, isPreview }: ColumnProps) => {
       <AddNewItem
         toggleButtonText="+ Add another material"
         onAdd={
-        (text, price, quantity, unit, comment, deliveryDate, orderedBy) => {
+        (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
           dispatch(moveFromArchive(id))
-          dispatch(addTask(text, id, price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+          dispatch(addTask(text, id,article || '', price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
         }
       }
         dark

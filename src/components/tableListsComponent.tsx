@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import {CardPriceText} from "../textStyles";
 import DownloadIcon from '@mui/icons-material/Download';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import {downloadExcel, onUpload} from '../api'
+import {downloadExcel} from '../api'
 import {moveToArchive, removeList} from "../state/actions";
 import CloseIcon from "@mui/icons-material/Close";
 import ArchiveIcon from '@mui/icons-material/Archive';
@@ -138,7 +138,7 @@ const ListRow = ({ list, index, isArchive }) => {
     );
 };
 
-const TableListsComponent = ({ lists, isArchive }) => {
+const TableListsComponent = ({ lists, isArchive, onUpload }) => {
 
     const [file, setFile] = useState(null);
 

@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
 type AddNewItemProps = {
-  onAdd(text: string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
+  onAdd(text: string, article?: string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
   toggleButtonText: string
   dark?: boolean
   list?: boolean
@@ -62,8 +62,8 @@ export const AddNewItem = (props: AddNewItemProps) => {
         Please, fill out all fields
       </DialogContentText>
       <NewItemForm
-        onAdd={(text,price, quantity, unit, comment, deliveryDate, orderedBy) => {
-        onAdd(text,price,quantity,unit,comment, deliveryDate, orderedBy)
+        onAdd={(text,article,price, quantity, unit, comment, deliveryDate, orderedBy) => {
+        onAdd(text,article,price,quantity,unit,comment, deliveryDate, orderedBy)
           setShowForm(false)
       }}
       />

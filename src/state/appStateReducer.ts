@@ -6,6 +6,7 @@ import {findItemIndexById, findTaskIndex, moveItem, removeItemAtIndex} from "../
 export type Task = {
   id: string;
   text: string;
+  article: string;
   price: string;
   quantity: number;
   date: string;
@@ -48,12 +49,13 @@ export const appStateReducer = (
       break
     }
     case "ADD_TASK": {
-      const { text, listId, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
+      const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
       let targetListIndex = findItemIndexById(draft.lists, listId);
       if (targetListIndex !== -1) {
         draft.lists[targetListIndex].tasks.push({
           id: nanoid(),
           text,
+          article,
           price,
           quantity,
           date,
@@ -72,6 +74,7 @@ export const appStateReducer = (
         draft.archive[targetListIndex].tasks.push({
           id: nanoid(),
           text,
+          article,
           price,
           quantity,
           date,
@@ -86,13 +89,14 @@ export const appStateReducer = (
       break;
     }
     case "EDIT_TASK": {
-      const { id, listId, text, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
+      const { id, listId, text,article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
       const targetListIndex = findItemIndexById(draft.lists, listId);
       const { location, listIndex, taskIndex }= findTaskIndex(id, draft)
 
       if (taskIndex !== -1 && listIndex !== -1) {
         const task = location === 'lists' ? draft.lists[listIndex].tasks[taskIndex] : draft.archive[listIndex].tasks[taskIndex];
         task.text = text ?? task.text;
+        task.article = article ?? task.article;
         task.price = price ?? task.price;
         task.quantity = quantity ?? task.quantity;
         task.date = date ?? task.date;

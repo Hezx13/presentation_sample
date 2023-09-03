@@ -1,6 +1,7 @@
 import {useAppState } from "./state/AppStateContext";
 import React, {useState, useEffect} from 'react'
 import {Grid} from '@mui/material'
+import {onUpload} from "./api";
 import CardComponent from "./components/cardComponent";
 import NavBar from "./components/navBar";
 import TableListsComponent from "./components/tableListsComponent";
@@ -11,17 +12,18 @@ export const DashboardPage = () => {
     const { lists, archive, dispatch } = useAppState()
     const [totalPrice, setTotalPrice] =useState<number>(0)
    const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
+    const [_lists, setLists] = useState([])
 
     useEffect(() => {
         calculateTotal()
-    }, []);
+    }, [lists,archive]);
+
     const calculateTotal = () => {
         let _totalPrice = 0;
         lists.forEach((list) => {
             list.tasks.forEach((task) => {
                 if (task.status !== "Done" && task.payment?.toLowerCase() === "cash") {
                     const price = parseFloat(task.price.split(' ')[0] || task.price);
-                    console.log(price)
                     const quantity = task.quantity;
 
                     _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
@@ -36,7 +38,12 @@ export const DashboardPage = () => {
             return total + list.tasks.filter((task) => task.status !== "Done").length;
         }, 0);
         setNotDoneTasksCount(countNotDoneTasks)
-    }, []);
+    }, [lists]);
+
+    const handleFileUpload = (file) => {
+
+    }
+
     return (
         <>
             <Grid container>
@@ -64,7 +71,7 @@ export const DashboardPage = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={10} sx={{margin: '10px auto'}}>
-                        <TableListsComponent lists={lists} isArchive={false}/>
+                        <TableListsComponent lists={lists} isArchive={false} onUpload={onUpload}/>
                         </Grid>
                     </Grid>
                 </Grid>
@@ -76,7 +83,7 @@ export const DashboardPage = () => {
                             </Typography>
                         </Grid>
                         <Grid item xs={10} sx={{margin: '10px auto'}}>
-                            <TableListsComponent lists={archive} isArchive={true}/>
+                            <TableListsComponent lists={archive} isArchive={true} onUpload={onUpload}/>
                         </Grid>
                     </Grid>
                 </Grid>
