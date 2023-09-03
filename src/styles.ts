@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import {TableCell, TableContainer, TableRow} from "@mui/material";
+import {TableCell, TableContainer, TableRow, Tab} from "@mui/material";
 import {NavLink, NavLinkProps} from "react-router-dom";
 
 export const AppContainer = styled.div`
@@ -206,6 +206,10 @@ export const StyledNavBar = styled.div`
   background-color: #ffffff09;
   border-radius: 10px;
   backdrop-filter: blur(50px);
+`
+
+export const StyledTab = styled(Tab)`
+  color: salmon !important;
 `
 
 export const StyledNavBarItem = styled.div`

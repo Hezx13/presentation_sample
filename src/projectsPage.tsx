@@ -8,6 +8,7 @@ import TableComponent from "./components/tableComponent";
 import NavBar from "./components/navBar";
 import {addList} from "./state/actions";
 import {AddNewItem} from "./components/AddNewItem";
+import {StyledTab} from "./styles";
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -65,7 +66,9 @@ export default function VerticalTabs() {
                 sx={{ borderRight: 1, borderColor: 'divider',maxWidth: '200px'  }}
             >
                 {lists.map((list, index)=>(
-                    <Tab label={list.text} {...a11yProps(index)} />
+                    list.tasks.some((task)=>task.status==="Pending") ?
+                    <StyledTab label={list.text} {...a11yProps(index)} /> :
+                        <Tab label={list.text} {...a11yProps(index)} />
                     )
                 )}
                 <AddNewItem
