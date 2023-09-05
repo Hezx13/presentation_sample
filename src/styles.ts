@@ -102,10 +102,11 @@ export const CardContainer = styled(DragPreviewContainer)<ColumnContainerProps>`
 
 type AddItemButtonProps = {
   dark?: boolean
+  excel?: boolean
 }
 
 export const AddItemButton = styled.button<AddItemButtonProps>`
-  background-color: #0000003d;
+  background-color: ${(props) => (props.excel ? "#47c35180" : "#0000003d")};
   border-radius: 3px;
   border: none;
   color: ${(props) => (props.dark ? "#000" : "#fff")};

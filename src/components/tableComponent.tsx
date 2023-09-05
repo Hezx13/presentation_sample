@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import {useAppState, } from "../state/AppStateContext";
 import {findItemIndexById} from "../utils/arrayUtils";
 import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem } from '@mui/material';
@@ -7,12 +7,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
 import { Task } from '../state/appStateReducer'
-import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, DeleteTaskButton} from "../styles";
+import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, AddItemButton} from "../styles";
 import {CardQuantityText, CardPriceText} from "../textStyles";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import {AddNewItem} from "./AddNewItem";
 import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
+import { onUploadSingle } from '../api';
 
 type ColProps = {
     tableId: string
@@ -47,6 +48,9 @@ const TableComponent = ({tableId}: ColProps) =>{
     const [editing, setEditing] = useState<string | null>(null);
     const { lists, archive, dispatch } = useAppState()
     const [searchTerm, setSearchTerm] = useState('');
+    const fileInput = useRef<HTMLInputElement>(null);
+
+    
 
     useEffect(() => {
         const id_a = findItemIndexById(archive, tableId)
@@ -64,6 +68,16 @@ const TableComponent = ({tableId}: ColProps) =>{
             return task.text.toLowerCase().includes(searchTerm.toLowerCase());
         }))
     }, [tasks, searchTerm]);
+
+
+    const handleUploadClick = () => {
+        fileInput.current!.click();
+      };
+    
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        file && onUploadSingle(file, tableId)
+    };
 
     const handleEditClick = (task: any) => {
         setEditing(task.id);
@@ -262,7 +276,9 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                 >
                                                     <MenuItem value="cash">Cash</MenuItem>
                                                     <MenuItem value="card">Card</MenuItem>
+                                                    <MenuItem value="credit">Credit</MenuItem>
                                                     <MenuItem value="bank transfer">Bank Transfer</MenuItem>
+                                                    <MenuItem value="pemo card">Pemo card</MenuItem>
                                                     <MenuItem value="">Not paid</MenuItem>
                                                 </Select>
                                             ) : (
@@ -289,7 +305,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                     </StyledTableRow>
                                 ))}
                                 <StyledTableRow>
-                                    <StyledTableCell colSpan={12}>
+                                    <StyledTableCell colSpan={7}>
                                         <AddNewItem
                                             toggleButtonText="+ Add another material"
                                             onAdd={
@@ -300,6 +316,17 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             }
                                             dark
                                         />
+                                    </StyledTableCell>
+                                    <StyledTableCell colSpan={6}>
+                                    <AddItemButton onClick={handleUploadClick} dark excel>
+                                        Excel import
+                                    </AddItemButton>
+                                    <input
+                                        type="file"
+                                        ref={fileInput}
+                                        style={{ display: 'none' }}
+                                        onChange={handleFileChange}
+                                    />
                                     </StyledTableCell>
                                 </StyledTableRow>
                             </TableBody>

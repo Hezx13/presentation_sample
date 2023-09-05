@@ -9,6 +9,8 @@ import NavBar from "./components/navBar";
 import {addList} from "./state/actions";
 import {AddNewItem} from "./components/AddNewItem";
 import {StyledTab} from "./styles";
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 
 interface TabPanelProps {
     children?: React.ReactNode;
@@ -45,6 +47,7 @@ function a11yProps(index: number) {
 
 export default function VerticalTabs() {
     const {lists, draggedItem, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
+    const matches = useMediaQuery('(max-width:1280px)');
 
     const [value, setValue] = React.useState(0);
 
@@ -53,24 +56,26 @@ export default function VerticalTabs() {
     };
 
     return (
-        <>
-        <Box
-            sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 'auto', borderRadius: '12px', width: '100%'}}
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            {matches && 
+            <Box
+            sx={{bgcolor: 'background.paper', height: 'auto', borderRadius: '12px'}}
         >
             <Tabs
-                orientation="vertical"
+                orientation="horizontal"
                 variant="scrollable"
                 value={value}
                 onChange={handleChange}
                 aria-label="Vertical tabs example"
-                sx={{ borderRight: 1, borderColor: 'divider',maxWidth: '200px'  }}
+                sx={{ borderRight: 1, borderColor: 'divider'}}
             >
                 {lists.map((list, index)=>(
-                    list.tasks.some((task)=>task.status==="Pending") ?
+                    list.tasks.some((task)=>(task.status==="Pending" || task.status==='' || !task.status)) ?
                     <StyledTab label={list.text} {...a11yProps(index)} /> :
                         <Tab label={list.text} {...a11yProps(index)} />
                     )
                 )}
+                
                 <AddNewItem
                     toggleButtonText="+ Add another project"
                     onAdd={(text) => dispatch(addList(text))}
@@ -78,7 +83,7 @@ export default function VerticalTabs() {
                 />
             </Tabs>
             <Box
-                sx={{ flexGrow: 1, bgcolor: 'background.paper'}}
+                sx={{bgcolor: 'background.paper'}}
             >
             {lists.map((list, index)=>(
                 <TabPanel value={value} index={index}>
@@ -87,6 +92,42 @@ export default function VerticalTabs() {
             ))}
         </Box>
         </Box>
-        </>
+            }
+
+        {!matches && <Box
+                sx={{ flexGrow: 1, bgcolor: 'background.paper', display: 'flex', height: 'auto', borderRadius: '12px', width: '100%'}}
+            >
+                <Tabs
+                    orientation="vertical"
+                    variant="scrollable"
+                    value={value}
+                    onChange={handleChange}
+                    aria-label="Vertical tabs example"
+                    sx={{ borderRight: 1, borderColor: 'divider',maxWidth: '200px'  }}
+                >
+                    {lists.map((list, index)=>(
+                        list.tasks.some((task)=>(task.status==="Pending" || task.status==='' || !task.status)) ?
+                        <StyledTab label={list.text} {...a11yProps(index)} /> :
+                            <Tab label={list.text} {...a11yProps(index)} />
+                        )
+                    )}
+                    
+                    <AddNewItem
+                        toggleButtonText="+ Add another project"
+                        onAdd={(text) => dispatch(addList(text))}
+                        list
+                    />
+                </Tabs>
+                <Box
+                    sx={{ flexGrow: 1, bgcolor: 'background.paper'}}
+                >
+                {lists.map((list, index)=>(
+                    <TabPanel value={value} index={index}>
+                        <TableComponent tableId={list.id}/>
+                    </TabPanel>
+                ))}
+            </Box>
+            </Box>}
+        </Box>
     );
 }

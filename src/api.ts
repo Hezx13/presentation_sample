@@ -79,3 +79,19 @@ export const onUpload = async (file) => {
         console.error('Failed to upload file');
     }
 };
+
+export const onUploadSingle = async (file, listId: string) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    try {
+        const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/upload/${listId}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        });
+        window.alert('Data imported successfully');
+        window.location.reload();
+    } catch (error) {
+        console.error('Failed to upload file');
+    }
+}
