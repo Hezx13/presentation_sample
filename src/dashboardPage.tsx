@@ -10,6 +10,7 @@ import Typography from "@mui/material/Typography";
 
 export const DashboardPage = () => {
     const { lists, archive, dispatch } = useAppState()
+    const [roughTotalPrice, setRoughTotalPrice] = useState<number>(0)
     const [totalPrice, setTotalPrice] =useState<number>(0)
    const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
     const [_lists, setLists] = useState([])
@@ -20,18 +21,23 @@ export const DashboardPage = () => {
 
     const calculateTotal = () => {
         let _totalPrice = 0;
+        let _totalPriceRough = 0;
+
         lists.forEach((list) => {
             list.tasks.forEach((task) => {
-                if (task.status !== "Done" && task.payment?.toLowerCase() === "cash") {
-                    const price = parseFloat(task.price.split(' ')[0] || task.price);
+                if (task.status !== "Done") {
+                    const price = parseFloat(task.price?.split(' ')[0] || task.price);
                     const quantity = task.quantity;
-
-                    _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
+                    if (task.payment?.toLowerCase() === "cash") {
+                        _totalPrice += !Number.isNaN(price) ? price * quantity : 0;
+                    }
+                    _totalPriceRough += !Number.isNaN(price) ? price * quantity : 0;
                 }
             });
         });
 
         setTotalPrice(parseFloat(_totalPrice.toFixed(2)))
+        setRoughTotalPrice(parseFloat(_totalPriceRough.toFixed(2)))
     }
     useEffect(() => {
         const countNotDoneTasks = lists.reduce((total, list) => {
@@ -54,6 +60,7 @@ export const DashboardPage = () => {
                     <Grid container justifyContent="center" spacing={8} >
                         <Grid item xl={2}>
                             <CardComponent textColor="green" text="Cash order" amount={totalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
+                            <CardComponent textColor="red" text="Cash order(Rough)" amount={roughTotalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
                         </Grid>
                         <Grid item xl={2}>
                             <CardComponent textColor="orange" text="Projects in work" amount={lists.length}/>
