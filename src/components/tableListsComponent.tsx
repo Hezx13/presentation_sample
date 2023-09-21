@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Table,
     TableBody,
@@ -56,9 +56,15 @@ const ListRow = ({ list, index, isArchive }) => {
         return _totalPrice.toFixed(2)
     }
     const [isCollapsed, setIsCollapsed] = useState(true);
-    const [totalPrice, setTotalPrice] =useState(calculateTotal())
-    const [totalPriceDone, setTotalPriceDone] =useState(calculateDone())
-    const [totalPriceNotDone, setTotalPriceNotDone] =useState(calculateNotDone())
+    const [totalPrice, setTotalPrice] =useState('')
+    const [totalPriceDone, setTotalPriceDone] =useState('')
+    const [totalPriceNotDone, setTotalPriceNotDone] =useState('')
+    
+    useEffect(()=>{
+        setTotalPrice(calculateTotal());
+        setTotalPriceDone(calculateDone());
+        setTotalPriceNotDone(calculateNotDone())
+    },[list])
 
     const handleExpandToTable = (id) =>{
         navigate('/table', { state: { myData: id } });
@@ -142,8 +148,15 @@ const TableListsComponent = ({ lists, isArchive, onUpload }) => {
 
     const [file, setFile] = useState(null);
 
+    const [isProcessing, setIsProcessing] = useState(false);
+
     const onFileChange = (e) => {
         setFile(e.target.files[0]);
+    };
+
+    const onFileUpload = (e) => {
+        setIsProcessing(true);
+        onUpload(file)
     };
 
     return (
@@ -160,9 +173,10 @@ const TableListsComponent = ({ lists, isArchive, onUpload }) => {
                                     <DownloadIcon htmlColor="#008000"/>
                                 </IconButton>
                                 <IconButton
-                                    onClick={() => {
-                                        onUpload(file)
-                                    }}
+                                    disabled={isProcessing}
+                                    onClick={
+                                        onFileUpload
+                                    }
                                 >
                                     <FileUploadIcon htmlColor="#008080"/>
                                 </IconButton>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from "react"
+import { createContext, useContext, useEffect, useCallback, useRef } from "react"
 import { useImmerReducer } from "use-immer"
 import {
   appStateReducer,
@@ -8,6 +8,7 @@ import {
 } from "./appStateReducer"
 import { Action } from "./actions"
 import { withInitialState } from "../utils/withInitialState"
+import { debounce } from "throttle-debounce-ts"
 import { save } from "../api"
 import { DragItem } from "../components/DragItem"
 
@@ -29,35 +30,40 @@ type AppStateProviderProps = {
   initialState: AppState
 }
 
-export const AppStateProvider =
-  withInitialState<AppStateProviderProps>(
-    ({ children, initialState }) => {
-      const [state, dispatch] = useImmerReducer(
-        appStateReducer,
-        initialState
-      )
+export const AppStateProvider = withInitialState<AppStateProviderProps>(
+  ({ children, initialState }) => {
+    const [state, dispatch] = useImmerReducer(appStateReducer, initialState);
 
-      useEffect(() => {
-        save(state)
-      }, [state])
+    // useRef to keep track of the previous state
+    const prevStateRef = useRef(initialState);
 
-      const { draggedItem, lists, archive } = state
-      const getTasksByListId = (id: string) => {
-        return lists.find((list) => list.id === id)?.tasks || []
-      }
-        const getTasksByArchiveId = (id: string) => {
-            return archive.find((list) => list.id === id)?.tasks || []
-        }
+    const debouncedSave = useCallback(debounce(2000, save), []);
 
-      return (
-        <AppStateContext.Provider
-          value={{ draggedItem, lists,archive, getTasksByListId,getTasksByArchiveId, dispatch }}
-        >
-          {children}
-        </AppStateContext.Provider>
-      )
-    }
-  )
+    useEffect(() => {
+      debouncedSave(state, prevStateRef.current);
+
+      // Update the prevStateRef AFTER you've used it.
+      prevStateRef.current = state;
+    }, [state, debouncedSave]);
+
+    const { draggedItem, lists, archive } = state;
+    const getTasksByListId = (id: string) => {
+      return lists.find((list) => list.id === id)?.tasks || [];
+    };
+    const getTasksByArchiveId = (id: string) => {
+      return archive.find((list) => list.id === id)?.tasks || [];
+    };
+
+    return (
+      <AppStateContext.Provider
+        value={{ draggedItem, lists, archive, getTasksByListId, getTasksByArchiveId, dispatch }}
+      >
+        {children}
+      </AppStateContext.Provider>
+    );
+  }
+);
+
 
 export const useAppState = () => {
   return useContext(AppStateContext)

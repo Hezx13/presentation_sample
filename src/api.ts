@@ -1,21 +1,63 @@
 import axios from 'axios';
-import { AppState } from "./state/appStateReducer";
+import hash from 'object-hash';
+import { AppState, List } from "./state/appStateReducer";
 import {response} from "express";
 
-export const save = async (payload: AppState) => {
-    try {
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/save`, payload, {
-            headers: {
-                Accept: "application/json",
-                "Content-Type": "application/json"
-            }
-        });
-
-        return response.data;
-    } catch (error) {
-        throw new Error("Error while saving the state.");
+export const save = async (payload: AppState, old: AppState) => {
+    const oldListIds = new Set(old.lists.map(list => list.id));
+    const oldArchiveIds = new Set(old.archive.map(archive => archive.id));
+    const oldListTasksHash = new Map(old.lists.map(list => [list.id, hash(list.tasks)]));
+    const oldArchiveTasksHash = new Map(old.archive.map(list => [list.id, hash(list.tasks)]));
+    
+    const listsToAdd: List[] = [];
+    const archiveToAdd: List[] = [];
+    const listsToRemove: string[] = [];
+    const archiveToRemove: string[] = [];
+    const listsToUpdate: List[] = [];
+    const archiveToUpdate: List[] = [];
+  
+    for (const newList of payload.lists) {
+      if (!oldListIds.has(newList.id)) {
+        listsToAdd.push(newList);
+      } else if (oldListTasksHash.get(newList.id) !== hash(newList.tasks)) {
+        listsToUpdate.push(newList);
+      }
     }
-}
+  
+    for (const newArchive of payload.archive) {
+      if (!oldArchiveIds.has(newArchive.id)) {
+        archiveToAdd.push(newArchive);
+      } else if (oldArchiveTasksHash.get(newArchive.id) !== hash(newArchive.tasks)) {
+        archiveToUpdate.push(newArchive);
+      }
+    }
+  
+    listsToRemove.push(...Array.from(oldListIds).filter(id => !payload.lists.some(list => list.id === id)));
+    archiveToRemove.push(...Array.from(oldArchiveIds).filter(id => !payload.archive.some(archive => archive.id === id)));
+  
+    const processedPayload = {
+      listsToAdd,
+      archiveToAdd,
+      listsToRemove,
+      archiveToRemove,
+      listsToUpdate,
+      archiveToUpdate
+    };
+    console.log(processedPayload);
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/save`, processedPayload, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        }
+      });
+  
+      return response.data;
+    } catch (error: any) { // Explicitly type error as 'any' to access 'message'
+      throw new Error(`Error while saving the state: ${error.message}`);
+    }
+  };
+  
 
 export const load = async () => {
     try {

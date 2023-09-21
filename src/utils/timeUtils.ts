@@ -13,3 +13,11 @@ export const getNextWeek = () => {
     weekFromNow.setDate(today.getDate() + 7);
     return weekFromNow.toString()
 }
+
+export const debounce = (fn: Function, time = 500) => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: any[]) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => fn.apply(this, args), time);
+    };
+  };
