@@ -37,12 +37,10 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     // useRef to keep track of the previous state
     const prevStateRef = useRef(initialState);
 
-    const debouncedSave = useCallback(debounce(2000, save), []);
+    const debouncedSave = useCallback(debounce(500, save), []);
 
     useEffect(() => {
       debouncedSave(state, prevStateRef.current);
-
-      // Update the prevStateRef AFTER you've used it.
       prevStateRef.current = state;
     }, [state, debouncedSave]);
 
