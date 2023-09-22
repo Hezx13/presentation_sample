@@ -37,12 +37,15 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     // useRef to keep track of the previous state
     const prevStateRef = useRef(initialState);
 
-    const debouncedSave = useCallback(debounce(500, save), []);
-
+    const debouncedSave = useCallback(debounce(500, (currentState, prevState) => {
+      save(currentState, prevState);
+      prevStateRef.current = currentState;
+    }), []);
+    
     useEffect(() => {
       debouncedSave(state, prevStateRef.current);
-      prevStateRef.current = state;
     }, [state, debouncedSave]);
+    
 
     const { draggedItem, lists, archive } = state;
     const getTasksByListId = (id: string) => {
