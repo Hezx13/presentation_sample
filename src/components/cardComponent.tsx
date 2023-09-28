@@ -21,7 +21,7 @@ const bull = (
 
 export default function CardComponent({text, amount, textColor}) {
     const card = (
-        <React.Fragment>
+        <>
             <CardContent>
                 <Typography sx={{ fontSize: 18 }} color="#ffffff" gutterBottom>
                     {text}
@@ -34,7 +34,7 @@ export default function CardComponent({text, amount, textColor}) {
                 </Typography>
 
             </CardContent>
-        </React.Fragment>
+        </>
     );
     return (
         <Box sx={{ minWidth: 275, boxShadow: '8px 12px 15px -10px rgba(0, 0, 0, 0.2)' }}>

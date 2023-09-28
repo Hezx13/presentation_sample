@@ -43,7 +43,6 @@ export const save = async (payload: AppState, old: AppState) => {
       listsToUpdate,
       archiveToUpdate
     };
-    console.log(processedPayload);
     try {
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/save`, processedPayload, {
         headers: {
@@ -137,3 +136,37 @@ export const onUploadSingle = async (file, listId: string) => {
         console.error('Failed to upload file');
     }
 }
+
+export const generateReport = async(period) => {
+  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/generate_report`, period, {
+});
+return res.status;
+}
+
+export const loadReports = async() => {
+  try {
+    const response = await axios.get(`${process.env.REACT_APP_BACKEND_ENDPOINT}/reports`, {
+        headers: {
+            Accept: "application/json",
+        }
+    });
+    return response.data.reports;
+} catch (error) {
+    throw new Error("Error while loading the reports.");
+}
+}
+
+export const addDebit = async(period, debit) => {
+  let dataToProcess = {periodStart: period, valueToInsert: debit};
+
+  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/add_debit`, dataToProcess, {
+  });
+  return res.status;
+};
+export const removeDebit = async(period, debit) => {
+  let dataToProcess = {periodStart: period, valueToRemove: debit};
+
+  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/remove_debit`, dataToProcess, {
+  });
+  return res.status;
+};

@@ -16,6 +16,11 @@ export const NavBar = () =>{
                 </StyledLink>
             </StyledNavBarItem>
             <StyledNavBarItem>
+                <StyledLink to='/reports' isActive={location.pathname === '/reports'} >
+                    Reports
+                </StyledLink>
+            </StyledNavBarItem>
+            <StyledNavBarItem>
                 <StyledLink to='/archive' isActive={location.pathname === '/archive'}>
                     Archive
                 </StyledLink>

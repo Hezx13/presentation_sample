@@ -6,6 +6,8 @@ import TablesPage from './components/tablesPage'
 import ArchivePage from "./archivePage";
 import DashboardPage from "./dashboardPage";
 import VerticalTabs from "./projectsPage";
+import ReportsPage from "./ReportsPage";
+import ReportDetailedTable from "./components/ReportDetailedTable";
 
 const AppRouter = () => {
     return (
@@ -16,6 +18,8 @@ const AppRouter = () => {
                 <Route path="/archive" element={<ArchivePage/>}/>
                 <Route path="/dashboard" element={<DashboardPage/>}/>
                 <Route path="/projects" element={<VerticalTabs/>}/>
+                <Route path="/reports" element={<ReportsPage/>}/>
+                <Route path="/report" element={<ReportDetailedTable/>}/>
             </Routes>
         </Router>
         );

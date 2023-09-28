@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useAppState, } from "../state/AppStateContext";
-import {findItemIndexById} from "../utils/arrayUtils";
-import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -13,10 +13,39 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import {AddNewItem} from "./AddNewItem";
 import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
-import { onUploadSingle } from '../api';
+import { FormControl, InputLabel } from '@mui/material';
+import AddCardIcon from '@mui/icons-material/AddCard';
+import { useReport } from '../state/reportsContext'; // Adjust the import to your file structure
+
+import { addDebit } from '../api';
+
+type Report = {
+    materials: [],
+    month: any,
+    debit: Array<number>,
+    credit: number,
+    activeProjects: []
+}
+
+type Material = {
+    id: string,
+    text: string,
+    article: string,
+    price: string,
+    quantity: number,
+    date: any, 
+    unit: string,
+    comment: string,
+    deliveryDate: string,
+    orderedBy: string,
+    status: string,
+    payment: string,
+    listParent: any
+}
 
 type ColProps = {
-    tableId: string
+    report: Report[],
+    period: any,
 }
 
 const CollapsibleText = ({ text, maxLength }) => {
@@ -41,57 +70,95 @@ const CollapsibleText = ({ text, maxLength }) => {
     );
 };
 
-const TableComponent = ({tableId}: ColProps) =>{
-    const [tasks, setTasks] = useState<Task[]>([])
-    const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
+const ReportDetailedTable = () =>{
+    const { reports, updateReports } = useReport();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const period = location.state?.period || null;
+
+    const [tasks, setTasks] = useState<Material[]>([])
+    const [filteredTasks, setFilteredTasks] = useState<Material[]>([])
+    const [activeProjects, setActiveProjects] = useState<string[]>([]);
+    const [selectedProject, setSelectedProject] = useState('')
+    const [credit, setCredit] = useState(0)
     const [editedTask, setEditedTask] = useState<any>(null);
     const [editing, setEditing] = useState<string | null>(null);
     const { lists, archive, dispatch } = useAppState()
     const [searchTerm, setSearchTerm] = useState('');
     const fileInput = useRef<HTMLInputElement>(null);
+    const [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = useState('');
+    const [debit, setDebit] = useState(0);
 
+    type Project = {
+        id: string;
+        name: string;
+    }
     
+    // FETCHING DATA
+    
+    useEffect(()=>{
+        if(!reports.length){
+            updateReports();
+            return;
+        }
+        if (!period) navigate('/reports');
+        const detailedReport = reports.filter((report) => report.month.start === period.start);
+        const act_proj: string[] = []
+        setTasks(detailedReport[0].materials)
+        detailedReport[0].activeProjects.map((activeProject: Project) => 
+            act_proj.push(activeProject.name)
+        )
+        setActiveProjects(act_proj);
+        calculateTotalDebit(detailedReport[0].debit);
+    },[reports])
+
+    //FILTERING
 
     useEffect(() => {
-        const id_a = findItemIndexById(archive, tableId)
-        const id_l =  findItemIndexById(lists, tableId)
-        if (id_a > -1){
-            setTasks(archive[id_a].tasks)
+        let newFilteredTasks = tasks;
+      
+        if (searchTerm !== '') {
+          newFilteredTasks = newFilteredTasks.filter(task =>
+            task.text.toLowerCase().includes(searchTerm.toLowerCase())
+          );
         }
-        else if (id_l > -1) {
-            setTasks(lists[id_l].tasks)
+      
+        if (selectedProject !== '') {
+          newFilteredTasks = newFilteredTasks.filter(task =>
+            task.listParent.name === selectedProject
+          );
         }
-    }, [tableId, editing,lists]);
-
-    useEffect(() => {
-        setFilteredTasks (tasks.filter(task => {
-            return task.text.toLowerCase().includes(searchTerm.toLowerCase());
-        }))
-    }, [tasks, searchTerm]);
-
-
-    const handleUploadClick = () => {
-        fileInput.current!.click();
-      };
-    
-      const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        file && onUploadSingle(file, tableId)
-    };
+      
+        setFilteredTasks(newFilteredTasks);
+      }, [tasks, searchTerm, selectedProject]);
+      
+   
+      useEffect(()=>{
+        calculateTotalCredit();
+      },[filteredTasks])
 
     const handleEditClick = (task: any) => {
         setEditing(task.id);
         setEditedTask(task);
     };
 
-    const handleRemoveClick = (target: Task) => {
-        const shouldRemove = window.confirm("Are you sure you want to remove " + target.text + " ?" );
-
-        if (shouldRemove) {
-            setTasks(tasks.filter((task) => task.id !== target.id));
-            dispatch(removeTask(tableId, target.id));
+    const calculateTotalCredit = () =>{
+        let totalCredit = 0;
+        for (let task of filteredTasks){
+            if (!isNaN(Number(task.price)))
+            totalCredit += Number(task.price)*task.quantity
         }
-    };
+        setCredit(totalCredit);
+    }
+
+    const calculateTotalDebit = (debits) =>{
+        let totalDebit = 0;
+        for (let debit of debits){
+            totalDebit += debit
+        }
+        setDebit(totalDebit);
+    }
 
     const isUrl = (string) => {
         try {
@@ -102,49 +169,38 @@ const TableComponent = ({tableId}: ColProps) =>{
         }
     };
 
-    const handleSaveClick = (listId: string) => {
-        dispatch(editTask(
-            editedTask.id,
-            listId,
-            editedTask.text,
-            editedTask.article,
-            editedTask.price,
-            editedTask.quantity,
-            editedTask.date,
-            editedTask.unit,
-            editedTask.comment,
-            editedTask.deliveryDate,
-            editedTask.orderedBy,
-            editedTask.status,
-            editedTask.payment
-            ));
-        setEditing(null);
-    };
-
     const handleInputChange = (field: string, value: any) => {
         setEditedTask({ ...editedTask, [field]: value });
     };
 
-
-
+    const handleClickOpen = () => {
+        setOpen(true);
+      };
+    
+      const handleClose = () => {
+        setOpen(false);
+      };
+    
+      const handleSave = async () => {
+        if (inputValue)
+            try {
+                addDebit(period.start,inputValue)
+                console.log('Saved:', inputValue);
+                updateReports();     
+                
+            } catch (err) {
+                console.log(err);
+            }
+        setOpen(false);
+      };
     return(
         <>
                     <StyledTableContainer>
                         <Table>
                             <TableHead>
                                 <StyledTableRow>
-                                    <StyledTableCell>Date ordered</StyledTableCell>
-                                    <StyledTableCell>{tasks.some((task) => task.article !== '') ? 'Article number' : ''}</StyledTableCell>
-                                    <StyledTableCell>Material</StyledTableCell>
-                                    <StyledTableCell>Quantity</StyledTableCell>
-                                    <StyledTableCell>Price</StyledTableCell>
-                                    <StyledTableCell>Unit</StyledTableCell>
-                                    <StyledTableCell>Comment</StyledTableCell>
-                                    <StyledTableCell>Delivery Date</StyledTableCell>
-                                    <StyledTableCell>Ordered By</StyledTableCell>
-                                    <StyledTableCell>Status</StyledTableCell>
-                                    <StyledTableCell>Payment</StyledTableCell>
-                                    <StyledTableCell><TextField
+                                    <StyledTableCell colSpan={2}>
+                                        <TextField
                                         label="Search by Name"
                                         variant="standard"
                                         value={searchTerm}
@@ -166,12 +222,113 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         }}
                                         style={{}}
                                         onChange={e => setSearchTerm(e.target.value)}
-                                    /></StyledTableCell>
+                                    />
+                                    </StyledTableCell>
+                                    <StyledTableCell colSpan={7}>
+                                    <FormControl variant="outlined" style={{ margin: '0 10px', width: '200px' }}>
+                                        <InputLabel>Project</InputLabel>
+                                        <Select
+                                        value={selectedProject}
+                                        onChange={(e) => setSelectedProject(e.target.value)}
+                                        label="Project"
+                                        size="small"
+                                        margin='dense'
+                                        >
+                                        <MenuItem value=''>
+                                            None
+                                        </MenuItem>
+                                        {activeProjects.map((m, index) => (
+                                            <MenuItem key={index} value={m}>
+                                            {m}
+                                            </MenuItem>
+                                        ))}
+                                        </Select>
+                                    </FormControl>
+                                    </StyledTableCell>
+                                    </StyledTableRow>
+                                    <StyledTableRow>
+                                    <StyledTableCell 
+                                    colSpan={2}>
+                                        <Typography
+                                        sx={{background: "#AA0000AA",
+                                        maxWidth: '300px',
+                                        padding: '10px',
+                                        borderRadius: '8px'    
+                                        }}
+                                        >
+                                        <span 
+                                        style={{color: '#000'}}
+                                        >
+                                             Credit: 
+                                        </span>
+                                        <span
+                                        style={{fontWeight: '600'}}
+                                        >
+                                            {credit.toFixed(2)}
+                                        </span> 
+                                        </Typography>
+                                    </StyledTableCell>
+                                    <StyledTableCell colSpan={5}>
+                                        <Typography
+                                        sx={{
+                                            background: "#00AA00AA",
+                                            maxWidth: '300px',
+                                            padding: '10px',
+                                            borderRadius: '8px',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                        }}
+                                        >
+                                        <span>
+                                            <span style={{ color: '#000' }}>Debit:</span>
+                                            <span style={{ fontWeight: '600' }}>{debit.toFixed(2)}</span>
+                                        </span>
+                                        <IconButton sx={{ padding: '0px' }} onClick={handleClickOpen}>
+                                            <AddCardIcon />
+                                        </IconButton>
+                                        </Typography>
+                                    </StyledTableCell>
+
+                                    {/*    DIALOG     */}
+
+                                    <Dialog open={open} onClose={handleClose}>
+                                        <DialogTitle>Add debit</DialogTitle>
+                                        <DialogContent>
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            type="number"
+                                            fullWidth
+                                            value={inputValue}
+                                            onChange={(e) => setInputValue(e.target.value)}
+                                        />
+                                        </DialogContent>
+                                        <DialogActions>
+                                        <Button onClick={handleClose} color="primary">
+                                            Cancel
+                                        </Button>
+                                        <Button onClick={handleSave} color="primary">
+                                            ADD
+                                        </Button>
+                                        </DialogActions>
+                                    </Dialog>
+
+                                    </StyledTableRow>
+                                <StyledTableRow>
+                                    <StyledTableCell>Date ordered</StyledTableCell>
+                                    <StyledTableCell>Material</StyledTableCell>
+                                    <StyledTableCell>Project</StyledTableCell>
+                                    <StyledTableCell>Credit</StyledTableCell>
+                                    <StyledTableCell>Unit</StyledTableCell>
+                                    <StyledTableCell>Invoice</StyledTableCell>
+                                    <StyledTableCell>Delivery Date</StyledTableCell>
+                                    <StyledTableCell>Status</StyledTableCell>
+                                    <StyledTableCell>Payment</StyledTableCell>
                                 </StyledTableRow>
                             </TableHead>
                             <TableBody>
-                                {filteredTasks.map((task) => (
-                                    <StyledTableRow key={task.id}>
+                                {filteredTasks.map((task, index) => (
+                                    <StyledTableRow key={task.id} color={index %2 === 0 ? "#00000005" : "white"}>
                                         <StyledTableCell>
                                             {editing === task.id ? (
                                                 <TextField value={editedTask.date} onChange={(e) => handleInputChange('date', e.target.value)} />
@@ -181,16 +338,9 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         </StyledTableCell>
                                         <StyledTableCell>
                                             {editing === task.id ? (
-                                                <TextField value={editedTask.article} onChange={(e) => handleInputChange('article', e.target.value)} />
-                                            ) : (
-                                                task.article
-                                            )}
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            {editing === task.id ? (
                                                 <TextField value={editedTask.text} onChange={(e) => handleInputChange('text', e.target.value)} />
                                             ) : (
-                                                <CollapsibleText text={task.text} maxLength={50} />
+                                                <CollapsibleText text={task.text} maxLength={60} />
                                             )}
                                         </StyledTableCell>
                                         <StyledTableCell>
@@ -198,7 +348,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                 <TextField value={editedTask.quantity} onChange={(e) => handleInputChange('quantity', e.target.value)} />
                                             ) : (
                                                 <CardQuantityText>
-                                                    {task.quantity}
+                                                    {task.listParent.name}
                                                 </CardQuantityText>
 
                                             )}
@@ -208,7 +358,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                 <TextField value={editedTask.price} onChange={(e) => handleInputChange('price', e.target.value)} />
                                             ) : (
                                                 <CardPriceText>
-                                                    {task.price}
+                                                    {(Number(task.price)*task.quantity).toFixed(2)}
                                                 </CardPriceText>
                                             )}
                                         </StyledTableCell>
@@ -231,13 +381,6 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                 <DatePicker value={dayjs(editedTask.deliveryDate)} onChange={(newValue) => handleInputChange('deliveryDate', newValue?.toString())} />
                                             ) : (
                                                 task.deliveryDate
-                                            )}
-                                        </StyledTableCell>
-                                        <StyledTableCell>
-                                            {editing === task.id ? (
-                                                <TextField value={editedTask.orderedBy} onChange={(e) => handleInputChange('orderedBy', e.target.value)} />
-                                            ) : (
-                                                task.orderedBy
                                             )}
                                         </StyledTableCell>
                                         <StyledTableCell>
@@ -286,22 +429,6 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             )}
                                         </StyledTableCell>
 
-                                        {/* Similar for other fields */}
-                                        <StyledTableCell sx={{display: 'flex', justifyContent: 'space-between'}}>
-                                            {editing === task.id ? (
-                                                <IconButton onClick={() => handleSaveClick(tableId)}>
-                                                    <SaveIcon fontSize="small" htmlColor='green'/>
-                                                </IconButton>
-                                            ) : (
-                                                <IconButton onClick={() => handleEditClick(task)}>
-                                                    <EditIcon fontSize="small" htmlColor='DarkOrange'/>
-                                                </IconButton>
-                                            )}
-                                            <IconButton
-                                                onClick={() => handleRemoveClick(task)}>
-                                                <DeleteForeverIcon fontSize="small" htmlColor='Crimson'/>
-                                            </IconButton>
-                                        </StyledTableCell>
                                     </StyledTableRow>
                                 ))}
                                 <StyledTableRow>
@@ -310,22 +437,24 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             toggleButtonText="+ Add another material"
                                             onAdd={
                                                 (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
-                                                    dispatch(moveFromArchive(tableId))
-                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+                                                    dispatch(moveFromArchive(''))
+                                                    dispatch(addTask(text, '', article || '',price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
                                                 }
                                             }
                                             dark
                                         />
                                     </StyledTableCell>
                                     <StyledTableCell colSpan={6}>
-                                    <AddItemButton onClick={handleUploadClick} dark excel>
+                                    <AddItemButton 
+                                    //onClick={handleUploadClick} dark excel
+                                    >
                                         Excel import
                                     </AddItemButton>
                                     <input
                                         type="file"
                                         ref={fileInput}
                                         style={{ display: 'none' }}
-                                        onChange={handleFileChange}
+                                   //     onChange={handleFileChange}
                                     />
                                     </StyledTableCell>
                                 </StyledTableRow>
@@ -336,4 +465,4 @@ const TableComponent = ({tableId}: ColProps) =>{
     )
 }
 
-export default TableComponent
+export default ReportDetailedTable

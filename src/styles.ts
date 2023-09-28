@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import {TableCell, TableContainer, TableRow, Tab} from "@mui/material";
+import {TableCell, TableContainer, TableRow, Tab, Select, Button} from "@mui/material";
 import {NavLink, NavLinkProps} from "react-router-dom";
 
 export const AppContainer = styled.div`
@@ -168,6 +168,7 @@ export const StyledTableContainer = styled(TableContainer)`
 `
 export const StyledTableRow = styled(TableRow)`
   padding: 4px 16px;
+  background-color: ${(props) => props.color || 'white'};
 `
 
 export const StyledTableCell = styled(TableCell)`
@@ -196,7 +197,7 @@ export const Status = styled.span`
 
 export const StyledNavBar = styled.div`
   height: 40px;
-  width: 320px;
+  width: 380px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -232,3 +233,22 @@ export const StyledLink = styled(NavLink)<{ isActive: boolean }>`
       text-decoration: underline orange;
     }
 `;
+
+export const StyledSelect = styled(Select)`
+color: #ffffff !important;
+
+    & > * {
+      color: #ffffff !important;
+    }
+
+`
+export const StyledGenerateButton = styled(Button)`
+    color: orange !important;
+    background-color: rgba(0, 0, 0, 0.06) !important;
+    width: 120px;
+    height: 48px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.26) !important;
+    }
+`
