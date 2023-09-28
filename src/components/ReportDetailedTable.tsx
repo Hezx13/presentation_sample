@@ -153,10 +153,9 @@ const ReportDetailedTable = () =>{
     }
 
     const calculateTotalDebit = (debits) =>{
-        let totalDebit = 0;
-        for (let debit of debits){
-            totalDebit += debit
-        }
+        let totalDebit = debits.reduce((a, b) => {
+            return a + b;
+          }, 0)
         setDebit(totalDebit);
     }
 
