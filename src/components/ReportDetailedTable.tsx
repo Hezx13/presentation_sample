@@ -2,11 +2,9 @@ import React, {useState, useEffect, useRef} from 'react'
 import {useAppState, } from "../state/AppStateContext";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem, Typography, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
 import { Task } from '../state/appStateReducer'
+import HoverPopover from './HoverPopover';
 import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, AddItemButton} from "../styles";
 import {CardQuantityText, CardPriceText} from "../textStyles";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -14,10 +12,8 @@ import dayjs from "dayjs";
 import {AddNewItem} from "./AddNewItem";
 import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
 import { FormControl, InputLabel } from '@mui/material';
-import AddCardIcon from '@mui/icons-material/AddCard';
 import { useReport } from '../state/reportsContext'; // Adjust the import to your file structure
-
-import { addDebit } from '../api';
+import { addDebit, removeDebit } from '../api';
 
 type Report = {
     materials: [],
@@ -88,7 +84,7 @@ const ReportDetailedTable = () =>{
     const fileInput = useRef<HTMLInputElement>(null);
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
-    const [debit, setDebit] = useState(0);
+    const [debit, setDebit] = useState<Array<number>>([]);
 
     type Project = {
         id: string;
@@ -155,10 +151,7 @@ const ReportDetailedTable = () =>{
     }
 
     const calculateTotalDebit = (debits) =>{
-        let totalDebit = debits.reduce((a, b) => {
-            return a + b;
-          }, 0)
-        setDebit(totalDebit);
+        setDebit(debits);
     }
 
     const isUrl = (string) => {
@@ -185,15 +178,25 @@ const ReportDetailedTable = () =>{
       const handleSave = async () => {
         if (inputValue)
             try {
-                addDebit(period.start,inputValue)
-                console.log('Saved:', inputValue);
-                updateReports();     
+            addDebit(period.start,inputValue).then(() => { updateReports()});
+                   
                 
             } catch (err) {
                 console.log(err);
             }
         setOpen(false);
       };
+
+      const handleRemoveDebitClick =async (num: number) => {
+        console.log(period.start);
+
+        try {
+            removeDebit(period.start, num).then(() => { updateReports()})
+          } catch (error) {
+            console.error("Error in removeDebit:", error);
+          }
+      };
+
     return(
         <>
                     <StyledTableContainer>
@@ -271,22 +274,8 @@ const ReportDetailedTable = () =>{
                                     </StyledTableCell>
                                     <StyledTableCell colSpan={5}>
                                         <Typography
-                                        sx={{
-                                            background: "#00AA00AA",
-                                            maxWidth: '300px',
-                                            padding: '10px',
-                                            borderRadius: '8px',
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                        }}
                                         >
-                                        <span>
-                                            <span style={{ color: '#000' }}>Debit:</span>
-                                            <span style={{ fontWeight: '600' }}>{debit.toFixed(2)}</span>
-                                        </span>
-                                        <IconButton sx={{ padding: '0px' }} onClick={handleClickOpen}>
-                                            <AddCardIcon />
-                                        </IconButton>
+                                            <HoverPopover openHook={handleClickOpen} debit={debit} onRemoveDebit={handleRemoveDebitClick}/>
                                         </Typography>
                                     </StyledTableCell>
 
@@ -466,4 +455,4 @@ const ReportDetailedTable = () =>{
     )
 }
 
-export default ReportDetailedTable
+export default ReportDetailedTable;

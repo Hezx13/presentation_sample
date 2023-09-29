@@ -163,6 +163,7 @@ export const addDebit = async(period, debit) => {
   });
   return res.status;
 };
+
 export const removeDebit = async(period, debit) => {
   let dataToProcess = {periodStart: period, valueToRemove: debit};
 
