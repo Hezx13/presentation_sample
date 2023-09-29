@@ -142,7 +142,7 @@ const ReportDetailedTable = () =>{
     const calculateTotalCredit = () =>{
         let totalCredit = 0;
         for (let task of filteredTasks){
-            let price = Number(task.price.split(" ")[0] || task.price);
+            let price = Number(task.price?.split(" ")[0] || task.price);
             let quantity = Number(task.quantity)
             if (!isNaN(price) && !isNaN(quantity))
             totalCredit += price * quantity
