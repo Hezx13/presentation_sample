@@ -11,6 +11,7 @@ const HoverPopover = ({openHook, debit, onRemoveDebit}) => {
 
   const handleMouseOver = () => {
     clearTimeout(timerID);
+    if (debit.length)
     setShowDialog(true);
   };
 

@@ -14,7 +14,7 @@ import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
 import { FormControl, InputLabel } from '@mui/material';
 import { useReport } from '../state/reportsContext'; // Adjust the import to your file structure
 import { addDebit, removeDebit } from '../api';
-
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 type Report = {
     materials: [],
     month: any,
@@ -142,7 +142,7 @@ const ReportDetailedTable = () =>{
     const calculateTotalCredit = () =>{
         let totalCredit = 0;
         for (let task of filteredTasks){
-            let price = Number(task.price)
+            let price = Number(task.price.split(" ")[0] || task.price);
             let quantity = Number(task.quantity)
             if (!isNaN(price) && !isNaN(quantity))
             totalCredit += price * quantity
@@ -203,7 +203,14 @@ const ReportDetailedTable = () =>{
                         <Table>
                             <TableHead>
                                 <StyledTableRow>
-                                    <StyledTableCell colSpan={2}>
+                                    <StyledTableCell >
+                                        <IconButton
+                                        onClick={() => navigate("/reports")}
+                                        >
+                                            <ArrowBackIcon htmlColor='#000'/>
+                                        </IconButton>
+                                    </StyledTableCell>
+                                    <StyledTableCell >
                                         <TextField
                                         label="Search by Name"
                                         variant="standard"
@@ -251,27 +258,27 @@ const ReportDetailedTable = () =>{
                                     </StyledTableCell>
                                     </StyledTableRow>
                                     <StyledTableRow>
-                                    <StyledTableCell 
-                                    colSpan={2}>
-                                        <Typography
-                                        sx={{background: "#AA0000AA",
-                                        maxWidth: '300px',
-                                        padding: '10px',
-                                        borderRadius: '8px'    
-                                        }}
-                                        >
-                                        <span 
-                                        style={{color: '#000'}}
-                                        >
-                                             Credit: 
-                                        </span>
-                                        <span
-                                        style={{fontWeight: '600'}}
-                                        >
-                                            {credit.toFixed(2)}
-                                        </span> 
-                                        </Typography>
-                                    </StyledTableCell>
+                                        <StyledTableCell></StyledTableCell>
+                                        <StyledTableCell>
+                                            <Typography
+                                            sx={{background: "#AA0000AA",
+                                            maxWidth: '300px',
+                                            padding: '10px',
+                                            borderRadius: '8px'    
+                                            }}
+                                            >
+                                            <span 
+                                            style={{color: '#000'}}
+                                            >
+                                                Credit: 
+                                            </span>
+                                            <span
+                                            style={{fontWeight: '600'}}
+                                            >
+                                                {credit.toFixed(2)}
+                                            </span> 
+                                            </Typography>
+                                        </StyledTableCell>
                                     <StyledTableCell colSpan={5}>
                                         <Typography
                                         >
@@ -348,7 +355,7 @@ const ReportDetailedTable = () =>{
                                                 <TextField value={editedTask.price} onChange={(e) => handleInputChange('price', e.target.value)} />
                                             ) : (
                                                 <CardPriceText>
-                                                    {(Number(task.price)*task.quantity).toFixed(2)}
+                                                    {(Number(task.price.split(" ")[0] || task.price)*task.quantity).toFixed(2)}
                                                 </CardPriceText>
                                             )}
                                         </StyledTableCell>
