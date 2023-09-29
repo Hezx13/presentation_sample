@@ -355,7 +355,7 @@ const ReportDetailedTable = () =>{
                                                 <TextField value={editedTask.price} onChange={(e) => handleInputChange('price', e.target.value)} />
                                             ) : (
                                                 <CardPriceText>
-                                                    {(Number(task.price.split(" ")[0] || task.price)*task.quantity).toFixed(2)}
+                                                    {(Number(task.price?.split(" ")[0] || task.price)*task.quantity).toFixed(2)}
                                                 </CardPriceText>
                                             )}
                                         </StyledTableCell>
