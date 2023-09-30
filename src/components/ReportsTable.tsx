@@ -39,8 +39,8 @@ const ReportTable = ({ data, updateCall }) => {
             <TableCell>
             <Typography variant='body2' color="green">
             {data.debit.reduce((a, b) => {
-                return a.amount || 0 + b.amount || 0;
-              }, 0)}
+                return (a.amount || a + b.amount || 0) || 0;
+              }, 0).toFixed(2)}
             </Typography>
               
               </TableCell>

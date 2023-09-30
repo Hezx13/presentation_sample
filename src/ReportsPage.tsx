@@ -31,7 +31,7 @@ const ReportsPage = () => {
         for (let report of reportss) {
             
             total += report.debit.reduce((a, b) => {
-                return a.amount || 0 + b.amount || 0;
+                return (a.amount || a + b.amount || 0) || 0;
               }, 0) - report.credit
             } 
               setBalance(total);
