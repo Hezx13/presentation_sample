@@ -43,8 +43,10 @@ const HoverPopover = ({openHook, debit, onRemoveDebit}) => {
             style={{ color: '#000' }}>Debit:</span>
             <span style={{ fontWeight: '600' }}>
                 {debit.reduce((a, b) => {
-                return a + b;
-            }, 0).toFixed(2)}</span>
+                  console.log("a= " + a + " b= " + b)
+                  console.log(b)
+                return a.amount || a + b.amount || 0;
+              }, 0).toFixed(2)}</span>
         </span>
         <IconButton sx={{ padding: '0px' }} onClick={openHook}>
             <AddCardIcon />
@@ -64,15 +66,19 @@ const HoverPopover = ({openHook, debit, onRemoveDebit}) => {
         onMouseOut={handleMouseOut}>
           {debit.map((num, index) => (
             <>
-            <Typography sx={{display: 'flex',justifyContent: 'space-between', minWidth: '120px'}} variant="subtitle1" color="green" key={index}>
-               <span>
-               +{num}
-               </span>
-                
+            <Typography sx={{display: 'flex',justifyContent: 'space-between', minWidth: '200px', maxWidth: '300px'}} variant="subtitle1" color="green" key={index}>
+               <span>+{num.amount}</span>
             <IconButton
                 onClick={()=>onRemoveDebit(num)}>
                 <DeleteForeverIcon fontSize="small" htmlColor='Crimson'/>
             </IconButton>
+            </Typography>
+            <Typography variant="body2"
+            sx={{display: 'flex',justifyContent: 'space-around'}}
+            >
+              <span>{num.date.split(' ')[0]}</span>
+              <span>{num.check} </span>
+               
             </Typography>
             <Divider />
             </>

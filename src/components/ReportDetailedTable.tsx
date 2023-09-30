@@ -15,10 +15,17 @@ import { FormControl, InputLabel } from '@mui/material';
 import { useReport } from '../state/reportsContext'; // Adjust the import to your file structure
 import { addDebit, removeDebit } from '../api';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+
+type debit = {
+    amount: number,
+    date: string,
+    check: string,
+}
+
 type Report = {
     materials: [],
     month: any,
-    debit: Array<number>,
+    debit: Array<debit>,
     credit: number,
     activeProjects: []
 }
@@ -37,11 +44,6 @@ type Material = {
     status: string,
     payment: string,
     listParent: any
-}
-
-type ColProps = {
-    report: Report[],
-    period: any,
 }
 
 const CollapsibleText = ({ text, maxLength }) => {
@@ -83,8 +85,10 @@ const ReportDetailedTable = () =>{
     const [searchTerm, setSearchTerm] = useState('');
     const fileInput = useRef<HTMLInputElement>(null);
     const [open, setOpen] = useState(false);
-    const [inputValue, setInputValue] = useState('');
-    const [debit, setDebit] = useState<Array<number>>([]);
+    const [inputValue, setInputValue] = useState(0);
+    const [inputDate, setInputDate] = useState('');
+    const [inputCheck, setInputCheck] = useState('');
+    const [debit, setDebit] = useState<Array<debit>>([]);
 
     type Project = {
         id: string;
@@ -176,14 +180,14 @@ const ReportDetailedTable = () =>{
       };
     
       const handleSave = async () => {
-        if (inputValue)
+        if (inputValue){
+            let data = {amount: inputValue, date: inputDate, check: inputCheck};
             try {
-            addDebit(period.start,inputValue).then(() => { updateReports()});
-                   
-                
+            addDebit(period.start,data).then(() => { updateReports()});
             } catch (err) {
                 console.log(err);
             }
+        }
         setOpen(false);
       };
 
@@ -297,7 +301,23 @@ const ReportDetailedTable = () =>{
                                             type="number"
                                             fullWidth
                                             value={inputValue}
-                                            onChange={(e) => setInputValue(e.target.value)}
+                                            onChange={(e) => setInputValue(Number(e.target.value))}
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            type="date"
+                                            fullWidth
+                                            value={inputDate}
+                                            onChange={(e) => setInputDate(e.target.value)}
+                                        />
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            type="text"
+                                            fullWidth
+                                            value={inputCheck}
+                                            onChange={(e) => setInputCheck(e.target.value)}
                                         />
                                         </DialogContent>
                                         <DialogActions>

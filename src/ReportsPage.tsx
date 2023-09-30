@@ -18,7 +18,6 @@ type Report = {
 
 const ReportsPage = () => {
     const { reports, fetchReports, updateReports } = useReport();
-
     const [reportsUpdated, setRepotsUpdated] = useState(false)
     const [balance, setBalance] = useState(0);
     
@@ -32,7 +31,7 @@ const ReportsPage = () => {
         for (let report of reportss) {
             
             total += report.debit.reduce((a, b) => {
-                return a + b;
+                return a.amount || 0 + b.amount || 0;
               }, 0) - report.credit
             } 
               setBalance(total);
