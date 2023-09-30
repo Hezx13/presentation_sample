@@ -184,6 +184,9 @@ const ReportDetailedTable = () =>{
             let data = {amount: inputValue, date: inputDate, check: inputCheck};
             try {
             addDebit(period.start,data).then(() => { updateReports()});
+            setInputCheck('');
+            setInputValue(0);
+            setInputDate('')
             } catch (err) {
                 console.log(err);
             }
