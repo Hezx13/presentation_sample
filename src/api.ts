@@ -171,3 +171,27 @@ export const removeDebit = async(period, debit) => {
   });
   return res.status;
 };
+
+export const downloadReport = async (period) => {
+  console.log(period + "@@")
+  try {
+    const response = await axios({
+      method: 'GET',
+      url: `${process.env.REACT_APP_BACKEND_ENDPOINT}/download_report`,
+      params: { periodStart: period }, // Adding period as a query parameter
+      responseType: 'blob',
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'ExportedReports.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    
+    return response.status; // Return the status if successful
+  } catch (error) {
+    console.error("Error downloading the report:", error);
+    return new Error(); //
+  }
+};

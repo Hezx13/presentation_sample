@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton } from '@mui/material';
 import {StyledTableCell, SyledListButton} from '../styles';
+import {downloadReport} from '../api'
+import DownloadIcon from '@mui/icons-material/Download';
+
 const ReportTable = ({ data, updateCall }) => {
   const navigate = useNavigate();
   const months = [
@@ -12,6 +15,11 @@ const ReportTable = ({ data, updateCall }) => {
   const handleExpandToTable = (month) =>{
         navigate('/report', { state: { reports: data, period: month } });
     }
+
+  const handleDownloadReport = (per) => {
+    console.log(per)
+    downloadReport(per);
+  }
   
   return (
     <TableContainer component={Paper}>
@@ -53,6 +61,14 @@ const ReportTable = ({ data, updateCall }) => {
           
             
             <TableCell>{data.materials.length}</TableCell>
+
+            <TableCell>
+            <IconButton
+                  onClick={()=>handleDownloadReport(data.month.start)}
+              >
+                  <DownloadIcon htmlColor="#008000"/>
+              </IconButton>
+            </TableCell>
           </TableRow>
             ))
           

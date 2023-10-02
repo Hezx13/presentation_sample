@@ -23,7 +23,7 @@ type debit = {
 }
 
 type Report = {
-    materials: [],
+    materials: Array<Material>,
     month: any,
     debit: Array<debit>,
     credit: number,
