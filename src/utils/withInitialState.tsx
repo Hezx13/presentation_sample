@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AppState } from "../state/appStateReducer";
 import { load } from "../api";
+import CircularProgress from '@mui/material/CircularProgress';
 
 type InjectedProps = {
   initialState: AppState;
@@ -12,6 +13,25 @@ type PropsWithoutInjected<TBaseProps> = Omit<
 >;
 
 type WithInjectedProps<TProps> = TProps & InjectedProps;
+
+
+export const LoadingSpinner = () => {
+  return (
+    <div style={{ 
+      display: 'flex',
+       flexDirection: 'column',
+        justifyContent: 'center',
+         alignItems: 'center',
+          height: '100vh',
+          color: 'white'
+          }}>
+      <CircularProgress sx={{color: 'orange'}}/>
+      <div>Development sample</div>
+      <div>Loading may take a while...</div>
+    </div>
+  );
+};
+
 
 export function withInitialState<TProps>(
   WrappedComponent
@@ -41,7 +61,7 @@ export function withInitialState<TProps>(
     }, []);
 
     if (isLoading) {
-      return <div>Loading</div>;
+      return <LoadingSpinner></LoadingSpinner>;
     }
 
     if (error) {

@@ -8,7 +8,8 @@ import DashboardPage from "./dashboardPage";
 import VerticalTabs from "./projectsPage";
 import ReportsPage from "./ReportsPage";
 import ReportDetailedTable from "./components/ReportDetailedTable";
-
+import Login from "./loginPage";
+import Register from "./registerPage";
 const AppRouter = () => {
     return (
         <Router>
@@ -20,6 +21,8 @@ const AppRouter = () => {
                 <Route path="/projects" element={<VerticalTabs/>}/>
                 <Route path="/reports" element={<ReportsPage/>}/>
                 <Route path="/report" element={<ReportDetailedTable/>}/>
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/register" element={<Register/>}/>
             </Routes>
         </Router>
         );
