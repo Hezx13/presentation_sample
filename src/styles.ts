@@ -177,6 +177,10 @@ export const StyledTableRow = styled(TableRow)`
 
 export const StyledTableCell = styled(TableCell)`
   padding: 4px 16px !important;
+  @media (max-width: 1280px) {  
+    font-size: 0.725rem;
+  }
+
 `
 
 export const SyledListButton = styled.button`
@@ -236,6 +240,9 @@ export const StyledLink = styled(NavLink)<StyledLinkProps>`
     }
     &.active {
       text-decoration: underline orange;
+    }
+    @media (max-width: 600px) {  
+      font-size: 1.725rem;
     }
 `;
 

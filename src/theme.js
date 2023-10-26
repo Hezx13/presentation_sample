@@ -13,6 +13,7 @@ const darkTheme = createTheme({
         main: '#FFA500',
        }
       },
+      
 });
 
 export default darkTheme;
