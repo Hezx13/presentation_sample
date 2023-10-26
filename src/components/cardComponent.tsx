@@ -38,7 +38,7 @@ export default function CardComponent({text, amount, textColor}) {
     );
     return (
         <Box sx={{ minWidth: 275, boxShadow: '8px 12px 15px -10px rgba(0, 0, 0, 0.2)' }}>
-            <Card variant="outlined" sx={{backgroundColor: '#ffffff10'}}>{card}</Card>
+            <Card variant="outlined" sx={{backgroundColor: '#ffffff10', border: '1px solid #000000'}}>{card}</Card>
         </Box>
     );
 }

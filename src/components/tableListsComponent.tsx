@@ -72,7 +72,7 @@ const ListRow = ({ list, index, isArchive }) => {
 
     return (
         <>
-            <TableRow sx={{backgroundColor: index % 2 === 0 ? '#00000005' : '#ffffff'}}>
+            <TableRow sx={{backgroundColor: index % 2 === 0 ? '#00000005' : '#ffffff05'}}>
                 <StyledTableCell>
                     <IconButton size="small" onClick={() => setIsCollapsed(!isCollapsed)}>
                         {isCollapsed ? <ExpandMore /> : <ExpandLess />}
@@ -120,7 +120,7 @@ const ListRow = ({ list, index, isArchive }) => {
                                 </TableHead>
                                 <TableBody>
                                     {list.tasks.map((task, index) => (
-                                        <TableRow key={index} sx={{backgroundColor: index % 2 === 0 ? '#00000005' : '#ffffff'}}>
+                                        <TableRow key={index} sx={{backgroundColor: index % 2 === 0 ? '#00000005' : '#ffffff05'}}>
                                             <TableCell>{task.text}</TableCell>
                                             <TableCell>{task.quantity}</TableCell>
                                             <TableCell>

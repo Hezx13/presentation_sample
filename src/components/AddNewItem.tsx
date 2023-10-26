@@ -59,7 +59,7 @@ export const AddNewItem = (props: AddNewItemProps) => {
     <DialogTitle>Order Details</DialogTitle>
     <DialogContent>
       <DialogContentText>
-        Please, fill out all fields
+        
       </DialogContentText>
       <NewItemForm
         onAdd={(text,article,price, quantity, unit, comment, deliveryDate, orderedBy) => {

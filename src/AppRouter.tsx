@@ -1,6 +1,6 @@
 // AppRouter.js
 import React from "react";
-import { HashRouter as Router, Route, Routes } from "react-router-dom";
+import { HashRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import ListsPage from './listsPage';
 import TablesPage from './components/tablesPage'
 import ArchivePage from "./archivePage";
@@ -23,6 +23,7 @@ const AppRouter = () => {
                 <Route path="/report" element={<ReportDetailedTable/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
+                <Route path="*" element={<Navigate to="/"/>} />
             </Routes>
         </Router>
         );

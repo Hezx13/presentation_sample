@@ -75,7 +75,6 @@ export default function VerticalTabs() {
                         <Tab label={list.text} {...a11yProps(index)} />
                     )
                 )}
-                
                 <AddNewItem
                     toggleButtonText="+ Add another project"
                     onAdd={(text) => dispatch(addList(text))}
@@ -86,7 +85,7 @@ export default function VerticalTabs() {
                 sx={{bgcolor: 'background.paper'}}
             >
             {lists.map((list, index)=>(
-                <TabPanel value={value} index={index}>
+                <TabPanel key={index} value={value} index={index}>
                     <TableComponent tableId={list.id}/>
                 </TabPanel>
             ))}
@@ -107,8 +106,8 @@ export default function VerticalTabs() {
                 >
                     {lists.map((list, index)=>(
                         list.tasks.some((task)=>(task.status==="Pending" || task.status==='' || !task.status)) ?
-                        <StyledTab label={list.text} {...a11yProps(index)} /> :
-                            <Tab label={list.text} {...a11yProps(index)} />
+                        <StyledTab key={index} label={list.text} {...a11yProps(index)} /> :
+                            <Tab key={index} label={list.text} {...a11yProps(index)} />
                         )
                     )}
                     
@@ -122,7 +121,7 @@ export default function VerticalTabs() {
                     sx={{ flexGrow: 1, bgcolor: 'background.paper'}}
                 >
                 {lists.map((list, index)=>(
-                    <TabPanel value={value} index={index}>
+                    <TabPanel key={index} value={value} index={index}>
                         <TableComponent tableId={list.id}/>
                     </TabPanel>
                 ))}

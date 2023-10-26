@@ -10,6 +10,8 @@ import {addList} from "./state/actions";
 import {AddNewItem} from "./components/AddNewItem";
 import {StyledTab} from "./styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import { Navigate } from 'react-router-dom';
+
 
 
 interface TabPanelProps {
@@ -50,6 +52,7 @@ export default function ArchivePage() {
     const matches = useMediaQuery('(max-width:1280px)');
 
     const [value, setValue] = React.useState(0);
+    const [isLoggedIn] = React.useState(!!localStorage.getItem('token'));
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
@@ -57,6 +60,7 @@ export default function ArchivePage() {
 
     return (
         <Grid container>
+            {!isLoggedIn && <Navigate to="/login"/>}
                 <Grid item xs={12}>
                     <NavBar/>
                 </Grid>

@@ -6,6 +6,7 @@ import CardComponent from "./components/cardComponent";
 import NavBar from "./components/navBar";
 import TableListsComponent from "./components/tableListsComponent";
 import Typography from "@mui/material/Typography";
+import { Navigate } from "react-router-dom";
 
 
 export const DashboardPage = () => {
@@ -13,6 +14,8 @@ export const DashboardPage = () => {
     const [roughTotalPrice, setRoughTotalPrice] = useState<number>(0)
     const [totalPrice, setTotalPrice] =useState<number>(0)
    const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
+   const [isLoggedIn] = useState(!!localStorage.getItem('token'));
+
     const [_lists, setLists] = useState([])
 
     useEffect(() => {
@@ -53,6 +56,8 @@ export const DashboardPage = () => {
     return (
         <>
             <Grid container>
+            {!isLoggedIn && <Navigate to="/login"/>}
+
                 <Grid item xs={12} sx={{marginBottom: '15px'}}>
                     <NavBar/>
                 </Grid>

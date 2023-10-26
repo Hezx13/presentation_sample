@@ -7,6 +7,7 @@ import ReportTable from "./components/ReportsTable";
 import { loadReports } from "./api";
 import { Calculate } from "@mui/icons-material";
 import { useReport } from './state/reportsContext'; // Adjust the import to your file structure
+import { Navigate } from "react-router-dom";
 
 type Report = {
     materials: [],
@@ -20,7 +21,8 @@ const ReportsPage = () => {
     const { reports, fetchReports, updateReports } = useReport();
     const [reportsUpdated, setRepotsUpdated] = useState(false)
     const [balance, setBalance] = useState(0);
-    
+    const [isLoggedIn] = useState(!!localStorage.getItem('token'));
+
     useEffect(()=>{
         calculateTotalReports(reports)
     },[reports])
@@ -37,11 +39,11 @@ const ReportsPage = () => {
               setBalance(total);
         }
     
-    
-
     return (
         <>
         <Grid container>
+        {!isLoggedIn && <Navigate to="/login"/>}
+
             <Grid item xs={12} sx={{marginBottom: '15px'}}>
                 <NavBar/>
             </Grid>

@@ -4,7 +4,7 @@ import {NavLink, NavLinkProps} from "react-router-dom";
 
 export const AppContainer = styled.div`
   align-items: flex-start;
-  background-color: #18181b;
+  background-color: #101010;
   background-size: cover;
   display: flex;
   flex-direction: row;
@@ -17,6 +17,10 @@ export const AppContainer = styled.div`
 type DragPreviewContainerProps = {
   isHidden?: boolean
   isPreview?: boolean
+}
+
+type StyledLinkProps = {
+  isActive?: boolean
 }
 
 export const DragPreviewContainer = styled.div<DragPreviewContainerProps>`
@@ -162,13 +166,13 @@ export const CustomDragLayerContainer = styled.div`
 `
 export const StyledTableContainer = styled(TableContainer)`
   border-radius: 10px;
-  background-color: #ffffff;
+  background-color: #ffffff05;
   box-shadow: 8px 12px 15px -10px rgba(0, 0, 0, 0.2);
   width: 100%;
 `
 export const StyledTableRow = styled(TableRow)`
   padding: 4px 16px;
-  background-color: ${(props) => props.color || 'white'};
+  //background-color: ${(props) => props.color || 'white'};
 `
 
 export const StyledTableCell = styled(TableCell)`
@@ -180,7 +184,7 @@ export const SyledListButton = styled.button`
   border: none;
   cursor: pointer;
   font-size: 14px;
-  
+  color: #ffffff;
   &:hover{
     text-decoration: underline;
   }
@@ -197,14 +201,14 @@ export const Status = styled.span`
 
 export const StyledNavBar = styled.div`
   height: 40px;
-  width: 380px;
+  width: auto;
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   gap: 2rem;
   margin: 10px auto;
-  padding: 10px 0;
+  padding: 10px 20px;
   background-color: #ffffff09;
   border-radius: 10px;
   backdrop-filter: blur(50px);
@@ -216,16 +220,17 @@ export const StyledTab = styled(Tab)`
 
 export const StyledNavBarItem = styled.div`
   color: #ffffff;
+  margin: 0 6px;
   & > * {
     color: #ffffff;
     
     
   }
 `
-export const StyledLink = styled(NavLink)<{ isActive: boolean }>`
+export const StyledLink = styled(NavLink)<StyledLinkProps>`
     text-decoration: none;
-    color: #ffffff; // default color
-    text-decoration: none;
+    color: ${(props) => props.color || '#ffffff'};
+    text-decoration: ${(props) => props.isActive  ? 'underline orange' : 'none'};
     &:hover {
       color: orange;
     }

@@ -152,7 +152,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         InputProps={{
                                             style: {
                                                 color: '#000',
-                                                backgroundColor: '#ffffff50',
+                                                backgroundColor: '#ffffff05',
                                                 padding: '5px'
                                             }
                                         }}
@@ -290,16 +290,16 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         <StyledTableCell sx={{display: 'flex', justifyContent: 'space-between'}}>
                                             {editing === task.id ? (
                                                 <IconButton onClick={() => handleSaveClick(tableId)}>
-                                                    <SaveIcon fontSize="small" htmlColor='green'/>
+                                                    <SaveIcon fontSize="medium" htmlColor='green'/>
                                                 </IconButton>
                                             ) : (
                                                 <IconButton onClick={() => handleEditClick(task)}>
-                                                    <EditIcon fontSize="small" htmlColor='DarkOrange'/>
+                                                    <EditIcon fontSize="medium" htmlColor='DarkOrange'/>
                                                 </IconButton>
                                             )}
                                             <IconButton
                                                 onClick={() => handleRemoveClick(task)}>
-                                                <DeleteForeverIcon fontSize="small" htmlColor='Crimson'/>
+                                                <DeleteForeverIcon fontSize="medium" htmlColor='Crimson'/>
                                             </IconButton>
                                         </StyledTableCell>
                                     </StyledTableRow>
@@ -314,7 +314,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                     dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
                                                 }
                                             }
-                                            dark
+                                            
                                         />
                                     </StyledTableCell>
                                     <StyledTableCell colSpan={6}>
