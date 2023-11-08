@@ -1,7 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
 import {useAppState, } from "../state/AppStateContext";
 import {findItemIndexById} from "../utils/arrayUtils";
-import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem } from '@mui/material';
+import { Table, TableBody, TableHead, Grid, TextField, IconButton, Select, MenuItem, Box } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -14,9 +14,12 @@ import dayjs from "dayjs";
 import {AddNewItem} from "./AddNewItem";
 import { getCurrentDateAndTime, getNextWeek } from "../utils/timeUtils";
 import { onUploadSingle } from '../api';
-
+import { getUserData } from '../api/user-api';
 type ColProps = {
     tableId: string
+}
+type User = {
+    username: string
 }
 
 const CollapsibleText = ({ text, maxLength }) => {
@@ -49,8 +52,19 @@ const TableComponent = ({tableId}: ColProps) =>{
     const { lists, archive, dispatch } = useAppState()
     const [searchTerm, setSearchTerm] = useState('');
     const fileInput = useRef<HTMLInputElement>(null);
+    const [userData,setUserData] = useState<User | null>(null);
 
     
+    useEffect(() =>{
+        getUserData().then(user => {
+            const userData : User = {
+                username: user.username
+            }
+            setUserData(userData);
+        })
+        
+        
+    },[]);
 
     useEffect(() => {
         const id_a = findItemIndexById(archive, tableId)
@@ -228,7 +242,13 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         </StyledTableCell>
                                         <StyledTableCell>
                                             {editing === task.id ? (
-                                                <DatePicker value={dayjs(editedTask.deliveryDate)} onChange={(newValue) => handleInputChange('deliveryDate', newValue?.toString())} />
+                                                <DatePicker
+                                                value={dayjs(editedTask.deliveryDate)}
+                                                onChange={(newValue) => {
+                                                  const formattedDate = newValue ? dayjs(newValue).format('DD-MM-YYYY') : '';
+                                                  handleInputChange('deliveryDate', formattedDate);
+                                                }}
+                                              />
                                             ) : (
                                                 task.deliveryDate
                                             )}
@@ -287,7 +307,8 @@ const TableComponent = ({tableId}: ColProps) =>{
                                         </StyledTableCell>
 
                                         {/* Similar for other fields */}
-                                        <StyledTableCell sx={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <StyledTableCell>
+                                            <Box sx={{display: 'flex', justifyContent: "space-between", maxWidth: '100px'}}>
                                             {editing === task.id ? (
                                                 <IconButton onClick={() => handleSaveClick(tableId)}>
                                                     <SaveIcon fontSize="medium" htmlColor='green'/>
@@ -301,6 +322,8 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                 onClick={() => handleRemoveClick(task)}>
                                                 <DeleteForeverIcon fontSize="medium" htmlColor='Crimson'/>
                                             </IconButton>
+                                            </Box>
+                                            
                                         </StyledTableCell>
                                     </StyledTableRow>
                                 ))}
@@ -311,7 +334,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             onAdd={
                                                 (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
                                                     dispatch(moveFromArchive(tableId))
-                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), userData?.username || 'Anonymus', "Pending", ""))
                                                 }
                                             }
                                             

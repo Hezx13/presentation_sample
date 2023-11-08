@@ -73,7 +73,6 @@ const ReportDetailedTable = () =>{
     const navigate = useNavigate();
     const location = useLocation();
     const period = location.state?.period || null;
-
     const [tasks, setTasks] = useState<Material[]>([])
     const [filteredTasks, setFilteredTasks] = useState<Material[]>([])
     const [activeProjects, setActiveProjects] = useState<string[]>([]);
@@ -214,7 +213,7 @@ const ReportDetailedTable = () =>{
                                         <IconButton
                                         onClick={() => navigate("/reports")}
                                         >
-                                            <ArrowBackIcon htmlColor='#000'/>
+                                            <ArrowBackIcon htmlColor='#fff'/>
                                         </IconButton>
                                     </StyledTableCell>
                                     <StyledTableCell >
@@ -451,7 +450,7 @@ const ReportDetailedTable = () =>{
 
                                     </StyledTableRow>
                                 ))}
-                                <StyledTableRow>
+                                {/* <StyledTableRow>
                                     <StyledTableCell colSpan={7}>
                                         <AddNewItem
                                             toggleButtonText="+ Add another material"
@@ -477,7 +476,7 @@ const ReportDetailedTable = () =>{
                                    //     onChange={handleFileChange}
                                     />
                                     </StyledTableCell>
-                                </StyledTableRow>
+                                </StyledTableRow> */}
                             </TableBody>
                         </Table>
                     </StyledTableContainer>

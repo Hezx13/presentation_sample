@@ -1,4 +1,4 @@
-import axios from 'axios';
+import http from './api/http';
 import hash from 'object-hash';
 import { AppState, List } from "./state/appStateReducer";
 import {response} from "express";
@@ -44,11 +44,12 @@ export const save = async (payload: AppState, old: AppState) => {
       archiveToUpdate
     };
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/save`, processedPayload, {
+      const response = await http.post(`/save`, processedPayload, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json"
-        }
+        },
+        
       });
   
       return response.data;
@@ -60,7 +61,7 @@ export const save = async (payload: AppState, old: AppState) => {
 
 export const load = async () => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_ENDPOINT}/load`, {
+        const response = await http.get(`/load`, {
             headers: {
                 Accept: "application/json",
             }
@@ -73,7 +74,7 @@ export const load = async () => {
 
 export const deleteTaskFromList  = async (listId: string, taskId: string) => {
   try {
-    const response = await axios.delete(`http://localhost:3000/list/${listId}/task/${taskId}`);
+    const response = await http.delete(`http://localhost:3000/list/${listId}/task/${taskId}`);
     console.log("success");
     return response.data;
   } catch (error) {
@@ -83,15 +84,15 @@ export const deleteTaskFromList  = async (listId: string, taskId: string) => {
 }
 
 export const archiveList = async (listId: string) => {
-    axios.post('/archive', {listId})
+    http.post('/archive', {listId})
         .then((response) => console.log(response.data))
         .catch((error) => console.error(error))
 }
 
 export const downloadExcel = () => {
-    axios({
+    http({
         method: 'GET',
-        url: `${process.env.REACT_APP_BACKEND_ENDPOINT}/download`,
+        url: `/download`,
         responseType: 'blob',
     })
         .then((response) => {
@@ -109,7 +110,7 @@ export const onUpload = async (file) => {
     formData.append('file', file);
 
     try {
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/upload`, formData, {
+        const res = await http.post(`/upload`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -125,7 +126,7 @@ export const onUploadSingle = async (file, listId: string) => {
     const formData = new FormData();
     formData.append('file', file);
     try {
-        const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/upload/${listId}`, formData, {
+        const res = await http.post(`/upload/${listId}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
@@ -137,15 +138,16 @@ export const onUploadSingle = async (file, listId: string) => {
     }
 }
 
-export const generateReport = async(period) => {
-  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/generate_report`, period, {
+export const generateReport = async(period, payment) => {
+  const payload = {...period, payment}
+  const res = await http.post(`/generate_report`, payload, {
 });
 return res.status;
 }
 
 export const loadReports = async() => {
   try {
-    const response = await axios.get(`${process.env.REACT_APP_BACKEND_ENDPOINT}/reports`, {
+    const response = await http.get(`/reports`, {
         headers: {
             Accept: "application/json",
         }
@@ -159,7 +161,7 @@ export const loadReports = async() => {
 export const addDebit = async(period, debit) => {
   let dataToProcess = {periodStart: period, valueToInsert: debit};
 
-  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/add_debit`, dataToProcess, {
+  const res = await http.post(`/add_debit`, dataToProcess, {
   });
   return res.status;
 };
@@ -167,7 +169,7 @@ export const addDebit = async(period, debit) => {
 export const removeDebit = async(period, debit) => {
   let dataToProcess = {periodStart: period, valueToRemove: debit};
 
-  const res = await axios.post(`${process.env.REACT_APP_BACKEND_ENDPOINT}/remove_debit`, dataToProcess, {
+  const res = await http.post(`/remove_debit`, dataToProcess, {
   });
   return res.status;
 };
@@ -175,9 +177,9 @@ export const removeDebit = async(period, debit) => {
 export const downloadReport = async (period) => {
   console.log(period + "@@")
   try {
-    const response = await axios({
+    const response = await http({
       method: 'GET',
-      url: `${process.env.REACT_APP_BACKEND_ENDPOINT}/download_report`,
+      url: `/download_report`,
       params: { periodStart: period }, // Adding period as a query parameter
       responseType: 'blob',
     });

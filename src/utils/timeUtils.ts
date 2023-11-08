@@ -8,10 +8,10 @@ export const getCurrentDateAndTime = () =>{
 }
 
 export const getNextWeek = () => {
-    const today = new Date();
-    const weekFromNow = new Date(today);
-    weekFromNow.setDate(today.getDate() + 7);
-    return weekFromNow.toString()
+  const today = new Date();
+  const weekFromNow = new Date(today);
+  weekFromNow.setDate(today.getDate() + 7);
+  return weekFromNow.toLocaleDateString('en-GB').split('/').reverse().join('-');
 }
 
 export const debounce = (fn: Function, time = 500) => {

@@ -1,17 +1,42 @@
-import React from 'react';
+import {useState, useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, IconButton } from '@mui/material';
-import {StyledTableCell, SyledListButton} from '../styles';
+import { Table,
+         TableBody,
+        TableCell, 
+        TableContainer, 
+        TableHead, 
+        TableRow, 
+        Paper, 
+        Typography,
+        IconButton,
+        FormControl,
+        InputLabel,
+        MenuItem
+       } from '@mui/material';
+import {StyledTableCell, SyledListButton, StyledSelectDark} from '../styles';
 import {downloadReport} from '../api'
 import DownloadIcon from '@mui/icons-material/Download';
 
 const ReportTable = ({ data, updateCall }) => {
   const navigate = useNavigate();
+  const [payment, setPayment] = useState('');
+  const [filteredData, setFilteredData] = useState(data);
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
+
+  useEffect(() => {
+    if (payment) {
+      let extractedData = data.filter(report => report.payment === payment);
+      setFilteredData(extractedData)
+    }
+    else {
+      setFilteredData(data);
+    }
+  },[payment])
+  
   const handleExpandToTable = (month) =>{
         navigate('/report', { state: { reports: data, period: month } });
     }
@@ -31,17 +56,36 @@ const ReportTable = ({ data, updateCall }) => {
           <TableCell>Credit</TableCell>
           <TableCell>Active Projects Count</TableCell>
           <TableCell>Materials Count</TableCell>
+          <TableCell>
+          <FormControl variant="filled" style={{ margin: '0 10px', width: '120px'  }}>
+                <InputLabel sx={{color: 'orange'}}>Payment</InputLabel>
+                <StyledSelectDark
+                    value={payment}
+                    onChange={(e) => setPayment(e.target.value as string)}
+                    label="Month"
+                    size="small"
+                    margin='dense'
+                >
+                    <MenuItem value="cash">Cash</MenuItem>
+                    <MenuItem value="card">Card</MenuItem>
+                    <MenuItem value="credit">Credit</MenuItem>
+                    <MenuItem value="bank transfer">Bank Transfer</MenuItem>
+                    <MenuItem value="pemo card">Pemo card</MenuItem>
+                    <MenuItem value="">SHOW ALL</MenuItem>
+                </StyledSelectDark>
+                </FormControl>
+          </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>{
-            data.map((data, index)=>(
+            filteredData.map((data, index)=>(
             <TableRow key={index}>
             
             <StyledTableCell>
                     <SyledListButton
                         onClick={()=>{handleExpandToTable(data.month)}}
                     >
-            {months[Number(data.month.start.split("-")[1][1]) -1] + " " + data.month.start.split("-")[0]}
+            {months[Number(data.month.start.split("-")[1][1]) -1] + " " + data.month.start.split("-")[0] + " " + data.payment}  
                     </SyledListButton></StyledTableCell>
             
             <TableCell>

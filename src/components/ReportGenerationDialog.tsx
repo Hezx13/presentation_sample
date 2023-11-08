@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyledGenerateButton, StyledSelect } from '../styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import { FormControl, InputLabel, Button, MenuItem, Card, CardContent, Typography, Box } from '@mui/material';
 import { generateReport } from '../api';
 import dayjs from 'dayjs';
@@ -7,8 +8,10 @@ import dayjs from 'dayjs';
 const ReportGenerationDialog = ({onNewReport}) =>{
     const [month, setMonth] = useState('');
     const [year, setYear] = useState('');
+    const [payment, setPayment] = useState('');
     const [isGenerating, setIsGenerating] = useState(false);
-  
+    const isMobile = useMediaQuery('(max-width:500px)');
+
     const months = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
@@ -23,13 +26,12 @@ const ReportGenerationDialog = ({onNewReport}) =>{
 
         return { periodStart, periodEnd };
       }
-
     async function handleGenerateReport(){
-        if (month && year){
+        if (month && year && payment){
             setIsGenerating(true);
             let dates = getFirstAndLastDay(month, year);
             try {
-            await generateReport(dates);
+            await generateReport(dates, payment);
                 onNewReport();
                 setIsGenerating(false);
 
@@ -85,16 +87,38 @@ const ReportGenerationDialog = ({onNewReport}) =>{
                 ))}
             </StyledSelect>
             </FormControl>
-            <StyledGenerateButton
-            disabled={isGenerating}
-            onClick={handleGenerateReport}
-            >Generate</StyledGenerateButton>
+            <FormControl variant="filled" style={{ margin: '0 10px', width: '120px'  }}>
+                <InputLabel sx={{color: 'orange'}}>Payment</InputLabel>
+                <StyledSelect
+                    value={payment}
+                    onChange={(e) => setPayment(e.target.value as string)}
+                    label="Month"
+                    size="small"
+                    margin='dense'
+                >
+                    <MenuItem value="cash">Cash</MenuItem>
+                    <MenuItem value="card">Card</MenuItem>
+                    <MenuItem value="credit">Credit</MenuItem>
+                    <MenuItem value="bank transfer">Bank Transfer</MenuItem>
+                    <MenuItem value="pemo card">Pemo card</MenuItem>
+                    <MenuItem value="">Not paid</MenuItem>
+                </StyledSelect>
+                </FormControl>
+                
+                <StyledGenerateButton
+                disabled={isGenerating}
+                onClick={handleGenerateReport}
+                >
+                    Generate
+                </StyledGenerateButton>
+                
+            
             </CardContent>
         </>
         )
 
     return (
-        <Box sx={{ minWidth: 500, boxShadow: '8px 12px 15px -10px rgba(0, 0, 0, 0.2)' }}>
+        <Box sx={{ width: isMobile ? '350px' : '500px', boxShadow: '8px 12px 15px -10px rgba(0, 0, 0, 0.2)' }}>
         <Card variant="outlined" sx={{backgroundColor: '#ffffff10'}}>{card}</Card>
         
         </Box>

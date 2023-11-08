@@ -161,7 +161,7 @@ export const CustomDragLayerContainer = styled.div`
   pointer-events: none;
   position: absolute;
   top: 0;
-  width: auto;
+  width: auto
   z-index: 100;
 `
 export const StyledTableContainer = styled(TableContainer)`
@@ -248,7 +248,17 @@ export const StyledLink = styled(NavLink)<StyledLinkProps>`
 
 export const StyledSelect = styled(Select)`
 color: #ffffff !important;
+    & > * {
+      color: #ffffff !important;
+    }
 
+`
+
+export const StyledSelectDark = styled(Select)`
+color: #ffffff !important;
+margin: 0 auto !important;
+width: 150px !important;
+background-color: #00000000;
     & > * {
       color: #ffffff !important;
     }
@@ -256,11 +266,12 @@ color: #ffffff !important;
 `
 export const StyledGenerateButton = styled(Button)`
     color: orange !important;
-    background-color: rgba(0, 0, 0, 0.06) !important;
+    background-color: rgba(0, 0, 0, 0.16) !important;
     width: 120px;
     height: 48px;
-
+    margin-left: 10px;
     &:hover {
       background-color: rgba(0, 0, 0, 0.26) !important;
     }
+  
 `
