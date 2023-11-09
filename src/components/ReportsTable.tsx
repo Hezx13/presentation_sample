@@ -37,13 +37,12 @@ const ReportTable = ({ data, updateCall }) => {
     }
   },[payment])
   
-  const handleExpandToTable = (month) =>{
-        navigate('/report', { state: { reports: data, period: month } });
+  const handleExpandToTable = (month, pay) =>{
+        navigate('/report', { state: { reports: data, period: month, payment: pay } });
     }
 
-  const handleDownloadReport = (per) => {
-    console.log(per)
-    downloadReport(per);
+  const handleDownloadReport = (per, payment) => {
+    downloadReport(per, payment);
   }
   
   return (
@@ -83,7 +82,7 @@ const ReportTable = ({ data, updateCall }) => {
             
             <StyledTableCell>
                     <SyledListButton
-                        onClick={()=>{handleExpandToTable(data.month)}}
+                        onClick={()=>{handleExpandToTable(data.month, data.payment)}}
                     >
             {months[Number(data.month.start.split("-")[1][1]) -1] + " " + data.month.start.split("-")[0] + " " + data.payment}  
                     </SyledListButton></StyledTableCell>
@@ -108,7 +107,7 @@ const ReportTable = ({ data, updateCall }) => {
 
             <TableCell>
             <IconButton
-                  onClick={()=>handleDownloadReport(data.month.start)}
+                  onClick={()=>handleDownloadReport(data.month.start, data.payment)}
               >
                   <DownloadIcon htmlColor="#008000"/>
               </IconButton>

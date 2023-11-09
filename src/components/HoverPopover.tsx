@@ -26,7 +26,7 @@ const HoverPopover = ({openHook, debit, onRemoveDebit}) => {
       <Typography
         
         sx={{
-            background: "#00AA00AA",
+            background: "#00FF0050",
             maxWidth: '300px',
             padding: '10px',
             borderRadius: '8px',
@@ -40,7 +40,7 @@ const HoverPopover = ({openHook, debit, onRemoveDebit}) => {
         <span>
             <span 
             
-            style={{ color: '#000' }}>Debit:</span>
+            style={{ color: '#fff' }}>Income: </span>
             <span style={{ fontWeight: '600' }}>
                 {debit.reduce((a, b) => {
                   console.log("a= " + a + " b= " + b)

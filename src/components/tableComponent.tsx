@@ -334,7 +334,7 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             onAdd={
                                                 (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
                                                     dispatch(moveFromArchive(tableId))
-                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), userData?.username || 'Anonymus', "Pending", ""))
+                                                    dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getCurrentDateAndTime(), userData?.username || 'Anonymus', "Pending", ""))
                                                 }
                                             }
                                             

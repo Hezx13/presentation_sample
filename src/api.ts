@@ -158,29 +158,29 @@ export const loadReports = async() => {
 }
 }
 
-export const addDebit = async(period, debit) => {
-  let dataToProcess = {periodStart: period, valueToInsert: debit};
+export const addDebit = async(period, debit, payment) => {
+  let dataToProcess = {periodStart: period, valueToInsert: debit, pay: payment};
 
   const res = await http.post(`/add_debit`, dataToProcess, {
   });
   return res.status;
 };
 
-export const removeDebit = async(period, debit) => {
-  let dataToProcess = {periodStart: period, valueToRemove: debit};
+export const removeDebit = async(period, debit, payment) => {
+  let dataToProcess = {periodStart: period, valueToRemove: debit, pay: payment};
 
   const res = await http.post(`/remove_debit`, dataToProcess, {
   });
   return res.status;
 };
 
-export const downloadReport = async (period) => {
+export const downloadReport = async (period, payment) => {
   console.log(period + "@@")
   try {
     const response = await http({
       method: 'GET',
       url: `/download_report`,
-      params: { periodStart: period }, // Adding period as a query parameter
+      params: { periodStart: period, pay: payment }, // Adding period as a query parameter
       responseType: 'blob',
     });
 

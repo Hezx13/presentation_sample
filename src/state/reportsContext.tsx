@@ -12,6 +12,7 @@ type Report = {
   materials: any[];
   month: any;
   debit: number[];
+  payment: string;
   credit: number;
   activeProjects: any[];
 };

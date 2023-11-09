@@ -101,7 +101,6 @@ const ReportGenerationDialog = ({onNewReport}) =>{
                     <MenuItem value="credit">Credit</MenuItem>
                     <MenuItem value="bank transfer">Bank Transfer</MenuItem>
                     <MenuItem value="pemo card">Pemo card</MenuItem>
-                    <MenuItem value="">Not paid</MenuItem>
                 </StyledSelect>
                 </FormControl>
                 

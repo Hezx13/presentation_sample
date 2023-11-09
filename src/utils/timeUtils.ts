@@ -1,3 +1,4 @@
+import dayjs from "dayjs";
 export const getCurrentDateAndTime = () =>{
     const today = new Date();
     const now = new Date();
@@ -11,7 +12,8 @@ export const getNextWeek = () => {
   const today = new Date();
   const weekFromNow = new Date(today);
   weekFromNow.setDate(today.getDate() + 7);
-  return weekFromNow.toLocaleDateString('en-GB').split('/').reverse().join('-');
+
+  return dayjs(weekFromNow).format('DD-MM-YYYY').toString();
 }
 
 export const debounce = (fn: Function, time = 500) => {

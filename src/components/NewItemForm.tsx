@@ -39,7 +39,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
-      onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy)
+      onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy)
     }
   }
 
@@ -103,7 +103,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
             onChange={(e) => setOrderedBy(e.target.value)}
             onKeyPress={handleAddText}
         />
-      <NewItemButton onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.toString(), orderedBy); resetValues(); }}>
+      <NewItemButton onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy); resetValues(); }}>
         Create
       </NewItemButton>
     </NewItemFormContainer>
