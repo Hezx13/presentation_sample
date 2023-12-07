@@ -23,8 +23,6 @@
     "dayjs": "^1.11.9",
     "excel-date-to-js": "^1.1.5",
     "immer": "^9.0.0",
-    "mongodb": "^5.7.0",
-    "mongoose": "^7.4.3",
     "nanoid": "^3.3.6",
     "nvm": "^0.0.4",
     "object-hash": "^3.0.0",
@@ -37,22 +35,21 @@
     "styled-components": "^5.3.11",
     "throttle-debounce-ts": "^1.1.1",
     "typescript": "^4.9.5",
-    "use-immer": "^0.9.0",
-    "xlsx": "^0.18.5"
+    "use-immer": "^0.9.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.0",
+    "@types/node": "^18.18.2",
     "@types/react": "^17.0.64",
     "@types/react-dom": "^17.0.20",
+    "@types/styled-components": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
-    "@types/jest": "^24.0.0",
-    "@types/node": "^18.18.2",
-    "@types/styled-components": "^5.1.7",
     "eslint": "^8.53.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.4",
     "typescript": "^5.2.2",
-    "vite": "^5.0.0"
+    "vite": "^5.0.6"
   }
 }

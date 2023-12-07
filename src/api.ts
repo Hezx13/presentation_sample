@@ -1,7 +1,6 @@
 import http from './api/http';
 import hash from 'object-hash';
 import { AppState, List } from "./state/appStateReducer";
-import {response} from "express";
 
 export const save = async (payload: AppState, old: AppState) => {
     const oldListIds = new Set(old.lists.map(list => list.id));
