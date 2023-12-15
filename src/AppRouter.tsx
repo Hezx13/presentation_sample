@@ -10,6 +10,7 @@ import ReportsPage from "./ReportsPage";
 import ReportDetailedTable from "./components/ReportDetailedTable";
 import Login from "./loginPage";
 import Register from "./registerPage";
+import FullFeaturedCrudGrid from "./components/DataGridComponent";
 const AppRouter = () => {
     return (
         <Router>
@@ -23,6 +24,7 @@ const AppRouter = () => {
                 <Route path="/report" element={<ReportDetailedTable/>}/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
+                <Route path="/test" element={<FullFeaturedCrudGrid/>}/>
                 <Route path="*" element={<Navigate to="/"/>} />
             </Routes>
         </Router>

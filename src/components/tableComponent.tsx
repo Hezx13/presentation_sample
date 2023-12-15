@@ -65,10 +65,7 @@ const TableComponent = ({tableId}: ColProps) =>{
             })
         } catch(error) {
             setUserData(null);
-        }
-        
-        
-        
+        }        
     },[]);
 
     useEffect(() => {
@@ -311,7 +308,6 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             )}
                                         </StyledTableCell>
 
-                                        {/* Similar for other fields */}
                                         <StyledTableCell>
                                             <Box sx={{display: 'flex', justifyContent: "space-between", maxWidth: '100px'}}>
                                             {editing === task.id ? (

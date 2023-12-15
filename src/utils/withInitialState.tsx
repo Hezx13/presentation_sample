@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { AppState } from "../state/appStateReducer";
 import { load } from "../api";
 import CircularProgress from '@mui/material/CircularProgress';
+import { eventEmitter } from "../state/EventEmitter";
 
 type InjectedProps = {
   initialState: AppState;
@@ -40,13 +41,13 @@ export function withInitialState<TProps>(
     const [initialState, setInitialState] = useState<AppState>({
       lists: [],
       archive: [],
-      draggedItem: null
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | undefined>();
 
     useEffect(() => {
       const fetchInitialState = async () => {
+        setIsLoading(true);
         try {
           const data = await load();
           setInitialState(data);
@@ -57,8 +58,28 @@ export function withInitialState<TProps>(
         }
         setIsLoading(false);
       };
-      fetchInitialState();
+
+      const handleLogin = () => {
+        if (localStorage.getItem('token')) {
+        fetchInitialState();
+      } else {
+        setIsLoading(false);
+      }
+      };
+  
+      eventEmitter.on('login', handleLogin);
+  
+      if (localStorage.getItem('token')) {
+        fetchInitialState();
+      } else {
+        setIsLoading(false);
+      }
+  
+      return () => {
+        eventEmitter.off('login', handleLogin);
+      };
     }, []);
+    
 
     if (isLoading) {
       return <LoadingSpinner></LoadingSpinner>;

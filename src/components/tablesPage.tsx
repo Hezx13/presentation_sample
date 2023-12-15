@@ -3,6 +3,7 @@ import TableComponent from "./tableComponent";
 import { useLocation } from 'react-router-dom';
 import {Grid} from "@mui/material";
 import NavBar from './navBar'
+import FullFeaturedCrudGrid from './DataGridComponent';
 
 const TablesPage: React.FC = () => {
     const location = useLocation();
@@ -14,7 +15,7 @@ const TablesPage: React.FC = () => {
                     <NavBar/>
                 </Grid>
                 <Grid item xs={12}>
-                    <TableComponent
+                    <FullFeaturedCrudGrid
                         tableId={receivedData}
                     />
                 </Grid>

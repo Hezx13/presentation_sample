@@ -4,9 +4,7 @@ import { ColumnContainer, ColumnTitle } from "../styles"
 import { useAppState } from "../state/AppStateContext"
 import { Card } from "./Card"
 import { AddNewItem } from "./AddNewItem"
-import { useItemDrag } from "../utils/useItemDrag"
 import { useDrop } from "react-dnd"
-import { isHidden } from "../utils/isHidden"
 import CloseIcon from '@mui/icons-material/Close';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import {IconButton} from '@mui/material'
@@ -15,10 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 import {
-  moveTask,
-  moveList,
   addTask,
-  setDraggedItem
 } from "../state/actions"
 
 type ColumnProps = {
@@ -30,40 +25,9 @@ type ColumnProps = {
 
 export const Column = ({ text, id, isArchive, isPreview }: ColumnProps) => {
   const navigate = useNavigate();
-  const { draggedItem, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
+  const { getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
   const tasks = isArchive ? getTasksByArchiveId(id) : getTasksByListId(id)
   const ref = useRef<HTMLDivElement>(null)
-  const [, drop] = useDrop({
-    accept: ["COLUMN", "CARD"],
-    hover: throttle(200, () => {
-      if (!draggedItem) {
-        return
-      }
-      if (draggedItem.type === "COLUMN") {
-        if (draggedItem.id === id) {
-          return
-        }
-
-        dispatch(moveList(draggedItem.id, id))
-      } else {
-        if (draggedItem.columnId === id) {
-          return
-        }
-        if (tasks.length) {
-          return
-        }
-
-        dispatch(
-          moveTask(draggedItem.id, null, draggedItem.columnId, id)
-        )
-        dispatch(setDraggedItem({ ...draggedItem, columnId: id }))
-      }
-    })
-  })
-
-  const { drag } = useItemDrag({ type: "COLUMN", id, text })
-
-  drag(drop(ref))
 
   const handleExpandToTable = (id) =>{
     navigate('/table', { state: { myData: id } });
@@ -89,7 +53,6 @@ export const Column = ({ text, id, isArchive, isPreview }: ColumnProps) => {
     <ColumnContainer
       isPreview={isPreview}
       ref={ref}
-      isHidden={isHidden(isPreview, draggedItem, "COLUMN", id)}
     >
       <ColumnTitle>
         <div>

@@ -14,6 +14,8 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [department, setDepartment] = useState('');
+  const [email, setEmail] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
@@ -30,7 +32,7 @@ const Register = () => {
 
     try {
       // Replace with your backend API endpoint as needed.
-      const response = await register({username, password})
+      const response = await register({username, password, email, department})
 
       if (response.data) {
         setSuccessMessage('Successfully registered!');
@@ -80,6 +82,26 @@ const Register = () => {
               fullWidth
               label="Username"
               name="username"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              fullWidth
+              label="Email"
+              name="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              value={department} 
+              onChange={(e) => setDepartment(e.target.value)}
+              required
+              fullWidth
+              label="Department"
+              name="department"
               autoFocus
             />
             <TextField

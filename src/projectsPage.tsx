@@ -10,6 +10,7 @@ import {addList} from "./state/actions";
 import {AddNewItem} from "./components/AddNewItem";
 import {StyledTab} from "./styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import FullFeaturedCrudGrid from './components/DataGridComponent';
 
 
 interface TabPanelProps {
@@ -46,7 +47,7 @@ function a11yProps(index: number) {
 }
 
 export default function VerticalTabs() {
-    const {lists, draggedItem, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
+    const {lists, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
     const matches = useMediaQuery('(max-width:1280px)');
 
     const [value, setValue] = React.useState(0);
@@ -86,7 +87,7 @@ export default function VerticalTabs() {
             >
             {lists.map((list, index)=>(
                 <TabPanel key={index} value={value} index={index}>
-                    <TableComponent tableId={list.id}/>
+                    <FullFeaturedCrudGrid tableId={list.id}/>
                 </TabPanel>
             ))}
         </Box>
@@ -122,7 +123,7 @@ export default function VerticalTabs() {
                 >
                 {lists.map((list, index)=>(
                     <TabPanel key={index} value={value} index={index}>
-                        <TableComponent tableId={list.id}/>
+                        <FullFeaturedCrudGrid tableId={list.id}/>
                     </TabPanel>
                 ))}
             </Box>

@@ -1,10 +1,4 @@
-import { DragItem } from "../components/DragItem"
-
 export type Action =
-  | {
-      type: "SET_DRAGGED_ITEM"
-      payload: DragItem | null
-    }
   | {
       type: "ADD_LIST"
       payload: string
@@ -69,48 +63,6 @@ export type Action =
       type: "REMOVE_TASK"
       payload: { listId: string; taskId: string;}
     }
-  | {
-      type: "MOVE_LIST"
-      payload: {
-        draggedId: string
-        hoverId: string
-      }
-    }
-  | {
-      type: "MOVE_TASK"
-      payload: {
-        draggedItemId: string
-        hoveredItemId: string | null
-        sourceColumnId: string
-        targetColumnId: string
-      }
-    }
-
-export const moveTask = (
-  draggedItemId: string,
-  hoveredItemId: string | null,
-  sourceColumnId: string,
-  targetColumnId: string
-): Action => ({
-  type: "MOVE_TASK",
-  payload: {
-    draggedItemId,
-    hoveredItemId,
-    sourceColumnId,
-    targetColumnId
-  }
-})
-
-export const moveList = (
-  draggedId: string,
-  hoverId: string
-): Action => ({
-  type: "MOVE_LIST",
-  payload: {
-    draggedId,
-    hoverId
-  }
-})
 
 export const addTask = (
     text: string,
@@ -205,11 +157,4 @@ export const removeTask = (listId: string, taskId: string): Action => ({
   listId,
   taskId
   }
-})
-
-export const setDraggedItem = (
-  draggedItem: DragItem | null
-): Action => ({
-  type: "SET_DRAGGED_ITEM",
-  payload: draggedItem
 })

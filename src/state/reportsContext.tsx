@@ -26,6 +26,7 @@ export const ReportProvider: React.FC = ({ children }) => {
   const [reportsUpdated, setReportsUpdated] = useState(false);
 
   useEffect(() => {
+    if(!!localStorage.getItem('token'))
     fetchReports();
   }, [reportsUpdated]);
 

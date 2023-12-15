@@ -13,7 +13,6 @@ import { save } from "../api"
 import { DragItem } from "../components/DragItem"
 
 type AppStateContextProps = {
-  draggedItem: DragItem | null
   lists: List[]
     archive: List[]
   getTasksByListId(id: string): Task[]
@@ -33,7 +32,7 @@ type AppStateProviderProps = {
 export const AppStateProvider = withInitialState<AppStateProviderProps>(
   ({ children, initialState }) => {
     const [state, dispatch] = useImmerReducer(appStateReducer, initialState);
-
+    
     // useRef to keep track of the previous state
     const prevStateRef = useRef(initialState);
 
@@ -43,11 +42,12 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     }), []);
     
     useEffect(() => {
+      if(!!localStorage.getItem('token'))
       debouncedSave(state, prevStateRef.current);
     }, [state, debouncedSave]);
     
 
-    const { draggedItem, lists, archive } = state;
+    const { lists, archive } = state;
     const getTasksByListId = (id: string) => {
       return lists.find((list) => list.id === id)?.tasks || [];
     };
@@ -57,7 +57,7 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
 
     return (
       <AppStateContext.Provider
-        value={{ draggedItem, lists, archive, getTasksByListId, getTasksByArchiveId, dispatch }}
+        value={{ lists, archive, getTasksByListId, getTasksByArchiveId, dispatch }}
       >
         {children}
       </AppStateContext.Provider>
