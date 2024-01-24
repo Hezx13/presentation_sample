@@ -58,9 +58,6 @@ export const AddNewItem = (props: AddNewItemProps) => {
     >
     <DialogTitle>Order Details</DialogTitle>
     <DialogContent>
-      <DialogContentText>
-        
-      </DialogContentText>
       <NewItemForm
         onAdd={(text,article,price, quantity, unit, comment, deliveryDate, orderedBy) => {
         onAdd(text,article,price,quantity,unit,comment, deliveryDate, orderedBy)

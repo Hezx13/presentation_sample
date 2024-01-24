@@ -174,7 +174,6 @@ export const removeDebit = async(period, debit, payment) => {
 };
 
 export const downloadReport = async (period, payment) => {
-  console.log(period + "@@")
   try {
     const response = await http({
       method: 'GET',

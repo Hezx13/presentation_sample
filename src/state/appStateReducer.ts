@@ -2,6 +2,7 @@ import { Action } from "./actions"
 import { nanoid } from "nanoid"
 import { DragItem } from "../components/DragItem"
 import {findItemIndexById, findTaskIndex, moveItem, removeItemAtIndex} from "../utils/arrayUtils"
+import { getCurrentDateAndTime } from "../utils/timeUtils"
 
 export type Task = {
   id: string;
@@ -90,6 +91,10 @@ export const appStateReducer = (
 
       if (taskIndex !== -1 && listIndex !== -1) {
         const task = location === 'lists' ? draft.lists[listIndex].tasks[taskIndex] : draft.archive[listIndex].tasks[taskIndex];
+        
+        const isTextChanged = text !== undefined && text !== task.text;
+        const isArticleChanged = article !== undefined && article !== task.article;
+        
         task.text = text ?? task.text;
         task.article = article ?? task.article;
         task.price = price ?? task.price;
@@ -101,6 +106,15 @@ export const appStateReducer = (
         task.orderedBy = orderedBy ?? task.orderedBy;
         task.status = status ?? task.status;
         task.payment = payment ?? task.payment;
+
+        
+        
+        console.log(isTextChanged, isArticleChanged)
+
+        if (isTextChanged || isArticleChanged) {
+          const currentDate = getCurrentDateAndTime();
+          task.date = currentDate;
+      } 
       }
       break;
     }

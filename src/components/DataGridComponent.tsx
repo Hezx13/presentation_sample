@@ -2,6 +2,7 @@ import React, {useEffect, useState, useRef} from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
+import { Action } from '../state/actions';
 import EditIcon from '@mui/icons-material/Edit';
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
@@ -9,80 +10,42 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import {findItemIndexById} from "../utils/arrayUtils";
-import { Navigate } from 'react-router-dom';
-import { editTask, removeTask } from '../state/actions';
+import { Status, AddItemButton } from '../styles';
+import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
+import { getCurrentDateAndTime } from "../utils/timeUtils";
+import {AddNewItem} from "./AddNewItem";
+import { getUserData } from '../api/user-api';
+import { onUploadSingle } from '../api';
+
 import {
-  GridRowsProp,
   GridRowModesModel,
   GridRowModes,
   DataGrid,
   GridColDef,
-  GridToolbarContainer,
   GridActionsCellItem,
   GridEventListener,
   GridRowId,
   GridRowModel,
   GridRowEditStopReasons,
-  useGridApiContext,
-  GridApi,
+  GridRenderEditCellParams,
 } from '@mui/x-data-grid';
+import EditToolbar from './DataGridComponents/EditToolBar';
 import { useAppState } from '../state/AppStateContext';
 import { Task } from '../state/appStateReducer';
+import { MenuItem, Select } from '@mui/material';
+import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 
-const roles = ['Market', 'Finance', 'Development'];
+const statuses = ["Done", "In process", "Waiting for approval", "Waiting for payment", "Pending"]
+const payments = ["Cash", "Credit", "Pemo Card", "Bank Transfer", ""]
 
 
-interface EditToolbarProps {
-  apiRef: any,
-  setRows: (newRows: (oldRows: GridRowsProp) => GridRowsProp) => void;
-  setRowModesModel: (
-    newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
-  ) => void;
-}
-
-function EditToolbar(props: EditToolbarProps) {
-  const {setRows, setRowModesModel } = props;
-
-  const handleAdd = () => {
-    console.log("add")
-  };
-
-  function createMailToLink(email: string, subject: string, body:string) {
-    console.log(email, subject ,body);
-    return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  }
-
-  const apiRef = useGridApiContext();
-
-  const handleSend = () => {
-    const selectedMaterials = apiRef.current.getSelectedRows();
-    let message = ''
-    selectedMaterials.forEach(entry => {
-      message += entry.text + '\n';
-  });
-  const email = 'example@example.com';
-    const subject = 'Order';
-  const link = createMailToLink(email,subject,message)
-  window.location.href = link;
-  }
-  
-  return (
-    <GridToolbarContainer>
-      <Button color="primary" startIcon={<AddIcon />} onClick={handleAdd}>
-        Add record
-      </Button>
-      <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
-        Send selected
-      </Button>
-    </GridToolbarContainer>
-  );
-}
-//g2VTbod_MHHF8VyNpsYt6
 export default function FullFeaturedCrudGrid({tableId}) {
   const [rows, setRows] = React.useState<Task[]>([]);
   const [isSaving, setIsSaving] = React.useState(false)
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
   const { lists, archive, dispatch } = useAppState()
+  const [userData,setUserData] = useState< {username: string} | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
         const id_a = findItemIndexById(archive, tableId)
@@ -95,11 +58,18 @@ export default function FullFeaturedCrudGrid({tableId}) {
         }
     }, [tableId,lists]);
 
-    // useEffect(() => {
-    //     setFilteredTasks (tasks.filter(task => {
-    //         return task.text.toLowerCase().includes(searchTerm.toLowerCase());
-    //     }))
-    // }, [searchTerm]);
+    useEffect(() =>{
+      try{
+          getUserData().then(user => {
+              const userData = {
+                  username: user.username
+              }
+              setUserData(userData);
+          })
+      } catch(error) {
+          setUserData(null);
+      }        
+  },[]);
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -131,11 +101,16 @@ export default function FullFeaturedCrudGrid({tableId}) {
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
-    const editedRow = rows.find((row) => row.id === id);
-    if (editedRow) {
-      setRows(rows.filter((row) => row.id !== id));
-    }
   };
+
+  const handleUploadClick = () => {
+    fileInput.current!.click();
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    file && onUploadSingle(file, tableId)
+};
 
   const processRowUpdate = (newRow: GridRowModel) => {
     setIsSaving(true);
@@ -165,13 +140,27 @@ export default function FullFeaturedCrudGrid({tableId}) {
     setRowModesModel(newRowModesModel);
   };
 
-  const columns: GridColDef[] = [
+  const hasArticle = rows.some(row => row.article !== '');
+
+  const articleColumn: GridColDef = {
+    field: 'article',
+    headerName: 'Article №',
+    type: 'string',
+    minWidth: 150,
+    flex: 1,
+    align: 'left',
+    headerAlign: 'left',
+    editable: true,
+  }
+
+  let columns: GridColDef[] = [
     { field: 'date', headerName: 'Date ordered', width: 160, editable: false },
     {
       field: 'text',
       headerName: 'Material',
       type: 'string',
-      flex: 2,
+      minWidth: 150,
+      flex: 4,
       align: 'left',
       headerAlign: 'left',
       editable: true,
@@ -180,42 +169,102 @@ export default function FullFeaturedCrudGrid({tableId}) {
       field: 'quantity',
       headerName: 'Quantity',
       type: 'number',
-      width: 80,
+      align: 'left',
+      headerAlign: 'left',
+      minWidth: 80,
+      flex: 1,
       editable: true,
     },
     {
       field: 'price',
       headerName: 'Price',
       type: 'string',
-      width: 80,
+      minWidth: 80,
+      flex: 1,
       editable: true,
+    },
+    {
+      field: 'amount',
+      headerName: 'Amount',
+      type: 'number',
+      minWidth: 80,
+      flex: 1,
+      valueGetter: (params) => {
+        const value1 = params?.row.quantity || 1;
+        const value2 = params?.row?.price?.split(' ')[0] || params.row.price || 0;
+        return Number(value1) * Number(value2);
+      },
     },
     {
       field: 'unit',
       headerName: 'Unit',
-      width: 100,
+      flex: 1,
+      minWidth: 80,
       editable: true,
       type: 'string',
     },
     {
       field: 'comment',
-      headerName: 'Comment',
-      flex: 1,
+      headerName: 'Invoice / Note',
+      minWidth: 80,
+      flex: 2,
       editable: true,
       type: 'string',
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 100,
+      minWidth: 80,
+      flex: 2,
       editable: true,
-      type: 'string',
+      renderCell: (params) => {
+        const color = params.value === 'Done' ? 'green'
+                      : params.value === 'Waiting for approval' ? 'blue'
+                      : params.value === 'In process' ? 'orange'
+                      : params.value === 'Waiting for payment' ? 'red'
+                      : 'grey';
+        return <>
+        <Status color={color}></Status>
+        <div>{params.value}</div>
+        </>
+      },
+      renderEditCell: (params: GridRenderEditCellParams) => (
+        <Select
+          value={params.value || ''}
+          onChange={(event) => {
+            params.api.setEditCellValue({ id: params.id, field: params.field, value: event.target.value }, event);
+          }}
+          fullWidth
+        >
+          {statuses.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option}
+            </MenuItem>
+          ))}
+        </Select>
+      ),
+      type: 'singleSelect',
     },
     {
       field: 'payment',
       headerName: 'Payment',
       width: 100,
       editable: true,
+      renderEditCell: (params: GridRenderEditCellParams) => (
+        <Select
+          value={params.value || ''}
+          onChange={(event) => {
+            params.api.setEditCellValue({ id: params.id, field: params.field, value: event.target.value }, event);
+          }}
+          fullWidth
+        >
+          {payments.map((option) => (
+            <MenuItem key={option} value={option}>
+              {option === "" ? 'Not paid' : option}
+            </MenuItem>
+          ))}
+        </Select>
+      ),
       type: 'string',
     },
     {
@@ -264,6 +313,14 @@ export default function FullFeaturedCrudGrid({tableId}) {
     },
   ];
 
+  if (hasArticle) {
+    columns = [
+      ...columns.slice(0, 1), // First two columns
+      articleColumn,
+      ...columns.slice(1),   // Remaining columns
+    ];
+  }
+
   return (
     <Box
       sx={{
@@ -280,8 +337,10 @@ export default function FullFeaturedCrudGrid({tableId}) {
         },
       }}
     >
-      <DataGrid
-        rows={rows}
+      {
+        rows.length > 0 ? (
+          <DataGrid
+        rows={rows || []}
         columns={columns}
         editMode="row"
         rowModesModel={rowModesModel}
@@ -293,9 +352,34 @@ export default function FullFeaturedCrudGrid({tableId}) {
         }}
         checkboxSelection
         slotProps={{
-          toolbar: { setRows, setRowModesModel },
+          toolbar: { dispatch,tableId, userData, setRowModesModel },
         }}
       />
+        ) : (
+          <NoDataPlaceholder>
+            <AddNewItem
+            toggleButtonText="+ Add another material"
+            onAdd={
+              (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
+                  dispatch(moveFromArchive(tableId))
+                  dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getCurrentDateAndTime(), userData?.username || 'Anonymus', "Pending", ""))
+              }
+          }
+          />
+          <AddItemButton onClick={handleUploadClick} dark excel>
+              Excel import
+          </AddItemButton>
+          <input
+              type="file"
+              ref={fileInput}
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+          />
+          </NoDataPlaceholder>
+        )
+      }
+      
     </Box>
   );
 }
+

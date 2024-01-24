@@ -21,8 +21,8 @@ const ReportGenerationDialog = ({onNewReport}) =>{
         const monthIndex = months.indexOf(month);
       
         // Get the first and last day of the month
-        const periodStart = dayjs(new Date(year, monthIndex, 1)).format('YYYY-MM-DD');
-        const periodEnd = dayjs(new Date(year, monthIndex + 1, 0)).format('YYYY-MM-DD');
+        const periodStart = dayjs(new Date(year, monthIndex, 1)).format('DD-MM-YYYY');
+        const periodEnd = dayjs(new Date(year, monthIndex + 1, 0)).format('DD-MM-YYYY');
 
         return { periodStart, periodEnd };
       }

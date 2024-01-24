@@ -10,21 +10,47 @@ import ReportsPage from "./ReportsPage";
 import ReportDetailedTable from "./components/ReportDetailedTable";
 import Login from "./loginPage";
 import Register from "./registerPage";
-import FullFeaturedCrudGrid from "./components/DataGridComponent";
+
+const PrivateRoute = ({ children, roles }) => {
+    const currentUserRole = localStorage.getItem('role');
+  
+    if (!currentUserRole || !roles.includes(currentUserRole)) {
+        // User not authorized, redirecting to login
+        return <Navigate to="/" />;
+      }
+
+      return children;
+  };
+
 const AppRouter = () => {
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<ListsPage/>}/>
                 <Route path="/table" element={<TablesPage/>}/>
-                <Route path="/archive" element={<ArchivePage/>}/>
-                <Route path="/dashboard" element={<DashboardPage/>}/>
-                <Route path="/projects" element={<VerticalTabs/>}/>
-                <Route path="/reports" element={<ReportsPage/>}/>
-                <Route path="/report" element={<ReportDetailedTable/>}/>
+                <Route path="/archive" element={
+                    <PrivateRoute roles={['Admin']}>
+                        <ArchivePage/>
+                    </PrivateRoute>
+                }/>
+                <Route path="/dashboard" element={
+                    <PrivateRoute roles={['Admin']}>
+                        <DashboardPage/>
+                    </PrivateRoute>
+                }/>
+=                <Route path="/projects" element={<VerticalTabs/>}/>
+                <Route path="/reports" element={
+                    <PrivateRoute roles={['Admin']}>
+                        <ReportsPage/>
+                    </PrivateRoute>
+                }/>
+                <Route path="/report" element={
+                    <PrivateRoute roles={['Admin']}>
+                        <ReportDetailedTable/>
+                    </PrivateRoute>
+                }/>
                 <Route path="/login" element={<Login/>}/>
                 <Route path="/register" element={<Register/>}/>
-                <Route path="/test" element={<FullFeaturedCrudGrid/>}/>
                 <Route path="*" element={<Navigate to="/"/>} />
             </Routes>
         </Router>

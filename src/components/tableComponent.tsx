@@ -338,7 +338,6 @@ const TableComponent = ({tableId}: ColProps) =>{
                                                     dispatch(addTask(text, tableId, article || '',price + ' AED', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getCurrentDateAndTime(), userData?.username || 'Anonymus', "Pending", ""))
                                                 }
                                             }
-                                            
                                         />
                                     </StyledTableCell>
                                     <StyledTableCell colSpan={6}>

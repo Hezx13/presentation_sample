@@ -113,23 +113,22 @@ export const AddItemButton = styled.button<AddItemButtonProps>`
   background-color: ${(props) => (props.excel ? "#47c35180" : "#0000003d")};
   border-radius: 3px;
   border: none;
-  color: ${(props) => (props.dark ? "#000" : "#fff")};
+  color: ${(props) => (props.dark ? "#000" : "#FFA500")};
   cursor: pointer;
   padding: 10px 12px;
   text-align: left;
-  margin: 10px auto;
+  margin: 10px;
   height: 35px;
   transition: background 85ms ease-in;
-  width: 96%;
+  width: 200px;
   &:hover {
     background-color: #0000009d;
   }
 `
 
 export const NewItemFormContainer = styled.div`
-  max-width: 300px;
-  margin: 10px auto;
-  display: flex;
+  max-width: 400px;
+  margin: 10px;
   flex-direction: column;
   width: 100%;
   align-items: flex-start;

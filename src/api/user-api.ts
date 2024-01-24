@@ -9,6 +9,7 @@ export const login = async (credentials) => {
     });
     
     localStorage.setItem('token', response.data.token);
+    localStorage.setItem('role', response.data.role);
     eventEmitter.emit('login');
     return response.status;
 };
@@ -31,7 +32,7 @@ export const logout = async () => {
 
 export const getUserData = async () => {
     try {
-      const response = await http.get('/auth/user');
+      const response = await http.get('/user/user');
       return response.data;
     } catch (error: any) {
       console.error('Error while fetching user data:', error.response || error);

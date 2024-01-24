@@ -35,7 +35,7 @@ const ReportTable = ({ data, updateCall }) => {
     else {
       setFilteredData(data);
     }
-  },[payment])
+  },[payment, data])
   
   const handleExpandToTable = (month, pay) =>{
         navigate('/report', { state: { reports: data, period: month, payment: pay } });
@@ -44,7 +44,8 @@ const ReportTable = ({ data, updateCall }) => {
   const handleDownloadReport = (per, payment) => {
     downloadReport(per, payment);
   }
-  
+
+
   return (
     <StyledTableContainer >
       <Table>
@@ -84,7 +85,7 @@ const ReportTable = ({ data, updateCall }) => {
                     <SyledListButton
                         onClick={()=>{handleExpandToTable(data.month, data.payment)}}
                     >
-            {months[Number(data.month.start.split("-")[1][1]) -1] + " " + data.month.start.split("-")[0] + " " + data.payment}  
+            {months[Number(data.month.start.split("-")[1][1]) -1] + " " + data.month.start.split("-")[2] + " " + data.payment}  
                     </SyledListButton></StyledTableCell>
             
             <TableCell>

@@ -1,6 +1,6 @@
 import {useAppState } from "./state/AppStateContext";
 import React, {useState, useEffect, useMemo} from 'react'
-import {Grid} from '@mui/material'
+import {Grid, CircularProgress} from '@mui/material'
 import {onUpload} from "./api";
 import CardComponent from "./components/cardComponent";
 import NavBar from "./components/navBar";
@@ -9,31 +9,19 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Navigate } from "react-router-dom";
 import DebitDialog from "./components/DebitDialog";
-import { addBalance, loadBalance } from "./api/balance-api";
+import { addBalance, currentBalance, generateCashOrder, loadBalance } from "./api/balance-api";
 import AddCardIcon from '@mui/icons-material/AddCard';
 import dayjs from "dayjs";
-const BalanceCardContent = ({balance, action}) => {
-    let timerID;
-  const [showDialog, setShowDialog] = useState(false);
+import BalanceHistoryDialog from "./components/BalanceHistoryDialog";
 
-  const handleMouseOver = () => {
-    clearTimeout(timerID);
-    if (balance.length)
-    setShowDialog(true);
-  };
-
-  const handleMouseOut = () => {
-    timerID = setTimeout(() => {
-        setShowDialog(false);
-    }, 300);
-  };
+const BalanceCardContent = ({balance, action, historyAction}) => {
     return (
         <span style={{
             display: 'flex',
             justifyContent: 'space-between',
         }}>
-        <span>
-            {balance} AED
+        <span style={{color: balance > 0 ? 'green': 'red', cursor: 'pointer'}} onClick={historyAction}>
+            {balance ? balance.toFixed(2) + " AED" : <CircularProgress color="primary"/>} 
         </span>
         <IconButton sx={{ padding: '0 5px', }} onClick={action}>
             <AddCardIcon htmlColor="green"/>
@@ -46,23 +34,26 @@ const BalanceCardContent = ({balance, action}) => {
 export const DashboardPage = () => {
     const { lists, archive, dispatch } = useAppState()
     const [balance, setBalance] = useState([]);
+    const [current, setCurrent] = useState(0);
     const [roughTotalPrice, setRoughTotalPrice] = useState<number>(0)
     const [totalPrice, setTotalPrice] =useState<number>(0)
-   const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
-   const [isLoggedIn] = useState(!!localStorage.getItem('token'));
-   const [open, setOpen] = useState(false);
-   const [inputValue, setInputValue] = useState("");
-   const [inputDate, setInputDate] = useState("");
-   const [inputCheck, setInputCheck] = useState("");
-    const [_lists, setLists] = useState([])
+    const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
+    const [isLoggedIn] = useState(!!localStorage.getItem('token'));
+    const [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = useState("");
+    const [inputDate, setInputDate] = useState("");
+    const [inputCheck, setInputCheck] = useState("");
+    const [historyDialogOpen, setHistoryDialogOpen] = useState(false);    
 
-    const totalAmount = useMemo(() => {
-        return balance.reduce((sum, current:any) => sum + current.amount, 0);
-      }, [balance]);
+    // const totalAmount = useMemo(() => {
+    //     return balance.reduce((sum, current:any) => sum + current.amount, 0);
+    //   }, [balance]);
 
     useEffect(() => {
-        calculateTotal();
+        setRoughTotalPrice(totals.totalRough);
+        setTotalPrice(totals.total);
         fetchBalance();
+        fetchCurrentBalance();
     }, [lists,archive]);
 
     
@@ -78,7 +69,13 @@ export const DashboardPage = () => {
         setBalance(res);
     }
 
+    const fetchCurrentBalance = async () => {
+    const res = await currentBalance();
+    setCurrent(res);   
+    }
+
     const calculateTotal = () => {
+        console.log("Calculating total");
         let _totalPrice = 0;
         let _totalPriceRough = 0;
 
@@ -94,9 +91,7 @@ export const DashboardPage = () => {
                 }
             });
         });
-
-        setTotalPrice(parseFloat(_totalPrice.toFixed(2)))
-        setRoughTotalPrice(parseFloat(_totalPriceRough.toFixed(2)))
+        return {total: parseFloat(_totalPrice.toFixed(2)), totalRough: parseFloat(_totalPriceRough.toFixed(2))}
     }
 
     const handleClickOpen = () => {
@@ -115,11 +110,19 @@ export const DashboardPage = () => {
             setInputCheck("");
             setInputValue("");
             setInputDate("");
+            fetchCurrentBalance();
+            fetchBalance();
           } catch (err) {
             console.log(err);
           }
         }
         setOpen(false);
+      };
+
+      const totals = useMemo(()=>calculateTotal(), [lists])
+
+      const handleDownloadCashOrder = async () => {
+        const res = await generateCashOrder();
       };
 
     return (
@@ -135,6 +138,12 @@ export const DashboardPage = () => {
                 handleClose={handleClose}
                 handleSave={handleSave}
               ></DebitDialog>
+              <BalanceHistoryDialog
+                open={historyDialogOpen}
+                debits={balance}
+                onClose={()=>setHistoryDialogOpen(false)}
+                update={fetchCurrentBalance}
+                />
             <Grid container>
             {!isLoggedIn && <Navigate to="/login"/>}
 
@@ -144,7 +153,7 @@ export const DashboardPage = () => {
                 <Grid item xs={12}>
                     <Grid container justifyContent="center" spacing={8} >
                         <Grid item xl={2}>
-                            <CardComponent textColor="green" text="Cash order" 
+                            <CardComponent textColor="green" text="Waiting for payment" 
                             amount={totalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
                             <CardComponent textColor="red" text="Cash order(Rough)" 
                             amount={roughTotalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
@@ -154,13 +163,17 @@ export const DashboardPage = () => {
                             <CardComponent textColor="green" text="Current balance"
                              amount={
                              <BalanceCardContent
-                                balance={totalAmount}
+                                historyAction={() => setHistoryDialogOpen(true)}
+                                balance={current}
                                 action={handleClickOpen}
                              />
                              }/>
                         </Grid>
                         <Grid item xl={2}>
                             <CardComponent textColor="orange" text="Materials in work" amount={notDoneTasksCount}/>
+                        </Grid>
+                        <Grid item xl={2}>
+                             <button onClick={handleDownloadCashOrder}>Generate cash order</button>
                         </Grid>
                         
                     </Grid>
