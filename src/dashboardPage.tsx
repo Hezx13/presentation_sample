@@ -121,10 +121,6 @@ export const DashboardPage = () => {
 
       const totals = useMemo(()=>calculateTotal(), [lists])
 
-      const handleDownloadCashOrder = async () => {
-        const res = await generateCashOrder();
-      };
-
     return (
         <>
         <DebitDialog
@@ -154,7 +150,9 @@ export const DashboardPage = () => {
                     <Grid container justifyContent="center" spacing={8} >
                         <Grid item xl={2}>
                             <CardComponent textColor="green" text="Waiting for payment" 
-                            amount={totalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
+                            amount={totalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}
+                            button
+                            />
                             <CardComponent textColor="red" text="Cash order(Rough)" 
                             amount={roughTotalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
                         </Grid>
@@ -171,9 +169,6 @@ export const DashboardPage = () => {
                         </Grid>
                         <Grid item xl={2}>
                             <CardComponent textColor="orange" text="Materials in work" amount={notDoneTasksCount}/>
-                        </Grid>
-                        <Grid item xl={2}>
-                             <button onClick={handleDownloadCashOrder}>Generate cash order</button>
                         </Grid>
                         
                     </Grid>

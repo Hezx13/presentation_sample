@@ -275,3 +275,18 @@ export const StyledGenerateButton = styled(Button)`
     }
   
 `
+
+export const StyledGenerateCashOrderButton = styled.button`
+position: absolute;
+bottom: 5%;
+left: 5%;
+border: none;
+transition: all 0.3s;
+background: transparent;
+color: orange;
+padding: 0;
+&:hover {
+  border-bottom: 1px solid orange;
+  cursor: pointer;
+}
+` 

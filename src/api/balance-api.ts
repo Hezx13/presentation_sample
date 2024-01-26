@@ -52,7 +52,7 @@ export const addBalance = async(debit) => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'CashOrder.xlsx');
+    link.setAttribute('download', `CashOrder${Date.now()}.xlsx`);
     document.body.appendChild(link);
     link.click();
     
