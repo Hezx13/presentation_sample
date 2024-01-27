@@ -96,7 +96,7 @@ export const Column = ({ text, id, isArchive, isPreview }: ColumnProps) => {
         onAdd={
         (text,article, price, quantity, unit, comment, deliveryDate, orderedBy) => {
           dispatch(moveFromArchive(id))
-          dispatch(addTask(text, id,article || '', price + ' AED', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
+          dispatch(addTask(text, id,article || '', price || '', quantity || 0, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getNextWeek(), orderedBy || 'Anonymus', "Pending", ""))
         }
       }
         dark
