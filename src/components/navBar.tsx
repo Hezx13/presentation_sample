@@ -12,6 +12,16 @@ import logo from "../assets/logo192.png";
 function NavbarItems(props) {
   return (
     <>
+    <StyledNavBarItem>
+        <StyledLink
+          to="/management"
+          onClick={props.validateLogin}
+          color={!props.isLoggedIn ? "grey" : "#ffffff"}
+          isActive={props.location.pathname === "/management"}
+        >
+          Management
+        </StyledLink>
+      </StyledNavBarItem>
       <StyledNavBarItem>
         <StyledLink
           to="/dashboard"
@@ -173,7 +183,11 @@ export const NavBar = () => {
       <span>
         <StyledNavBarItem>
           <IconButton aria-label="account" onClick={openMenu}>
-            {isLoggedIn ? <PersonIcon /> : <PermIdentityIcon />}
+            {isLoggedIn ? 
+            <>
+            <PersonIcon />
+            </>
+             : <PermIdentityIcon />}
           </IconButton>
           <Menu
             anchorEl={menuAnchor}

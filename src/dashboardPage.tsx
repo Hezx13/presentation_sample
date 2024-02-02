@@ -45,10 +45,6 @@ export const DashboardPage = () => {
     const [inputCheck, setInputCheck] = useState("");
     const [historyDialogOpen, setHistoryDialogOpen] = useState(false);    
 
-    // const totalAmount = useMemo(() => {
-    //     return balance.reduce((sum, current:any) => sum + current.amount, 0);
-    //   }, [balance]);
-
     useEffect(() => {
         setRoughTotalPrice(totals.totalRough);
         setTotalPrice(totals.total);
@@ -66,7 +62,7 @@ export const DashboardPage = () => {
     
     const fetchBalance = async () => {
         const res = await loadBalance();
-        setBalance(res);
+        setBalance(res.reverse());
     }
 
     const fetchCurrentBalance = async () => {

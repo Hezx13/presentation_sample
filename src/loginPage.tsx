@@ -10,16 +10,40 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { Navigate } from 'react-router-dom';
+import { LinearProgress } from '@mui/material';
 function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('token'));
     const handleLogin = async (event) => {
       event.preventDefault();
+      setLoading(true)
        const response = await login({username, password})
-       if (response === 200) {
-        setIsLoggedIn(!!localStorage.getItem('token'))
+       console.log(response)
+       switch (response) {
+        case 200: {
+          setIsLoggedIn(!!localStorage.getItem('token'))
+          break;
+        }
+        case 401: {
+          setError("Invalid credentials")
+          break;
+        }
+        case 403: {
+          setError("Not approved")
+          break;
+        }
+        case 404: {
+          setError("User doesn't exist")
+          break;
+        }
+        default: {
+          setError("Unknown error")
+        }
        }
+       setLoading(false);
     };
 
     return (
@@ -44,6 +68,12 @@ function Login() {
           <Typography component="h1" variant="h5" color="#e3f2fd">
             Sign in
           </Typography>
+          <Box sx={{ width: '100%', textAlign: 'center', color: 'red' }}>
+            {isLoading && <LinearProgress />}
+            {error && <Typography component="h1" variant="h5" color="error">
+                {error}
+              </Typography>}
+          </Box>
           <Box component="form" onSubmit={handleLogin} sx={{ mt: 1 }}>
             <TextField
               margin="normal"
@@ -69,6 +99,7 @@ function Login() {
               type="submit"
               fullWidth
               variant="contained"
+              disabled={isLoading}
               sx={{ mt: 3, mb: 2 }}
             >
               Log in

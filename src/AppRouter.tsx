@@ -10,6 +10,7 @@ import ReportsPage from "./ReportsPage";
 import ReportDetailedTable from "./components/ReportDetailedTable";
 import Login from "./loginPage";
 import Register from "./registerPage";
+import ManagementPage from "./ManagementPage";
 
 const PrivateRoute = ({ children, roles }) => {
     const currentUserRole = localStorage.getItem('role');
@@ -36,6 +37,11 @@ const AppRouter = () => {
                 <Route path="/dashboard" element={
                     <PrivateRoute roles={['Admin']}>
                         <DashboardPage/>
+                    </PrivateRoute>
+                }/>
+                <Route path="/management" element={
+                    <PrivateRoute roles={['Admin']}>
+                        <ManagementPage/>
                     </PrivateRoute>
                 }/>
 =                <Route path="/projects" element={<VerticalTabs/>}/>

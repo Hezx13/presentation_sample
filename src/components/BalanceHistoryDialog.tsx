@@ -9,7 +9,6 @@ const BalanceHistoryDialog = ({open, onClose, debits, update}) =>{
         try {
             debits.filter(debitc => debitc !== debit)
           removeBalance(debit).then((res) => {
-            console.log(res);
             update()
           });
         } catch (error) {
@@ -24,23 +23,25 @@ const BalanceHistoryDialog = ({open, onClose, debits, update}) =>{
             {debits.map(debit => (
                 <div style={{
                     display: 'flex', 
-                    padding: '5px', 
+                    padding: '5px 10px', 
                     margin: '5px', 
                     background: '#00000020', 
                     borderRadius: '5px',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    width: 'clamp(300px, 400px, 500px)',
                 }}
                     >
-                <span style={{color: 'green'}}>
-                    {debit.amount} AED - 
+                <span style={{color: 'green', flex: 1}}>
+                    {debit.amount} AED
                 </span>
-                <span>
-                    - {debit.date} -
+                <span style={{flex: 1}}>
+                    {debit.date}
                 </span>
-                <span>
-                    - {debit.check}
+                <span style={{width: '100px'}}>
+                    {debit.check}
                 </span>
                 <IconButton
+                sx={{marginLeft: 'auto'}}
                 onClick={()=>handleRemoveDebitClick(debit)}>
                 <DeleteForeverIcon fontSize="small" htmlColor='Crimson'/>
                 </IconButton>
