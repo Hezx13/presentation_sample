@@ -107,39 +107,7 @@ const ListRow = ({ list, index, isArchive }) => {
                 <StyledTableCell>{totalPrice} AED</StyledTableCell>
                 {/* Other list fields here */}
             </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={!isCollapsed} timeout="auto" unmountOnExit>
-                        <Box margin={1}>
-                            <Table size="small">
-                                <TableHead>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell>Quantity</TableCell>
-                                    <TableCell>Price</TableCell>
-                                    <TableCell>Total</TableCell>
-                                </TableHead>
-                                <TableBody>
-                                    {list.tasks.map((task, index) => (
-                                        <TableRow key={index} sx={{backgroundColor: index % 2 === 0 ? '#00000005' : '#ffffff05'}}>
-                                            <TableCell>{task.text}</TableCell>
-                                            <TableCell>{task.quantity}</TableCell>
-                                            <TableCell>
-                                                {
-                                                    task.status === "Done" ?
-                                                        task.price :
-                                                        <CardPriceText>{task.price}</CardPriceText>
-                                                }
-                                            </TableCell>
-                                            <TableCell>{task.quantity * parseFloat(task.price?.split(' ')[0] || task.price)} AED</TableCell>
-                                            {/* Other task fields here */}
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+            
         </>
     );
 };

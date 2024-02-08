@@ -1,17 +1,16 @@
 import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import {Typography, Grid} from '@mui/material';
+import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import {useAppState} from "./state/AppStateContext";
-import TableComponent from "./components/tableComponent";
-import NavBar from "./components/navBar";
-import {addList} from "./state/actions";
-import {AddNewItem} from "./components/AddNewItem";
-import {StyledTab} from "./styles/styles";
+import {useAppState} from "../state/AppStateContext";
+import TableComponent from "../components/tableComponent";
+import NavBar from "../components/navBar";
+import {addList} from "../state/actions";
+import {AddNewItem} from "../components/AddNewItem";
+import {StyledTab} from "../styles/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
-import { Navigate } from 'react-router-dom';
-
+import FullFeaturedCrudGrid from '../components/DataGridComponent';
 
 
 interface TabPanelProps {
@@ -47,25 +46,18 @@ function a11yProps(index: number) {
     };
 }
 
-export default function ArchivePage() {
-    const {archive, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
+export default function VerticalTabs() {
+    const {lists, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
     const matches = useMediaQuery('(max-width:1280px)');
 
     const [value, setValue] = React.useState(0);
-    const [isLoggedIn] = React.useState(!!localStorage.getItem('token'));
 
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
     };
 
     return (
-        <Grid container>
-            {!isLoggedIn && <Navigate to="/login"/>}
-                <Grid item xs={12}>
-                    <NavBar/>
-                </Grid>
-                <Grid item xs={12}>
-                <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
             {matches && 
             <Box
             sx={{bgcolor: 'background.paper', height: 'auto', borderRadius: '12px'}}
@@ -78,13 +70,12 @@ export default function ArchivePage() {
                 aria-label="Vertical tabs example"
                 sx={{ borderRight: 1, borderColor: 'divider'}}
             >
-                {archive.map((list, index)=>(
+                {lists.map((list, index)=>(
                     list.tasks.some((task)=>(task.status==="Pending" || task.status==='' || !task.status)) ?
                     <StyledTab label={list.text} {...a11yProps(index)} /> :
                         <Tab label={list.text} {...a11yProps(index)} />
                     )
                 )}
-                
                 <AddNewItem
                     toggleButtonText="+ Add another project"
                     onAdd={(text) => dispatch(addList(text))}
@@ -94,9 +85,9 @@ export default function ArchivePage() {
             <Box
                 sx={{bgcolor: 'background.paper'}}
             >
-            {archive.map((list, index)=>(
-                <TabPanel value={value} index={index}>
-                    <TableComponent tableId={list.id}/>
+            {lists.map((list, index)=>(
+                <TabPanel key={index} value={value} index={index}>
+                    <FullFeaturedCrudGrid tableId={list.id}/>
                 </TabPanel>
             ))}
         </Box>
@@ -114,28 +105,29 @@ export default function ArchivePage() {
                     aria-label="Vertical tabs example"
                     sx={{ borderRight: 1, borderColor: 'divider',maxWidth: '200px'  }}
                 >
-                    {archive.map((list, index)=>(
+                    {lists.map((list, index)=>(
                         list.tasks.some((task)=>(task.status==="Pending" || task.status==='' || !task.status)) ?
-                        <StyledTab label={list.text} {...a11yProps(index)} /> :
-                            <Tab label={list.text} {...a11yProps(index)} />
+                        <StyledTab key={index} label={list.text} {...a11yProps(index)} /> :
+                            <Tab key={index} label={list.text} {...a11yProps(index)} />
                         )
                     )}
                     
+                    <AddNewItem
+                        toggleButtonText="+ Add another project"
+                        onAdd={(text) => dispatch(addList(text))}
+                        list
+                    />
                 </Tabs>
                 <Box
                     sx={{ flexGrow: 1, bgcolor: 'background.paper'}}
                 >
-                {archive.map((list, index)=>(
-                    <TabPanel value={value} index={index}>
-                        <TableComponent tableId={list.id}/>
+                {lists.map((list, index)=>(
+                    <TabPanel key={index} value={value} index={index}>
+                        <FullFeaturedCrudGrid tableId={list.id}/>
                     </TabPanel>
                 ))}
             </Box>
             </Box>}
         </Box>
-
-                </Grid>
-            </Grid>
-        
     );
 }

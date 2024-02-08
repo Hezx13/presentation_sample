@@ -1,10 +1,10 @@
 import { Alert, Divider, Grid } from "@mui/material";
 import React from "react";
 import { Navigate } from "react-router-dom";
-import NavBar from "./components/navBar";
-import { getUsers } from "./api/user-api";
+import NavBar from "../components/navBar";
+import { getUsers } from "../api/user-api";
 import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid";
-import UserManagementTable from "./components/UserManagementTable";
+import UserManagementTable from "../components/UserManagementTable";
 
 
 

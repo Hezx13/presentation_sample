@@ -1,18 +1,18 @@
-import {useAppState } from "./state/AppStateContext";
+import {useAppState } from "../state/AppStateContext";
 import React, {useState, useEffect, useMemo} from 'react'
 import {Grid, CircularProgress} from '@mui/material'
-import {onUpload} from "./api";
-import CardComponent from "./components/cardComponent";
-import NavBar from "./components/navBar";
-import TableListsComponent from "./components/tableListsComponent";
+import {onUpload} from "../api";
+import CardComponent from "../components/cardComponent";
+import NavBar from "../components/navBar";
+import TableListsComponent from "../components/tableListsComponent";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Navigate } from "react-router-dom";
-import DebitDialog from "./components/DebitDialog";
-import { addBalance, currentBalance, generateCashOrder, loadBalance } from "./api/balance-api";
+import DebitDialog from "../components/DebitDialog";
+import { addBalance, currentBalance, generateCashOrder, loadBalance } from "../api/balance-api";
 import AddCardIcon from '@mui/icons-material/AddCard';
 import dayjs from "dayjs";
-import BalanceHistoryDialog from "./components/BalanceHistoryDialog";
+import BalanceHistoryDialog from "../components/BalanceHistoryDialog";
 
 const BalanceCardContent = ({balance, action, historyAction}) => {
     return (
@@ -165,6 +165,7 @@ export const DashboardPage = () => {
                         </Grid>
                         <Grid item xl={2}>
                             <CardComponent textColor="orange" text="Materials in work" amount={notDoneTasksCount}/>
+                            <CardComponent textColor="orange" text="Saved materials" amount={250}/>
                         </Grid>
                         
                     </Grid>
