@@ -20,6 +20,9 @@ import { AddNewItem } from "../AddNewItem";
 import {addTask, editTask, moveFromArchive, removeTask} from "../../state/actions";
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import { getCurrentDateAndTime } from "../../utils/timeUtils";
+import { AddItemButton } from "../../styles/styles";
+import { useRef } from "react";
+import { onUploadSingle } from "../../api";
 
 
 interface EditToolbarProps {
@@ -33,7 +36,8 @@ interface EditToolbarProps {
   
   function EditToolbar(props: EditToolbarProps) {
     const {dispatch,tableId,userData } = props;
-  
+    const fileInput = useRef<HTMLInputElement>(null);
+
     function createMailToLink(email: string, subject: string, body:string) {
       console.log(email, subject ,body);
       return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -52,7 +56,17 @@ interface EditToolbarProps {
     const link = createMailToLink(email,subject,message)
     window.location.href = link;
     }
+
+    const handleUploadClick = () => {
+      fileInput.current!.click();
+    };
+
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      file && onUploadSingle(file, tableId)
+  };
     
+
     return (
       <GridToolbarContainer>
         <AddNewItem
@@ -63,6 +77,15 @@ interface EditToolbarProps {
                     dispatch(addTask(text, tableId, article || '',price || '', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getCurrentDateAndTime(), userData?.username || 'Anonymus', "Pending", ""))
                 }
             }
+        />
+        <AddItemButton onClick={handleUploadClick} dark excel>
+            Excel import
+        </AddItemButton>
+        <input
+            type="file"
+            ref={fileInput}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
         />
         <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
           Send selected

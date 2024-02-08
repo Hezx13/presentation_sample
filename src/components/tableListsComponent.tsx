@@ -9,10 +9,10 @@ import {
     Collapse,
     Box,
 } from "@mui/material";
-import {StyledTableContainer, SyledListButton, StyledTableCell} from "../styles";
+import {StyledTableContainer, SyledListButton, StyledTableCell} from "../styles/styles";
 import { ExpandMore, ExpandLess } from "@mui/icons-material";
 import { useNavigate } from 'react-router-dom';
-import {CardPriceText} from "../textStyles";
+import {CardPriceText} from "../styles/textStyles";
 import DownloadIcon from '@mui/icons-material/Download';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
 import {downloadExcel} from '../api'

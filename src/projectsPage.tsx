@@ -8,7 +8,7 @@ import TableComponent from "./components/tableComponent";
 import NavBar from "./components/navBar";
 import {addList} from "./state/actions";
 import {AddNewItem} from "./components/AddNewItem";
-import {StyledTab} from "./styles";
+import {StyledTab} from "./styles/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import FullFeaturedCrudGrid from './components/DataGridComponent';
 

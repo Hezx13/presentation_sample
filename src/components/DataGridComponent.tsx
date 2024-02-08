@@ -10,7 +10,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Close';
 import HourglassBottomOutlinedIcon from '@mui/icons-material/HourglassBottomOutlined';
 import {findItemIndexById} from "../utils/arrayUtils";
-import { Status, AddItemButton } from '../styles';
+import { Status, AddItemButton } from '../styles/styles';
 import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
 import { getCurrentDateAndTime } from "../utils/timeUtils";
 import {AddNewItem} from "./AddNewItem";

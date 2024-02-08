@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { approveUser, deleteUser, demoteUser, disapproveUser, getUsers, promoteUser, resetUserPassword } from "../api/user-api";
-import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, CircularProgress } from "@mui/material";
-import { StyledTableContainer } from "../styles";
+import { approveUser, deleteUser, demoteUser, disapproveUser, getUserData, getUsers, promoteUser, resetUserPassword } from "../api/user-api";
+import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, CircularProgress, Badge, Chip } from "@mui/material";
+import { StyledChip, StyledTableContainer } from "../styles/styles";
+import { act } from "@testing-library/react";
 
 
 type User = {
@@ -19,18 +20,31 @@ const fetchUsers = async () => {
     return users
 }
 
-const UserManagementTable = () => {
+const getActiveUser = async () => {
+  const userData = await getUserData();
+  return userData
+}
+
+const UserManagementTable = ({onAlert}) => {
 
     const [users, setUsers] = useState<User[]>([]);
+    const [activeUser, setActiveUser] = useState<User | null >(null);
     const [selectedRow, setSelectedRow] = useState<number | null>(null);
+    const [resetUser, setResetUser] = useState<string | null>(null);
+
     useEffect(()=>{
         fetchUsers().then(
             (data)=>setUsers(data)
         )
+          getUserData().then(
+            (data)=>setActiveUser(data)
+          );
     },[])
-    console.log(selectedRow)
-
     const handleApproveUser = async (username: string) => {
+        if (username === activeUser?.username){
+          onAlert("selfEdit")
+          return;
+        }
         const res = await approveUser(username);
         if (res === 200){
             fetchUsers().then(
@@ -39,6 +53,10 @@ const UserManagementTable = () => {
         }
     }
     const handleDisapproveUser = async (username: string) => {
+      if (username === activeUser?.username){
+        onAlert("selfEdit")
+        return;
+      }
         const res = await disapproveUser(username);
         if (res === 200){
             fetchUsers().then(
@@ -48,6 +66,10 @@ const UserManagementTable = () => {
     }
 
     const handleDeleteUser = async (username: string) => {
+      if (username === activeUser?.username){
+        onAlert("selfEdit")
+        return;
+      }
       const res = await deleteUser(username);
       if (res === 200){
         fetchUsers().then(
@@ -60,6 +82,10 @@ const UserManagementTable = () => {
     };
 
     const handleDemoteUser = async (username: string) =>{
+      if (username === activeUser?.username){
+        onAlert("selfEdit")
+        return;
+      }
       const res = await demoteUser(username);
       if (res === 200){
           fetchUsers().then(
@@ -68,6 +94,10 @@ const UserManagementTable = () => {
       }
     }
     const handlePromoteUser = async (username: string) =>{
+      if (username === activeUser?.username){
+        onAlert("selfEdit")
+        return;
+      }
       const res = await promoteUser(username);
       if (res === 200){
           fetchUsers().then(
@@ -76,11 +106,18 @@ const UserManagementTable = () => {
       }
     }
     const handleResetUserPassword = async (username: string) =>{
+      if (username === activeUser?.username){
+        onAlert("selfEdit")
+        return;
+      }
       const res = await resetUserPassword(username);
       if (res === 200){
           fetchUsers().then(
-              (data)=>setUsers(data)
+              (data)=>{
+                setUsers(data)
+            }
           )
+          setResetUser(username)
       }
     }
 
@@ -107,11 +144,15 @@ const UserManagementTable = () => {
                 '&:last-child td, &:last-child th': { border: 0 },
                 boxShadow: selectedRow === index ? 'inset -5px 0px 0px 0px orange, inset 5px 0px 0px 0px orange' : '',
                 cursor: 'pointer',
+                position: 'relative', 
                 '&:hover': { background: '#303030' }
               }}
             >
               <TableCell component="th" scope="row">
-                {row.username}
+                {row.username} &nbsp;
+                {
+                  resetUser === row.username ? <StyledChip label="Reset!" /> : null
+                }
               </TableCell>
               <TableCell align="right">{row.email}</TableCell>
               <TableCell align="right">{row.department}</TableCell>

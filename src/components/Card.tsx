@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from "react"
-import { CardContainer, DeleteTaskButton, EditTaskButton } from "../styles"
-import {CardMainText, CardPriceText, CardQuantityText} from "../textStyles";
+import { CardContainer, DeleteTaskButton, EditTaskButton } from "../styles/styles"
+import {CardMainText, CardPriceText, CardQuantityText} from "../styles/textStyles";
 import { useDrop } from "react-dnd"
 import { useAppState } from "../state/AppStateContext"
 import { removeTask, editTask } from "../state/actions"

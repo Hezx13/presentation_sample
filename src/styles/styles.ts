@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import {TableCell, TableContainer, TableRow, Tab, Select, Button} from "@mui/material";
+import {TableCell, TableContainer, TableRow, Tab, Select, Button, Chip} from "@mui/material";
 import {NavLink, NavLinkProps} from "react-router-dom";
 
 export const AppContainer = styled.div`
@@ -122,6 +122,7 @@ export const AddItemButton = styled.button<AddItemButtonProps>`
   transition: background 85ms ease-in;
   width: 200px;
   &:hover {
+    color: ${(props) => (props.excel ? "#47c35180" : "#FFA500")};
     background-color: #0000009d;
   }
 `
@@ -290,3 +291,8 @@ padding: 0;
   cursor: pointer;
 }
 ` 
+
+export const StyledChip = styled(Chip)`
+position: absolute;
+top: 20%;
+`

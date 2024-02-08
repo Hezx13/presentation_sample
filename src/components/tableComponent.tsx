@@ -7,8 +7,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import {addTask, editTask, moveFromArchive, removeTask} from "../state/actions";
 import { Task } from '../state/appStateReducer'
-import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, AddItemButton} from "../styles";
-import {CardQuantityText, CardPriceText} from "../textStyles";
+import {StyledTableContainer, StyledTableRow, StyledTableCell, Status, AddItemButton} from "../styles/styles";
+import {CardQuantityText, CardPriceText} from "../styles/textStyles";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs from "dayjs";
 import {AddNewItem} from "./AddNewItem";

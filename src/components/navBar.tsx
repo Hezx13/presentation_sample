@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { StyledNavBar, StyledNavBarItem, StyledLink } from "../styles";
+import { StyledNavBar, StyledNavBarItem, StyledLink } from "../styles/styles";
 import { Menu, MenuItem, IconButton, Drawer } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import PersonIcon from "@mui/icons-material/Person";
