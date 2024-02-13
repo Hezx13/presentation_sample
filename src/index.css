@@ -17,6 +17,26 @@ html {
   background-color: rgb(16, 16, 16) !important;
 }
 
+::-webkit-scrollbar {
+  background-color: #101010; /* Background of the scrollbar */
+  width: 5px;
+}
+::-webkit-scrollbar:hover {
+  width: 10px;
+}
+
+/* Optional: Styles for the scrollbar thumb (the draggable element) */
+::-webkit-scrollbar-thumb {
+  background-color: #5a5a5a; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Optional: roundness of the scrollbar thumb */
+}
+
+/* Optional: Styles for the scrollbar thumb when it's hovered */
+::-webkit-scrollbar-thumb:hover {
+  width: 10px;
+  background-color: #333333; /* Color of the scrollbar thumb on hover */
+}
+
 *,
 *:before,
 *:after {

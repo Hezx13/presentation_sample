@@ -7,16 +7,15 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { StyledGenerateCashOrderButton } from '../styles/styles';
 import { generateCashOrder } from '../api/balance-api';
+import { StyledComponent } from 'styled-components';
 type CardComponentProps = {
     text: string, 
     amount: JSX.Element | number | string, 
     textColor?: string,
-    button?: boolean,
+    button?: StyledComponent<"button", any, {}, never> | Element,
 }
 
-const handleDownloadCashOrder = async () => {
-    const res = await generateCashOrder();
-  };
+
 
 const bull = (
     <Box
@@ -37,12 +36,7 @@ export default function CardComponent({text, amount, textColor, button}: CardCom
             <CardContent sx={{position: 'relative'}}>
                 <Typography sx={{ fontSize: 18 }} color="#ffffff" gutterBottom>
                     {text}
-                    {button ? 
-                    <StyledGenerateCashOrderButton
-                        onClick={handleDownloadCashOrder}
-                    >
-                        Generate cash order
-                    </StyledGenerateCashOrderButton> : null}
+                    {button}
                 </Typography>
                 <Typography variant="h5" component="div" color={textColor || 'orange'} >
                     {amount}

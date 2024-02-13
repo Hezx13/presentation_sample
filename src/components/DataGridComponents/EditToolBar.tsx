@@ -14,6 +14,7 @@ import {
     useGridApiContext,
     GridApi,
     GridRenderEditCellParams,
+    GridValidRowModel,
   } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { AddNewItem } from "../AddNewItem";
@@ -21,8 +22,12 @@ import {addTask, editTask, moveFromArchive, removeTask} from "../../state/action
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import { getCurrentDateAndTime } from "../../utils/timeUtils";
 import { AddItemButton } from "../../styles/styles";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { onUploadSingle } from "../../api";
+import { SaveAltOutlined } from "@mui/icons-material";
+import DoneIcon from '@mui/icons-material/Done';
+import { saveMaterial } from "../../api/materials-api";
+import { Alert } from "@mui/material";
 
 
 interface EditToolbarProps {
@@ -36,6 +41,8 @@ interface EditToolbarProps {
   
   function EditToolbar(props: EditToolbarProps) {
     const {dispatch,tableId,userData } = props;
+    const [isSaving, setIsSaving] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
 
     function createMailToLink(email: string, subject: string, body:string) {
@@ -65,6 +72,19 @@ interface EditToolbarProps {
       const file = e.target.files[0];
       file && onUploadSingle(file, tableId)
   };
+
+  const handleSaveSelected = async () => {
+    setIsSaving(true)
+    const selectedMaterials: Map<GridRowId, GridValidRowModel> = apiRef.current.getSelectedRows();
+    const arrayToSave: string[] = [];
+    let res: number | null = null;
+    selectedMaterials.forEach((material, key) =>{
+      arrayToSave.push(key.toString());
+    })
+    if (arrayToSave.length) res = await saveMaterial(arrayToSave, tableId);
+    if (res === 200) setIsSaved(true);
+    setIsSaving(false)
+  };
     
 
     return (
@@ -90,6 +110,12 @@ interface EditToolbarProps {
         <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
           Send selected
         </Button>
+        <Button disabled={isSaving} color="primary" startIcon={<SaveAltOutlined/>} onClick={handleSaveSelected}>
+          Save selected
+        </Button>
+        {isSaved && <Alert sx={{padding: '0px 15px'}} variant="outlined" severity="success">
+            Success
+        </Alert> }
       </GridToolbarContainer>
     );
   }

@@ -71,6 +71,11 @@ export const load = async () => {
     }
 }
 
+export const getProjectsList = async () => {
+  const res = await http.get(`/projectsList`);
+  return res.data;
+}
+
 export const archiveList = async (listId: string) => {
     http.post('/archive', {listId})
         .then((response) => console.log(response.data))

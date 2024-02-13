@@ -212,6 +212,14 @@ export default function FullFeaturedCrudGrid({tableId}) {
       type: 'string',
     },
     {
+      field: 'orderedBy',
+      headerName: 'Ordered by',
+      minWidth: 80,
+      flex: 2,
+      editable: true,
+      type: 'string',
+    },
+    {
       field: 'status',
       headerName: 'Status',
       minWidth: 80,
@@ -352,7 +360,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
         }}
         checkboxSelection
         slotProps={{
-          toolbar: { dispatch,tableId, userData, setRowModesModel },
+          toolbar: { dispatch, tableId, userData, setRowModesModel, },
         }}
       />
         ) : (

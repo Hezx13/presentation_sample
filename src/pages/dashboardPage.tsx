@@ -7,12 +7,14 @@ import NavBar from "../components/navBar";
 import TableListsComponent from "../components/tableListsComponent";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import DebitDialog from "../components/DebitDialog";
 import { addBalance, currentBalance, generateCashOrder, loadBalance } from "../api/balance-api";
 import AddCardIcon from '@mui/icons-material/AddCard';
 import dayjs from "dayjs";
 import BalanceHistoryDialog from "../components/BalanceHistoryDialog";
+import { StyledGenerateCashOrderButton } from "../styles/styles";
+import { getMaterialCount, getSavedMaterials } from "../api/materials-api";
 
 const BalanceCardContent = ({balance, action, historyAction}) => {
     return (
@@ -41,15 +43,18 @@ export const DashboardPage = () => {
     const [isLoggedIn] = useState(!!localStorage.getItem('token'));
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
+    const [materialsCount, setMaterialsCount] = useState(0);
     const [inputDate, setInputDate] = useState("");
     const [inputCheck, setInputCheck] = useState("");
     const [historyDialogOpen, setHistoryDialogOpen] = useState(false);    
+    const navigate = useNavigate();
 
     useEffect(() => {
         setRoughTotalPrice(totals.totalRough);
         setTotalPrice(totals.total);
         fetchBalance();
         fetchCurrentBalance();
+        fetchSavedMaterialsCount();
     }, [lists,archive]);
 
     
@@ -70,8 +75,12 @@ export const DashboardPage = () => {
     setCurrent(res);   
     }
 
+    const fetchSavedMaterialsCount = async () => {  
+        const res = await getMaterialCount();
+        setMaterialsCount(res);
+    }
+
     const calculateTotal = () => {
-        console.log("Calculating total");
         let _totalPrice = 0;
         let _totalPriceRough = 0;
 
@@ -115,6 +124,14 @@ export const DashboardPage = () => {
         setOpen(false);
       };
 
+      const handleDownloadCashOrder = async () => {
+        const res = await generateCashOrder();
+      };
+
+      const handleViewSavedMaterials = () =>{
+        navigate('/saved')
+      }
+
       const totals = useMemo(()=>calculateTotal(), [lists])
 
     return (
@@ -147,7 +164,14 @@ export const DashboardPage = () => {
                         <Grid item xl={2}>
                             <CardComponent textColor="green" text="Waiting for payment" 
                             amount={totalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}
-                            button
+                            //@ts-ignore
+                            button={
+                                <StyledGenerateCashOrderButton
+                                    onClick={handleDownloadCashOrder}
+                                >
+                                    Generate cash order
+                                </StyledGenerateCashOrderButton>
+                            }
                             />
                             <CardComponent textColor="red" text="Cash order(Rough)" 
                             amount={roughTotalPrice.toLocaleString('en-US').replace(/,/g, ' ') + " AED"}/>
@@ -165,7 +189,16 @@ export const DashboardPage = () => {
                         </Grid>
                         <Grid item xl={2}>
                             <CardComponent textColor="orange" text="Materials in work" amount={notDoneTasksCount}/>
-                            <CardComponent textColor="orange" text="Saved materials" amount={250}/>
+                            <CardComponent textColor="orange" text="Saved materials" amount={materialsCount} 
+                            //@ts-ignore
+                            button={
+                                <StyledGenerateCashOrderButton
+                                    onClick={handleViewSavedMaterials}
+                                >
+                                    View materials
+                                </StyledGenerateCashOrderButton>
+                            }
+                            />
                         </Grid>
                         
                     </Grid>
