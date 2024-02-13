@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { StyledNavBar, StyledNavBarItem, StyledLink } from "../styles";
+import { StyledNavBar, StyledNavBarItem, StyledLink } from "../styles/styles";
 import { Menu, MenuItem, IconButton, Drawer } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import PersonIcon from "@mui/icons-material/Person";
@@ -12,6 +12,16 @@ import logo from "../assets/logo192.png";
 function NavbarItems(props) {
   return (
     <>
+    <StyledNavBarItem>
+        <StyledLink
+          to="/management"
+          onClick={props.validateLogin}
+          color={!props.isLoggedIn ? "grey" : "#ffffff"}
+          isActive={props.location.pathname === "/management"}
+        >
+          Management
+        </StyledLink>
+      </StyledNavBarItem>
       <StyledNavBarItem>
         <StyledLink
           to="/dashboard"
@@ -173,7 +183,11 @@ export const NavBar = () => {
       <span>
         <StyledNavBarItem>
           <IconButton aria-label="account" onClick={openMenu}>
-            {isLoggedIn ? <PersonIcon /> : <PermIdentityIcon />}
+            {isLoggedIn ? 
+            <>
+            <PersonIcon />
+            </>
+             : <PermIdentityIcon />}
           </IconButton>
           <Menu
             anchorEl={menuAnchor}

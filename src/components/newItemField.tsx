@@ -4,7 +4,7 @@ import {
     NewItemFormContainer,
     NewItemButton,
     NewItemInput
-} from "../styles"
+} from "../styles/styles"
 
 type NewItemFormProps = {
     onAdd(text: string): void

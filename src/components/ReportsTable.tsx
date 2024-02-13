@@ -14,7 +14,7 @@ import { Table,
         InputLabel,
         MenuItem
        } from '@mui/material';
-import {StyledTableCell, SyledListButton, StyledSelectDark, StyledTableContainer} from '../styles';
+import {StyledTableCell, SyledListButton, StyledSelectDark, StyledTableContainer} from '../styles/styles';
 import {downloadReport} from '../api'
 import DownloadIcon from '@mui/icons-material/Download';
 

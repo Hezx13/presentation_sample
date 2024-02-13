@@ -26,18 +26,16 @@ export const ReportProvider: React.FC = ({ children }) => {
   const [reportsUpdated, setReportsUpdated] = useState(false);
 
   useEffect(() => {
-    if(!!localStorage.getItem('token'))
+    if(!!localStorage.getItem('token') && localStorage.getItem('role') === 'Admin')
     fetchReports();
   }, [reportsUpdated]);
 
   const fetchReports = async () => {
     const fetchedReports = await loadReports();
     setReports(fetchedReports);
-    // calculateTotalReports(fetchedReports); // Assuming you have this function defined
   };
 
   const updateReports = () => {
-    console.log('updateReports called');
     setReportsUpdated(!reportsUpdated);
   };
 

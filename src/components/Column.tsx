@@ -1,6 +1,6 @@
 import { useRef, useState } from "react"
 import { throttle } from "throttle-debounce-ts"
-import { ColumnContainer, ColumnTitle } from "../styles"
+import { ColumnContainer, ColumnTitle } from "../styles/styles"
 import { useAppState } from "../state/AppStateContext"
 import { Card } from "./Card"
 import { AddNewItem } from "./AddNewItem"

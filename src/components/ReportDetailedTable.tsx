@@ -31,8 +31,8 @@ import {
   StyledTableCell,
   Status,
   AddItemButton,
-} from "../styles";
-import { CardQuantityText, CardPriceText } from "../textStyles";
+} from "../styles/styles";
+import { CardQuantityText, CardPriceText } from "../styles/textStyles";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { AddNewItem } from "./AddNewItem";

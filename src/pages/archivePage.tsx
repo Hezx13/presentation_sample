@@ -3,12 +3,12 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import {Typography, Grid} from '@mui/material';
 import Box from '@mui/material/Box';
-import {useAppState} from "./state/AppStateContext";
-import TableComponent from "./components/tableComponent";
-import NavBar from "./components/navBar";
-import {addList} from "./state/actions";
-import {AddNewItem} from "./components/AddNewItem";
-import {StyledTab} from "./styles";
+import {useAppState} from "../state/AppStateContext";
+import TableComponent from "../components/tableComponent";
+import NavBar from "../components/navBar";
+import {addList} from "../state/actions";
+import {AddNewItem} from "../components/AddNewItem";
+import {StyledTab} from "../styles/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { Navigate } from 'react-router-dom';
 

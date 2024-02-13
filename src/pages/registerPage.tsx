@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import {register} from './api/user-api'
-import NavBar from './components/navBar';
+import {register} from '../api/user-api'
+import NavBar from '../components/navBar';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';

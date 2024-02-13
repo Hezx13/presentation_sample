@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { NewItemForm } from "./NewItemForm"
 import { NewItemField } from "./newItemField"
-import { AddItemButton } from "../styles"
+import { AddItemButton } from "../styles/styles"
 import AddTaskDialog from './addTaskDialog'
 import Button from '@mui/material/Button';
 

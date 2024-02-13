@@ -68,6 +68,7 @@ export function withInitialState<TProps>(
       };
   
       eventEmitter.on('login', handleLogin);
+      eventEmitter.on('savedMaterialsAdded', handleLogin);
   
       if (localStorage.getItem('token')) {
         fetchInitialState();
@@ -77,6 +78,8 @@ export function withInitialState<TProps>(
   
       return () => {
         eventEmitter.off('login', handleLogin);
+        eventEmitter.off('savedMaterialsAdded', handleLogin);
+
       };
     }, []);
     

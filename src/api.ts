@@ -71,21 +71,24 @@ export const load = async () => {
     }
 }
 
-export const deleteTaskFromList  = async (listId: string, taskId: string) => {
-  try {
-    const response = await http.delete(`http://localhost:3000/list/${listId}/task/${taskId}`);
-    console.log("success");
-    return response.data;
-  } catch (error) {
-    console.error('Error while deleting the task:', error);
-    throw error;
-  }
+export const getProjectsList = async () => {
+  const res = await http.get(`/projectsList`);
+  return res.data;
 }
 
 export const archiveList = async (listId: string) => {
     http.post('/archive', {listId})
         .then((response) => console.log(response.data))
         .catch((error) => console.error(error))
+}
+
+export const deleteAll = async (toDelete: string) => {
+  try {
+    const res = await http.delete(`/deleteAll?toDelete=${toDelete}`)
+    return res.status;
+  } catch (err) {
+    throw new Error("Error while deleting collection");
+  }
 }
 
 export const downloadExcel = () => {

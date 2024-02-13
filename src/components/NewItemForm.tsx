@@ -4,7 +4,7 @@ import {
   NewItemFormContainer,
   NewItemButton,
   NewItemInput
-} from "../styles"
+} from "../styles/styles"
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 type NewItemFormProps = {

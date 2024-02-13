@@ -14,12 +14,20 @@ import {
     useGridApiContext,
     GridApi,
     GridRenderEditCellParams,
+    GridValidRowModel,
   } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
 import { AddNewItem } from "../AddNewItem";
 import {addTask, editTask, moveFromArchive, removeTask} from "../../state/actions";
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import { getCurrentDateAndTime } from "../../utils/timeUtils";
+import { AddItemButton } from "../../styles/styles";
+import { useRef, useState } from "react";
+import { onUploadSingle } from "../../api";
+import { SaveAltOutlined } from "@mui/icons-material";
+import DoneIcon from '@mui/icons-material/Done';
+import { saveMaterial } from "../../api/materials-api";
+import { Alert } from "@mui/material";
 
 
 interface EditToolbarProps {
@@ -33,7 +41,10 @@ interface EditToolbarProps {
   
   function EditToolbar(props: EditToolbarProps) {
     const {dispatch,tableId,userData } = props;
-  
+    const [isSaving, setIsSaving] = useState(false);
+    const [isSaved, setIsSaved] = useState(false);
+    const fileInput = useRef<HTMLInputElement>(null);
+
     function createMailToLink(email: string, subject: string, body:string) {
       console.log(email, subject ,body);
       return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -52,7 +63,30 @@ interface EditToolbarProps {
     const link = createMailToLink(email,subject,message)
     window.location.href = link;
     }
+
+    const handleUploadClick = () => {
+      fileInput.current!.click();
+    };
+
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      file && onUploadSingle(file, tableId)
+  };
+
+  const handleSaveSelected = async () => {
+    setIsSaving(true)
+    const selectedMaterials: Map<GridRowId, GridValidRowModel> = apiRef.current.getSelectedRows();
+    const arrayToSave: string[] = [];
+    let res: number | null = null;
+    selectedMaterials.forEach((material, key) =>{
+      arrayToSave.push(key.toString());
+    })
+    if (arrayToSave.length) res = await saveMaterial(arrayToSave, tableId);
+    if (res === 200) setIsSaved(true);
+    setIsSaving(false)
+  };
     
+
     return (
       <GridToolbarContainer>
         <AddNewItem
@@ -64,9 +98,24 @@ interface EditToolbarProps {
                 }
             }
         />
+        <AddItemButton onClick={handleUploadClick} dark excel>
+            Excel import
+        </AddItemButton>
+        <input
+            type="file"
+            ref={fileInput}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+        />
         <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
           Send selected
         </Button>
+        <Button disabled={isSaving} color="primary" startIcon={<SaveAltOutlined/>} onClick={handleSaveSelected}>
+          Save selected
+        </Button>
+        {isSaved && <Alert sx={{padding: '0px 15px'}} variant="outlined" severity="success">
+            Success
+        </Alert> }
       </GridToolbarContainer>
     );
   }

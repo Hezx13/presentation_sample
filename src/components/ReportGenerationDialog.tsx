@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyledGenerateButton, StyledSelect } from '../styles';
+import { StyledGenerateButton, StyledSelect } from '../styles/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { FormControl, InputLabel, Button, MenuItem, Card, CardContent, Typography, Box } from '@mui/material';
 import { generateReport } from '../api';
