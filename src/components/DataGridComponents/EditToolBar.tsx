@@ -108,7 +108,7 @@ interface EditToolbarProps {
             onChange={handleFileChange}
         />
         <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
-          Send selected
+          Email selected
         </Button>
         <Button disabled={isSaving} color="primary" startIcon={<SaveAltOutlined/>} onClick={handleSaveSelected}>
           Save selected

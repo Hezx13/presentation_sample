@@ -41,6 +41,7 @@ export function withInitialState<TProps>(
     const [initialState, setInitialState] = useState<AppState>({
       lists: [],
       archive: [],
+      role: 'User',
     });
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<Error | undefined>();

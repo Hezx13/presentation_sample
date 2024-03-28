@@ -29,6 +29,7 @@ export type List = {
 export type AppState = {
   lists: List[]
   archive: List[]
+  role: string
 }
 
 export const appStateReducer = (

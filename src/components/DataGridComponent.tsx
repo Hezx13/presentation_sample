@@ -43,7 +43,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
   const [rows, setRows] = React.useState<Task[]>([]);
   const [isSaving, setIsSaving] = React.useState(false)
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
-  const { lists, archive, dispatch } = useAppState()
+  const { lists, archive,role, dispatch } = useAppState()
   const [userData,setUserData] = useState< {username: string} | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -154,7 +154,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
   }
 
   let columns: GridColDef[] = [
-    { field: 'date', headerName: 'Date ordered', width: 160, editable: false },
+    { field: 'date', headerName: 'Date ordered', width: 160, editable: role === 'Admin' },
     {
       field: 'text',
       headerName: 'Material',
@@ -163,7 +163,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       flex: 4,
       align: 'left',
       headerAlign: 'left',
-      editable: true,
+      editable: role === 'Admin',
     },
     {
       field: 'quantity',
@@ -173,7 +173,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       headerAlign: 'left',
       minWidth: 80,
       flex: 1,
-      editable: true,
+      editable: role === 'Admin',
     },
     {
       field: 'price',
@@ -181,7 +181,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       type: 'string',
       minWidth: 80,
       flex: 1,
-      editable: true,
+      editable: role === 'Admin',
     },
     {
       field: 'amount',
@@ -200,7 +200,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       headerName: 'Unit',
       flex: 1,
       minWidth: 80,
-      editable: true,
+      editable: role === 'Admin',
       type: 'string',
     },
     {
@@ -208,7 +208,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       headerName: 'Invoice / Note',
       minWidth: 80,
       flex: 2,
-      editable: true,
+      editable: role === 'Admin',
       type: 'string',
     },
     {
@@ -216,7 +216,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       headerName: 'Ordered by',
       minWidth: 80,
       flex: 2,
-      editable: true,
+      editable: role === 'Admin',
       type: 'string',
     },
     {
@@ -224,17 +224,18 @@ export default function FullFeaturedCrudGrid({tableId}) {
       headerName: 'Status',
       minWidth: 80,
       flex: 2,
-      editable: true,
+      editable: role === 'Admin',
       renderCell: (params) => {
         const color = params.value === 'Done' ? 'green'
                       : params.value === 'Waiting for approval' ? 'blue'
                       : params.value === 'In process' ? 'orange'
                       : params.value === 'Waiting for payment' ? 'red'
                       : 'grey';
-        return <>
+        return   <div style={{ display: 'flex', alignItems: 'center' }}>
+
         <Status color={color}></Status>
         <div>{params.value}</div>
-        </>
+        </div>
       },
       renderEditCell: (params: GridRenderEditCellParams) => (
         <Select
@@ -257,7 +258,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       field: 'payment',
       headerName: 'Payment',
       width: 100,
-      editable: true,
+      editable: role === 'Admin',
       renderEditCell: (params: GridRenderEditCellParams) => (
         <Select
           value={params.value || ''}

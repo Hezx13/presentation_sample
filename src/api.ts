@@ -52,7 +52,7 @@ export const save = async (payload: AppState, old: AppState) => {
       });
   
       return response.data;
-    } catch (error: any) { // Explicitly type error as 'any' to access 'message'
+    } catch (error: any) {
       throw new Error(`Error while saving the state: ${error.message}`);
     }
   };

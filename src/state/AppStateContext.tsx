@@ -13,11 +13,12 @@ import { save } from "../api"
 import { DragItem } from "../components/DragItem"
 
 type AppStateContextProps = {
-  lists: List[]
+    lists: List[]
     archive: List[]
-  getTasksByListId(id: string): Task[]
+    role: string
+    getTasksByListId(id: string): Task[]
     getTasksByArchiveId(id: string) : Task[]
-  dispatch: React.Dispatch<Action>
+    dispatch: React.Dispatch<Action>
 }
 
 const AppStateContext = createContext<AppStateContextProps>(
@@ -32,7 +33,7 @@ type AppStateProviderProps = {
 export const AppStateProvider = withInitialState<AppStateProviderProps>(
   ({ children, initialState }) => {
     const [state, dispatch] = useImmerReducer(appStateReducer, initialState);
-    
+    console.log(state)
     // useRef to keep track of the previous state
     const prevStateRef = useRef(initialState);
 
@@ -47,7 +48,7 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     }, [state, debouncedSave]);
     
 
-    const { lists, archive } = state;
+    const { lists, archive, role } = state;
     const getTasksByListId = (id: string) => {
       return lists.find((list) => list.id === id)?.tasks || [];
     };
@@ -57,7 +58,7 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
 
     return (
       <AppStateContext.Provider
-        value={{ lists, archive, getTasksByListId, getTasksByArchiveId, dispatch }}
+        value={{ lists, archive, role, getTasksByListId, getTasksByArchiveId, dispatch }}
       >
         {children}
       </AppStateContext.Provider>

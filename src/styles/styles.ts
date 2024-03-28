@@ -136,12 +136,19 @@ export const NewItemFormContainer = styled.div`
 `
 
 export const NewItemInput = styled.input`
+  background: #00000060;
   border-radius: 3px;
+  color: #fff;
   border: none;
-  box-shadow: #091e4240 0px 1px 0px 0px;
+  box-shadow: #000 0px 1px 0px 0px;
   margin-bottom: 0.5rem;
   padding: 0.5rem 1rem;
   width: clamp(180px,100%, 600px);
+  &:focus {
+    outline: none;
+    border: none;
+    backdrop-filter: brightness(1.15)
+  }
 `
 
 export const NewItemButton = styled.button`
