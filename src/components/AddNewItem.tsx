@@ -54,6 +54,7 @@ export const AddNewItem = (props: AddNewItemProps) => {
       open={showForm}
     keepMounted
     onClose={handleClose}
+    sx={{backdropFilter: 'blur(5px)'}}
     aria-describedby="alert-dialog-slide-description"
     >
     <DialogTitle>Order Details</DialogTitle>

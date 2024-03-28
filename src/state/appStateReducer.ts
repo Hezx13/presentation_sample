@@ -162,7 +162,11 @@ export const appStateReducer = (
           }
           break;
         
-      } 
+      }
+      case "ADD_SAVED_TASK_TO_PROJECT": {
+        const {projectId, materialId} = action.payload
+        let targetListIndex = findItemIndexById(draft.lists, projectId);
+      }
     default: {
       break
     }

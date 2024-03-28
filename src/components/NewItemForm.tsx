@@ -79,14 +79,8 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
             onKeyPress={handleAddText}
         />
         <NewItemInput
-            value={price}
-            placeholder="Price"
-            onChange={(e) => setPrice(e.target.value)}
-            onKeyPress={handleAddText}
-        />
-        <NewItemInput
             value={comment}
-            placeholder="Comment"
+            placeholder="Comment/Link"
             onChange={(e) => setComment(e.target.value)}
             onKeyPress={handleAddText}
         />
@@ -96,14 +90,9 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
           value={deliveryDate}
           onChange={(newValue) => setDeliveryDate(newValue)}
       />
-
-      <NewItemInput
-            value={orderedBy}
-            placeholder="Ordered by"
-            onChange={(e) => setOrderedBy(e.target.value)}
-            onKeyPress={handleAddText}
-        />
-      <NewItemButton onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy); resetValues(); }}>
+      <NewItemButton 
+        disabled={!text.length}
+        onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy); resetValues(); }}>
         Create
       </NewItemButton>
     </NewItemFormContainer>

@@ -21,6 +21,13 @@ export type Action =
   listId: string
   }
   }
+| {
+  type: "ADD_SAVED_TASK_TO_PROJECT",
+  payload: {
+    projectId: string
+    materialId: string
+  }
+  }
   | {
       type: "ADD_TASK"
       payload: {

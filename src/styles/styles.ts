@@ -152,7 +152,19 @@ export const NewItemButton = styled.button`
   color: #fff;
   padding: 6px 12px;
   text-align: center;
+  width: 100%;
+  margin: 10px 0;
   
+  &:hover {
+    cursor: pointer;
+  }
+
+   &:disabled {
+    background-color: #cccccc; // Lighter color indicating it's disabled
+    color: #666666; // Dimmed text color
+    cursor: not-allowed; // Change cursor to indicate the button is disabled
+    box-shadow: none; // Optional: remove or modify the box shadow if any
+  }
 `
 
 export const CustomDragLayerContainer = styled.div`
