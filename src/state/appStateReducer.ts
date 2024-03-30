@@ -10,10 +10,10 @@ export type Task = {
   article: string;
   price: string;
   quantity: number;
-  date: string;
+  date: Date;
   unit: string;
   comment: string;
-  deliveryDate: string;
+  deliveryDate: Date;
   orderedBy: string;
   status: string;
   payment: string;

@@ -1,7 +1,6 @@
 import http from "./http";
 
 export const addBalance = async(debit) => {
-    console.log(debit)
   
     const res = await http.post(`/balance/add_balance`, debit, {
     });

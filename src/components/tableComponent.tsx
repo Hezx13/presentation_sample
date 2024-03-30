@@ -192,7 +192,8 @@ const TableComponent = ({tableId}: ColProps) =>{
                                             {editing === task.id ? (
                                                 <TextField value={editedTask.date} onChange={(e) => handleInputChange('date', e.target.value)} />
                                             ) : (
-                                                task.date.split(" ")[0]
+                                                //@ts-ignore
+                                                task.date.split("T")[0]
                                             )}
                                         </StyledTableCell>
                                         <StyledTableCell>

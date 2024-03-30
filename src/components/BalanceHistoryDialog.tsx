@@ -2,19 +2,11 @@ import { FC, useState, memo } from "react";
 import { removeBalance } from "../api/balance-api";
 import { Dialog, DialogContent,DialogActions, Button, IconButton } from "@mui/material";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import dayjs from "dayjs";
 
-const BalanceHistoryDialog = ({open, onClose, debits, update}) =>{
+const BalanceHistoryDialog = ({open, onClose, debits, onRemove}) =>{
     
-    const handleRemoveDebitClick = async (debit) => {
-        try {
-            debits.filter(debitc => debitc !== debit)
-          removeBalance(debit).then((res) => {
-            update()
-          });
-        } catch (error) {
-          console.error("Error in removeDebit:", error);
-        }
-      };
+    
 
     return (
     <>
@@ -35,14 +27,14 @@ const BalanceHistoryDialog = ({open, onClose, debits, update}) =>{
                     {debit.amount} AED
                 </span>
                 <span style={{flex: 1}}>
-                    {debit.date}
+                    {dayjs(debit.date).format('DD-MM-YYYY')}
                 </span>
                 <span style={{width: '100px'}}>
                     {debit.check}
                 </span>
                 <IconButton
                 sx={{marginLeft: 'auto'}}
-                onClick={()=>handleRemoveDebitClick(debit)}>
+                onClick={()=>onRemove(debit)}>
                 <DeleteForeverIcon fontSize="small" htmlColor='Crimson'/>
                 </IconButton>
                 </div>

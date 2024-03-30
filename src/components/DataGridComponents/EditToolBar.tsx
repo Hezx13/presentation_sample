@@ -28,6 +28,7 @@ import { SaveAltOutlined } from "@mui/icons-material";
 import DoneIcon from '@mui/icons-material/Done';
 import { saveMaterial } from "../../api/materials-api";
 import { Alert } from "@mui/material";
+import { useAppState } from "../../state/AppStateContext";
 
 
 interface EditToolbarProps {
@@ -40,6 +41,7 @@ interface EditToolbarProps {
   }
   
   function EditToolbar(props: EditToolbarProps) {
+    const {role} = useAppState();
     const {dispatch,tableId,userData } = props;
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
@@ -94,7 +96,18 @@ interface EditToolbarProps {
             onAdd={
                 (text,article, price, quantity, unit, comment, deliveryDate) => {
                     dispatch(moveFromArchive(tableId))
-                    dispatch(addTask(text, tableId, article || '',price || '', quantity || 1, getCurrentDateAndTime(), unit || 'pcs', comment || "", deliveryDate || getCurrentDateAndTime(), userData?.username || 'Anonymus', "Pending", ""))
+                    dispatch(addTask(
+                      text, 
+                      tableId, 
+                      article || '',
+                      price || '', 
+                      quantity || 1, 
+                      getCurrentDateAndTime(), 
+                      unit || 'pcs', 
+                      comment || "", 
+                      deliveryDate ? new Date() : getCurrentDateAndTime(), 
+                      userData?.username || 'Anonymus', 
+                      "Pending", ""))
                 }
             }
         />
@@ -110,9 +123,12 @@ interface EditToolbarProps {
         <Button color="primary" startIcon={<SendOutlinedIcon/>} onClick={handleSend}>
           Email selected
         </Button>
+        {
+          role === 'Admin' &&
         <Button disabled={isSaving} color="primary" startIcon={<SaveAltOutlined/>} onClick={handleSaveSelected}>
           Save selected
         </Button>
+        }
         {isSaved && <Alert sx={{padding: '0px 15px'}} variant="outlined" severity="success">
             Success
         </Alert> }
