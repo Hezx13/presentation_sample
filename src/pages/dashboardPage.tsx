@@ -1,4 +1,5 @@
 import {useAppState } from "../state/AppStateContext";
+import Cookie from "js-cookie";
 import React, {useState, useEffect, useMemo, memo} from 'react'
 import {Grid, CircularProgress} from '@mui/material'
 import {onUpload} from "../api";
@@ -109,7 +110,7 @@ export const DashboardPage = () => {
 
     const handleSave = async () => {
         if (inputValue) {
-          let data = { amount: Number(inputValue), date: dayjs(inputDate).toDate(), check: inputCheck };
+          let data = { amount: Number(inputValue), date: dayjs(inputDate).toDate(), check: inputCheck, department: Cookie.get('selectedDepartment') };
           try {
             addBalance(data)
             setInputCheck("");

@@ -21,3 +21,8 @@ type User = {
   role?: UserRole;
   isApproved?: boolean;
 }
+
+type Department = {
+  name: string;
+  users?: [User] | null;
+}

@@ -60,7 +60,7 @@ export function withInitialState<TProps>(
         setIsLoading(false);
       };
 
-      const handleLogin = () => {
+      const handleRefetch = () => {
         if (localStorage.getItem('token')) {
         fetchInitialState();
       } else {
@@ -68,8 +68,9 @@ export function withInitialState<TProps>(
       }
       };
   
-      eventEmitter.on('login', handleLogin);
-      eventEmitter.on('savedMaterialsAdded', handleLogin);
+      eventEmitter.on('login', handleRefetch);
+      eventEmitter.on('savedMaterialsAdded', handleRefetch);
+      eventEmitter.on('changedDepartment', handleRefetch);
   
       if (localStorage.getItem('token')) {
         fetchInitialState();
@@ -78,8 +79,9 @@ export function withInitialState<TProps>(
       }
   
       return () => {
-        eventEmitter.off('login', handleLogin);
-        eventEmitter.off('savedMaterialsAdded', handleLogin);
+        eventEmitter.off('login', handleRefetch);
+        eventEmitter.off('savedMaterialsAdded', handleRefetch);
+        eventEmitter.off('changedDepartment', handleRefetch);
 
       };
     }, []);

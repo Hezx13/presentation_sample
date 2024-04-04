@@ -1,3 +1,4 @@
+import Cookie from "js-cookie";
 import http from "./http";
 
 export const addBalance = async(debit) => {
@@ -17,6 +18,7 @@ export const addBalance = async(debit) => {
   export const loadBalance = async () => {
     try {
         const res = await http.get(`/balance/balance`, {
+            params: {department: Cookie.get('selectedDepartment')},
             headers: {
                 Accept: "application/json",
             }
@@ -30,6 +32,9 @@ export const addBalance = async(debit) => {
   export const currentBalance = async () => {
     try {
       const res = await http.get(`/balance/currentBalance`,{
+        params: {
+          department: Cookie.get('selectedDepartment')
+        },
         headers: {
           Accept: "application/json",
       }
@@ -44,6 +49,7 @@ export const addBalance = async(debit) => {
     try {
     const response = await http({
       method: 'GET',
+      params: {department: Cookie.get('selectedDepartment')}, 
       url: `/balance/generateCashOrder`,
       responseType: 'blob',
     });
