@@ -8,7 +8,7 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, {Dayjs} from "dayjs";
 type NewItemFormProps = {
-    onAdd(text: string,article?:string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
+    onAdd(text: string,article?:string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: Date, orderedBy?: string): void
 }
 
 export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
@@ -18,7 +18,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
   const [quantity, setQuantity] = useState<string>("")
     const [unit, setUnit] = useState("")
     const [comment, setComment] = useState("")
-    const [deliveryDate, setDeliveryDate] = useState<Dayjs | null>(dayjs());
+    const [deliveryDate, setDeliveryDate] = useState<Date>(new Date());
     const [orderedBy, setOrderedBy] = useState("")
 
 
@@ -31,7 +31,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
     setQuantity("")
       setUnit("")
       setComment("")
-      setDeliveryDate(dayjs())
+      setDeliveryDate(new Date());
       setOrderedBy("")
   }
 
@@ -39,7 +39,7 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
     event: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (event.key === "Enter") {
-      onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy)
+      onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate, orderedBy)
     }
   }
 
@@ -79,31 +79,15 @@ export const NewItemForm = ({ onAdd }: NewItemFormProps) => {
             onKeyPress={handleAddText}
         />
         <NewItemInput
-            value={price}
-            placeholder="Price"
-            onChange={(e) => setPrice(e.target.value)}
-            onKeyPress={handleAddText}
-        />
-        <NewItemInput
             value={comment}
-            placeholder="Comment"
+            placeholder="Comment/Link"
             onChange={(e) => setComment(e.target.value)}
             onKeyPress={handleAddText}
         />
 
-      <DatePicker
-          label="Delivery Date"
-          value={deliveryDate}
-          onChange={(newValue) => setDeliveryDate(newValue)}
-      />
-
-      <NewItemInput
-            value={orderedBy}
-            placeholder="Ordered by"
-            onChange={(e) => setOrderedBy(e.target.value)}
-            onKeyPress={handleAddText}
-        />
-      <NewItemButton onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate?.format('DD-MM-YYYY').toString(), orderedBy); resetValues(); }}>
+      <NewItemButton 
+        disabled={!text.length}
+        onClick={() => {onAdd(text,article, price, parseInt(quantity), unit, comment, deliveryDate, orderedBy); resetValues(); }}>
         Create
       </NewItemButton>
     </NewItemFormContainer>

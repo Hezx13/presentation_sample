@@ -10,10 +10,10 @@ export type Task = {
   article: string;
   price: string;
   quantity: number;
-  date: string;
+  date: Date;
   unit: string;
   comment: string;
-  deliveryDate: string;
+  deliveryDate: Date;
   orderedBy: string;
   status: string;
   payment: string;
@@ -29,6 +29,7 @@ export type List = {
 export type AppState = {
   lists: List[]
   archive: List[]
+  role: string
 }
 
 export const appStateReducer = (
@@ -162,7 +163,11 @@ export const appStateReducer = (
           }
           break;
         
-      } 
+      }
+      case "ADD_SAVED_TASK_TO_PROJECT": {
+        const {projectId, materialId} = action.payload
+        let targetListIndex = findItemIndexById(draft.lists, projectId);
+      }
     default: {
       break
     }

@@ -21,6 +21,13 @@ export type Action =
   listId: string
   }
   }
+| {
+  type: "ADD_SAVED_TASK_TO_PROJECT",
+  payload: {
+    projectId: string
+    materialId: string
+  }
+  }
   | {
       type: "ADD_TASK"
       payload: {
@@ -29,10 +36,10 @@ export type Action =
         article: string;
         price: string;
         quantity: number;
-        date: string;
+        date: Date;
         unit: string;
         comment: string;
-        deliveryDate: string;
+        deliveryDate: Date;
         orderedBy: string;
         status: string;
         payment: string;
@@ -49,10 +56,10 @@ export type Action =
         article: string,
         price: string,
         quantity: number,
-        date: string,
+        date: Date,
         unit: string,
         comment: string,
-        deliveryDate: string,
+        deliveryDate: Date,
         orderedBy: string,
         status: string,
         payment: string,
@@ -70,10 +77,10 @@ export const addTask = (
     article: string,
     price: string,
     quantity: number,
-    date: string,
+    date: Date,
     unit: string,
     comment: string,
-    deliveryDate: string,
+    deliveryDate: Date,
     orderedBy: string,
     status: string,
     payment: string
@@ -102,10 +109,10 @@ export const editTask = (
     article: string,
     price: string,
     quantity: number,
-    date: string,
+    date: Date,
     unit: string,
     comment: string,
-    deliveryDate: string,
+    deliveryDate: Date,
     orderedBy: string,
     status: string,
     payment: string,

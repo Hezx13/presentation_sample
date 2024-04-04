@@ -13,7 +13,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import TextField from '@mui/material/TextField';
 
 type AddNewItemProps = {
-  onAdd(text: string, article?: string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: string, orderedBy?: string): void
+  onAdd(text: string, article?: string, price?: string, quantity?: number, unit?: string, comment?: string, deliveryDate?: Date, orderedBy?: string): void
   toggleButtonText: string
   dark?: boolean
   list?: boolean
@@ -54,6 +54,7 @@ export const AddNewItem = (props: AddNewItemProps) => {
       open={showForm}
     keepMounted
     onClose={handleClose}
+    sx={{backdropFilter: 'blur(5px)'}}
     aria-describedby="alert-dialog-slide-description"
     >
     <DialogTitle>Order Details</DialogTitle>

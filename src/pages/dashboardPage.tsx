@@ -1,5 +1,6 @@
 import {useAppState } from "../state/AppStateContext";
-import React, {useState, useEffect, useMemo} from 'react'
+import Cookie from "js-cookie";
+import React, {useState, useEffect, useMemo, memo} from 'react'
 import {Grid, CircularProgress} from '@mui/material'
 import {onUpload} from "../api";
 import CardComponent from "../components/cardComponent";
@@ -9,7 +10,7 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import { Navigate, useNavigate } from "react-router-dom";
 import DebitDialog from "../components/DebitDialog";
-import { addBalance, currentBalance, generateCashOrder, loadBalance } from "../api/balance-api";
+import { addBalance, currentBalance, generateCashOrder, loadBalance, removeBalance } from "../api/balance-api";
 import AddCardIcon from '@mui/icons-material/AddCard';
 import dayjs from "dayjs";
 import BalanceHistoryDialog from "../components/BalanceHistoryDialog";
@@ -39,7 +40,7 @@ export const DashboardPage = () => {
     const [current, setCurrent] = useState(0);
     const [roughTotalPrice, setRoughTotalPrice] = useState<number>(0)
     const [totalPrice, setTotalPrice] =useState<number>(0)
-    const  [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
+    const [notDoneTasksCount, setNotDoneTasksCount] = useState(0)
     const [isLoggedIn] = useState(!!localStorage.getItem('token'));
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState("");
@@ -109,7 +110,7 @@ export const DashboardPage = () => {
 
     const handleSave = async () => {
         if (inputValue) {
-          let data = { amount: Number(inputValue), date: dayjs(inputDate).format('DD-MM-YYYY'), check: inputCheck };
+          let data = { amount: Number(inputValue), date: dayjs(inputDate).toDate(), check: inputCheck, department: Cookie.get('selectedDepartment') };
           try {
             addBalance(data)
             setInputCheck("");
@@ -132,8 +133,17 @@ export const DashboardPage = () => {
         navigate('/saved')
       }
 
-      const totals = useMemo(()=>calculateTotal(), [lists])
+      const handleRemoveDebitClick = async (debit) => {
+        try {
+            await removeBalance(debit);
+            fetchBalance();
+            fetchCurrentBalance();
+        } catch (error) {
+          console.error("Error in removeDebit:", error);
+        }
+      };
 
+      const totals = useMemo(()=>calculateTotal(), [lists])
     return (
         <>
         <DebitDialog
@@ -151,7 +161,7 @@ export const DashboardPage = () => {
                 open={historyDialogOpen}
                 debits={balance}
                 onClose={()=>setHistoryDialogOpen(false)}
-                update={fetchCurrentBalance}
+                onRemove={handleRemoveDebitClick}
                 />
             <Grid container>
             {!isLoggedIn && <Navigate to="/login"/>}
@@ -235,5 +245,5 @@ export const DashboardPage = () => {
 
 }
 
-export default DashboardPage
+export default memo(DashboardPage)
 

@@ -12,9 +12,10 @@ import Login from "./pages/loginPage";
 import Register from "./pages/registerPage";
 import ManagementPage from "./pages/ManagementPage";
 import SavedMaterialsPage from "./pages/SavedMaterialsPage";
+import { useAppState } from "./state/AppStateContext";
 
 const PrivateRoute = ({ children, roles }) => {
-    const currentUserRole = localStorage.getItem('role');
+    const currentUserRole = useAppState().role;
   
     if (!currentUserRole || !roles.includes(currentUserRole)) {
         // User not authorized, redirecting to login

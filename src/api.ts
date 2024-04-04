@@ -1,5 +1,6 @@
 import http from './api/http';
 import hash from 'object-hash';
+import Cookies from 'js-cookie';
 import { AppState, List } from "./state/appStateReducer";
 
 export const save = async (payload: AppState, old: AppState) => {
@@ -52,24 +53,30 @@ export const save = async (payload: AppState, old: AppState) => {
       });
   
       return response.data;
-    } catch (error: any) { // Explicitly type error as 'any' to access 'message'
+    } catch (error: any) {
       throw new Error(`Error while saving the state: ${error.message}`);
     }
   };
   
 
-export const load = async () => {
+  export const load = async () => {
     try {
+        const dep = Cookies.get('selectedDepartment');
+        console.log(dep)
         const response = await http.get(`/load`, {
+            params: {
+                department: dep
+            },
             headers: {
                 Accept: "application/json",
             }
         });
-        return response.data as AppState;
+        return response.data; 
     } catch (error) {
+        console.error("Error while loading the state:", error);
         throw new Error("Error while loading the state.");
     }
-}
+};
 
 export const getProjectsList = async () => {
   const res = await http.get(`/projectsList`);
@@ -110,6 +117,7 @@ export const downloadExcel = () => {
 export const onUpload = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('department', Cookies.get('selectedDepartment')); // Append department name to formData
 
     try {
         const res = await http.post(`/upload`, formData, {
@@ -141,7 +149,8 @@ export const onUploadSingle = async (file, listId: string) => {
 }
 
 export const generateReport = async(period, payment) => {
-  const payload = {...period, payment}
+  const department = Cookies.get('selectedDepartment');
+  const payload = {...period, payment, department}
   const res = await http.post(`/generate_report`, payload, {
 });
 return res.status;
@@ -150,6 +159,9 @@ return res.status;
 export const loadReports = async() => {
   try {
     const response = await http.get(`/reports`, {
+        params:{
+          department: Cookies.get('selectedDepartment')
+        },
         headers: {
             Accept: "application/json",
         }
@@ -161,7 +173,8 @@ export const loadReports = async() => {
 }
 
 export const addDebit = async(period, debit, payment) => {
-  let dataToProcess = {periodStart: period, valueToInsert: debit, pay: payment};
+  const department = Cookies.get('selectedDepartment');
+  let dataToProcess = {periodStart: period, valueToInsert: debit, pay: payment, department: department};
 
   const res = await http.post(`/add_debit`, dataToProcess, {
   });
@@ -169,7 +182,8 @@ export const addDebit = async(period, debit, payment) => {
 };
 
 export const removeDebit = async(period, debit, payment) => {
-  let dataToProcess = {periodStart: period, valueToRemove: debit, pay: payment};
+  const department = Cookies.get('selectedDepartment');
+  let dataToProcess = {periodStart: period, valueToRemove: debit, pay: payment, department: department};
 
   const res = await http.post(`/remove_debit`, dataToProcess, {
   });
@@ -178,17 +192,18 @@ export const removeDebit = async(period, debit, payment) => {
 
 export const downloadReport = async (period, payment) => {
   try {
+    const department = Cookies.get('selectedDepartment');
     const response = await http({
       method: 'GET',
       url: `/download_report`,
-      params: { periodStart: period, pay: payment }, // Adding period as a query parameter
+      params: { periodStart: period, pay: payment, department: department }, // Adding period as a query parameter
       responseType: 'blob',
     });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'ExportedReports.xlsx');
+    link.setAttribute('download', `Report${period} ${department} ${payment}.xlsx`);
     document.body.appendChild(link);
     link.click();
     

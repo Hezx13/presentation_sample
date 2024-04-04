@@ -302,7 +302,7 @@ const ReportDetailedTable = () => {
             </StyledTableRow>
             <StyledTableRow>
               <StyledTableCell></StyledTableCell>
-              <StyledTableCell>
+              <StyledTableCell colSpan={3}>
                 <Typography
                   sx={{
                     background: "#FF000050",
@@ -358,69 +358,24 @@ const ReportDetailedTable = () => {
                 color={index % 2 === 0 ? "#00000005" : "white"}
               >
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <TextField
-                      value={editedTask.date}
-                      onChange={(e) =>
-                        handleInputChange("date", e.target.value)
-                      }
-                    />
-                  ) : (
-                    task.date.split(" ")[0]
-                  )}
+                    {dayjs(task.date).format("DD-MM-YYYY HH:MM")}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <TextField
-                      value={editedTask.text}
-                      onChange={(e) =>
-                        handleInputChange("text", e.target.value)
-                      }
-                    />
-                  ) : (
                     <CollapsibleText text={task.text} maxLength={60} />
-                  )}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <TextField
-                      value={editedTask.quantity}
-                      onChange={(e) =>
-                        handleInputChange("quantity", e.target.value)
-                      }
-                    />
-                  ) : (
                     <CardQuantityText>{task.listParent.name}</CardQuantityText>
-                  )}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <TextField
-                      value={editedTask.price}
-                      onChange={(e) =>
-                        handleInputChange("price", e.target.value)
-                      }
-                    />
-                  ) : (
                     <CardPriceText>
                       {(
                         Number(task.price?.split(" ")[0] || task.price) *
                         task.quantity
                       ).toFixed(2)}
                     </CardPriceText>
-                  )}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <TextField
-                      value={editedTask.unit}
-                      onChange={(e) =>
-                        handleInputChange("unit", e.target.value)
-                      }
-                    />
-                  ) : (
-                    task.unit
-                  )}
+                    {task.unit}
                 </StyledTableCell>
                 <StyledTableCell>
                   {editing === task.id ? (
@@ -443,16 +398,9 @@ const ReportDetailedTable = () => {
                   )}
                 </StyledTableCell>
                 <StyledTableCell>
-                  {editing === task.id ? (
-                    <DatePicker
-                      value={dayjs(editedTask.deliveryDate)}
-                      onChange={(newValue) =>
-                        handleInputChange("deliveryDate", newValue?.toString())
-                      }
-                    />
-                  ) : (
-                    task.deliveryDate
-                  )}
+                  {
+                    task.deliveryDate ? dayjs(task.deliveryDate).format("DD-MM-YYYY") : ''
+                  }
                 </StyledTableCell>
                 <StyledTableCell>
                   {editing === task.id ? (

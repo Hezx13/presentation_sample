@@ -8,6 +8,7 @@ import { logout } from "../api/user-api";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import logo from "../assets/logo192.png";
+import DepartmentSelector from "./DepartmentSelector";
 
 function NavbarItems(props) {
   return (
@@ -209,6 +210,7 @@ export const NavBar = () => {
                 </StyledLink>
               </div>
             )}
+            <DepartmentSelector/>
           </Menu>
         </StyledNavBarItem>
       </span>
