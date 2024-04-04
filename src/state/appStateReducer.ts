@@ -3,6 +3,7 @@ import { nanoid } from "nanoid"
 import { DragItem } from "../components/DragItem"
 import {findItemIndexById, findTaskIndex, moveItem, removeItemAtIndex} from "../utils/arrayUtils"
 import { getCurrentDateAndTime } from "../utils/timeUtils"
+import { BreakfastDiningOutlined } from "@mui/icons-material"
 
 export type Task = {
   id: string;
@@ -167,6 +168,7 @@ export const appStateReducer = (
       case "ADD_SAVED_TASK_TO_PROJECT": {
         const {projectId, materialId} = action.payload
         let targetListIndex = findItemIndexById(draft.lists, projectId);
+        break;
       }
     default: {
       break

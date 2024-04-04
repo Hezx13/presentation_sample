@@ -1,4 +1,3 @@
-import { Column } from "./components/Column"
 import { AppContainer } from "./styles/styles"
 import { useAppState } from "./state/AppStateContext"
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

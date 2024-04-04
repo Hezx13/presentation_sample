@@ -1,4 +1,3 @@
-import { Column } from "../components/Column"
 import { useState } from "react"
 import { useAppState } from "../state/AppStateContext"
 import { AddNewItem } from "../components/AddNewItem"
