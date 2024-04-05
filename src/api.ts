@@ -117,7 +117,8 @@ export const downloadExcel = () => {
 export const onUpload = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('department', Cookies.get('selectedDepartment')); // Append department name to formData
+    const dep: string = localStorage.getItem('selectedDepartment') as string
+    formData.append('department', dep); // Append department name to formData
 
     try {
         const res = await http.post(`/upload`, formData, {
@@ -149,7 +150,7 @@ export const onUploadSingle = async (file, listId: string) => {
 }
 
 export const generateReport = async(period, payment) => {
-  const department = Cookies.get('selectedDepartment');
+  const department = localStorage.getItem('selectedDepartment');
   const payload = {...period, payment, department}
   const res = await http.post(`/generate_report`, payload, {
 });
@@ -160,7 +161,7 @@ export const loadReports = async() => {
   try {
     const response = await http.get(`/reports`, {
         params:{
-          department: Cookies.get('selectedDepartment')
+          department: localStorage.getItem('selectedDepartment')
         },
         headers: {
             Accept: "application/json",
@@ -173,7 +174,7 @@ export const loadReports = async() => {
 }
 
 export const addDebit = async(period, debit, payment) => {
-  const department = Cookies.get('selectedDepartment');
+  const department = localStorage.getItem('selectedDepartment');
   let dataToProcess = {periodStart: period, valueToInsert: debit, pay: payment, department: department};
 
   const res = await http.post(`/add_debit`, dataToProcess, {
@@ -182,7 +183,7 @@ export const addDebit = async(period, debit, payment) => {
 };
 
 export const removeDebit = async(period, debit, payment) => {
-  const department = Cookies.get('selectedDepartment');
+  const department = localStorage.getItem('selectedDepartment');
   let dataToProcess = {periodStart: period, valueToRemove: debit, pay: payment, department: department};
 
   const res = await http.post(`/remove_debit`, dataToProcess, {
@@ -192,7 +193,7 @@ export const removeDebit = async(period, debit, payment) => {
 
 export const downloadReport = async (period, payment) => {
   try {
-    const department = Cookies.get('selectedDepartment');
+    const department = localStorage.getItem('selectedDepartment');
     const response = await http({
       method: 'GET',
       url: `/download_report`,
