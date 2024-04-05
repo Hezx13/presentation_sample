@@ -57,7 +57,7 @@ interface EditToolbarProps {
       const selectedMaterials = apiRef.current.getSelectedRows();
       let message = ''
       selectedMaterials.forEach(entry => {
-        message += entry.article + '\t' + entry.text + ' Quantity: ' + entry.quantity + '\n';
+        message += entry.article + '  ' + entry.text + '  Quantity: ' + entry.quantity + '\n';
     });
     const email = 'example@example.com';
       const subject = 'Order';
