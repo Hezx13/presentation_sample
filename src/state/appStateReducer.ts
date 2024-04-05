@@ -24,6 +24,7 @@ export type Task = {
 export type List = {
   id: string
   text: string
+  department: string,
   tasks: Task[]
 }
 
@@ -39,9 +40,11 @@ export const appStateReducer = (
 ): AppState | void => {
   switch (action.type) {
     case "ADD_LIST": {
+      const {text, department} = action.payload;
       draft.lists.push({
         id: nanoid(),
-        text: action.payload,
+        department: department,
+        text: text,
         tasks: []
       })
       break

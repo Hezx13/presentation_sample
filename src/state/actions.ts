@@ -1,7 +1,10 @@
 export type Action =
   | {
       type: "ADD_LIST"
-      payload: string
+      payload: {
+        text: string,
+        department: string
+      }
     }
   | {
       type: "REMOVE_LIST",
@@ -136,9 +139,12 @@ export const editTask = (
 });
 
 
-export const addList = (text: string): Action => ({
+export const addList = (text: string, department: string): Action => ({
   type: "ADD_LIST",
-  payload: text
+  payload: {
+    text,
+    department
+  }
 })
 
 export const removeList = (listId: string): Action => ({

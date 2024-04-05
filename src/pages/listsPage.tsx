@@ -1,7 +1,5 @@
 import { useState } from "react"
 import { useAppState } from "../state/AppStateContext"
-import { AddNewItem } from "../components/AddNewItem"
-import { addList } from "../state/actions"
 import {Grid} from '@mui/material'
 import NavBar from "../components/navBar";
 import VerticalTabs from "./projectsPage";
