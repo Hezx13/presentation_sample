@@ -61,7 +61,7 @@ export const save = async (payload: AppState, old: AppState) => {
 
   export const load = async () => {
     try {
-        const dep = Cookies.get('selectedDepartment');
+        const dep = localStorage.getItem('selectedDepartment');
         console.log(dep)
         const response = await http.get(`/load`, {
             params: {
