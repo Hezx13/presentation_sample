@@ -78,7 +78,7 @@ export default function VerticalTabs() {
                 )}
                 <AddNewItem
                     toggleButtonText="+ Add another project"
-                    onAdd={(text) => dispatch(addList(text))}
+                    onAdd={(text) => dispatch(addList(text, localStorage.getItem('selectedDepartment') || 'Messe') )}
                     list
                 />
             </Tabs>
@@ -114,7 +114,7 @@ export default function VerticalTabs() {
                     
                     <AddNewItem
                         toggleButtonText="+ Add another project"
-                        onAdd={(text) => dispatch(addList(text))}
+                        onAdd={(text) => dispatch(addList(text, localStorage.getItem('selectedDepartment') || 'Messe'))}
                         list
                     />
                 </Tabs>
