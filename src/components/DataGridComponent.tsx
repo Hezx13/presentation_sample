@@ -382,7 +382,15 @@ export default function FullFeaturedCrudGrid({tableId}) {
   ];
 
   let userColumns: GridColDef[] = [
-    { field: 'date', headerName: 'Date ordered', width: 160, editable: role === 'Admin' },
+    { field: 'date', 
+    headerName: 'Date ordered', 
+    width: 160, 
+    editable: false,
+    valueGetter: (params) => {
+      let date = dayjs(params.value).format('DD-MM-YYYY HH:MM');
+      return date === 'Invalid Date'? '' : date;
+    },
+   },
     {
       field: 'text',
       headerName: 'Material',
@@ -412,16 +420,11 @@ export default function FullFeaturedCrudGrid({tableId}) {
       editable: false,
     },
     {
-      field: 'amount',
-      headerName: 'Amount',
-      type: 'number',
+      field: 'comment',
+      headerName: 'Comment',
+      type: 'string',
       minWidth: 80,
       flex: 1,
-      valueGetter: (params) => {
-        const value1 = params?.row.quantity || 1;
-        const value2 = params?.row?.price?.split(' ')[0] || params.row.price || 0;
-        return Number(value1) * Number(value2);
-      },
     },
     {
       field: 'unit',
@@ -438,6 +441,10 @@ export default function FullFeaturedCrudGrid({tableId}) {
       flex: 2,
       editable: false,
       type: 'string',
+      valueGetter: (params) => {
+        let date = dayjs(params.value).format('DD-MM-YYYY');
+        return date === 'Invalid Date'? '' : date;
+      },
     },
     {
       field: 'status',
