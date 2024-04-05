@@ -210,7 +210,7 @@ export const NavBar = () => {
                 </StyledLink>
               </div>
             )}
-            <DepartmentSelector/>
+            { isLoggedIn && <DepartmentSelector/> }
           </Menu>
         </StyledNavBarItem>
       </span>

@@ -11,11 +11,11 @@ function DepartmentSelector() {
     fetchDepartments().then((departments)=>{
       console.log(departments);
       setDepartments(departments)
-      const departmentInCookies = Cookies.get('selectedDepartment');
+      const departmentInCookies = localStorage.getItem('selectedDepartment');
       if (departmentInCookies) {
         setSelectedDepartment(departmentInCookies);
       } else {
-          Cookies.set('selectedDepartment', departments[0].name,{ expires: 10 });
+          localStorage.setItem('selectedDepartment', departments[0].name);
           setSelectedDepartment(departments[0].name)
       }
     })
@@ -34,7 +34,7 @@ function DepartmentSelector() {
   const handleDepartmentChange = (event) => {
     const newDepartment = event.target.value;
     setSelectedDepartment(newDepartment);
-    Cookies.set('selectedDepartment', newDepartment, { expires: 10 });
+    localStorage.setItem('selectedDepartment', newDepartment);
     eventEmitter.emit('changedDepartment');
   };
 

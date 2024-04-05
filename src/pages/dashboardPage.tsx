@@ -110,7 +110,7 @@ export const DashboardPage = () => {
 
     const handleSave = async () => {
         if (inputValue) {
-          let data = { amount: Number(inputValue), date: dayjs(inputDate).toDate(), check: inputCheck, department: Cookie.get('selectedDepartment') };
+          let data = { amount: Number(inputValue), date: dayjs(inputDate).toDate(), check: inputCheck, department: localStorage.getItem('selectedDepartment') };
           try {
             addBalance(data)
             setInputCheck("");
