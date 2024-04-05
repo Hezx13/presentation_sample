@@ -48,7 +48,6 @@ interface EditToolbarProps {
     const fileInput = useRef<HTMLInputElement>(null);
 
     function createMailToLink(email: string, subject: string, body:string) {
-      console.log(email, subject ,body);
       return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     }
   
@@ -58,7 +57,7 @@ interface EditToolbarProps {
       const selectedMaterials = apiRef.current.getSelectedRows();
       let message = ''
       selectedMaterials.forEach(entry => {
-        message += entry.text + '\n';
+        message += entry.article + '  ' + entry.text + '  Quantity: ' + entry.quantity + '\n';
     });
     const email = 'example@example.com';
       const subject = 'Order';
