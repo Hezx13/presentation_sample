@@ -208,7 +208,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       flex: 1,
       valueGetter: (params) => {
         const value1 = params?.row.quantity || 1;
-        const value2 = params?.row?.price?.split(' ')[0] || params.row.price || 0;
+        const value2 = params.row.price || 0;
         return Number(value1) * Number(value2);
       },
     },

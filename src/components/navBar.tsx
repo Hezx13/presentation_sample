@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { StyledNavBar, StyledNavBarItem, StyledLink } from "../styles/styles";
 import { Menu, MenuItem, IconButton, Drawer } from "@mui/material";
@@ -210,7 +210,7 @@ export const NavBar = () => {
                 </StyledLink>
               </div>
             )}
-            { isLoggedIn && <DepartmentSelector/> }
+            { isLoggedIn && menuAnchor && <DepartmentSelector/> }
           </Menu>
         </StyledNavBarItem>
       </span>
@@ -218,4 +218,4 @@ export const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default memo(NavBar);
