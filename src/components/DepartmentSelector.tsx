@@ -9,7 +9,6 @@ function DepartmentSelector() {
   const [departments, setDepartments] = useState<Department[]>([]);
   useEffect(() => {
     fetchDepartments().then((departments)=>{
-      console.log(departments);
       setDepartments(departments)
       const departmentInCookies = localStorage.getItem('selectedDepartment');
       if (departmentInCookies) {

@@ -209,7 +209,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
       valueGetter: (params) => {
         const value1 = params?.row.quantity || 1;
         const value2 = params.row.price || 0;
-        return Number(value1) * Number(value2);
+        return Number(value1) * Number(value2) || null;
       },
     },
     {
@@ -235,13 +235,10 @@ export default function FullFeaturedCrudGrid({tableId}) {
       flex: 2,
       editable: true,
       renderEditCell: (params) => {
-        console.log(dayjs("29-03-2024"))
-        console.log(params.value)
         return (
             <DatePicker
               value={dayjs(new Date(params.value))}
               onChange={(newValue) => {
-                console.log(newValue);
                 const formattedValue = newValue ? dayjs(newValue) : newValue;
 
                 params.api.setEditCellValue({ id: params.id, field: params.field, value: formattedValue });

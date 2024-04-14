@@ -16,7 +16,6 @@ type User = {
 
 const fetchUsers = async () => {
     const users = await getUsers();
-    console.log(users)  
     return users
 }
 

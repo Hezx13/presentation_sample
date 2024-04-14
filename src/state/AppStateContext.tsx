@@ -33,7 +33,6 @@ type AppStateProviderProps = {
 export const AppStateProvider = withInitialState<AppStateProviderProps>(
   ({ children, initialState }) => {
     const [state, dispatch] = useImmerReducer(appStateReducer, initialState);
-    console.log(state)
     // useRef to keep track of the previous state
     const prevStateRef = useRef(initialState);
 

@@ -112,10 +112,6 @@ export const appStateReducer = (
         task.status = status ?? task.status;
         task.payment = payment ?? task.payment;
 
-        
-        
-        console.log(isTextChanged, isArticleChanged)
-
         if (isTextChanged || isArticleChanged) {
           const currentDate = getCurrentDateAndTime();
           task.date = currentDate;

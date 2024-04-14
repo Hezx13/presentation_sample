@@ -62,7 +62,6 @@ export const save = async (payload: AppState, old: AppState) => {
   export const load = async () => {
     try {
         const dep = localStorage.getItem('selectedDepartment');
-        console.log(dep)
         const response = await http.get(`/load`, {
             params: {
                 department: dep
@@ -85,7 +84,7 @@ export const getProjectsList = async () => {
 
 export const archiveList = async (listId: string) => {
     http.post('/archive', {listId})
-        .then((response) => console.log(response.data))
+        .then()
         .catch((error) => console.error(error))
 }
 
