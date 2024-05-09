@@ -524,6 +524,7 @@ export default function FullFeaturedCrudGrid({tableId}) {
           toolbar: EditToolbar,
         }}
         checkboxSelection
+        disableRowSelectionOnClick 
         slotProps={{
           toolbar: { dispatch, tableId, userData, setRowModesModel, },
         }}

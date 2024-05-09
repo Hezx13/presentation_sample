@@ -72,7 +72,7 @@ export const NavBar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem("token"));
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
+  document.title = 'ExhibitFlow - ' + (location.pathname.split("/")[1] ? location.pathname.split("/")[1] : "projects");
   const isMobile = useMediaQuery("(max-width:600px)");
 
   const openMenu = (event) => {
