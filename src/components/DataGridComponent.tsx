@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, memo} from 'react';
 import Box from '@mui/material/Box';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -36,12 +36,13 @@ import { Task } from '../state/appStateReducer';
 import { MenuItem, Select, TextField } from '@mui/material';
 import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 import dayjs from 'dayjs';
+import { useSocket } from '../state/socketContext';
 
 const statuses = ["Done", "In process", "Waiting for approval", "Waiting for payment", "Pending"]
 const payments = ["Cash", "Credit", "Pemo Card", "Bank Transfer", ""]
 
 
-export default function FullFeaturedCrudGrid({tableId}) {
+function FullFeaturedCrudGrid({tableId}) {
   const [rows, setRows] = React.useState<Task[]>([]);
   const [isSaving, setIsSaving] = React.useState(false)
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
@@ -49,7 +50,10 @@ export default function FullFeaturedCrudGrid({tableId}) {
   const [userData,setUserData] = useState< {username: string} | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const [users, setUsers] = useState<User[]>([]);
+  const socket = useSocket();
+  
   useEffect(() => {
+    
         const id_a = findItemIndexById(archive, tableId)
         const id_l =  findItemIndexById(lists, tableId)
         if (id_a > -1){
@@ -57,6 +61,14 @@ export default function FullFeaturedCrudGrid({tableId}) {
         }
         else if (id_l > -1) {
             setRows(lists[id_l].tasks)
+            //@ts-expect-error
+            socket?.emit(
+              "selected_project",
+            {
+            id: tableId,
+            materials: lists[id_l].tasks,
+            user: localStorage.getItem('token')
+          } )
         }
     }, [tableId,lists]);
 
@@ -566,3 +578,4 @@ export default function FullFeaturedCrudGrid({tableId}) {
   );
 }
 
+export default memo(FullFeaturedCrudGrid)

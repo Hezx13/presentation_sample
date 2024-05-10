@@ -14,6 +14,7 @@ type Material = {
   };
   
 type User = {
+  _id: string;
   username: string;
   password: string;
   email: string;
@@ -26,3 +27,5 @@ type Department = {
   name: string;
   users?: [User] | null;
 }
+
+type TODO = any;

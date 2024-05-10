@@ -1,18 +1,12 @@
 import { useEffect, useState } from "react";
 import { approveUser, deleteUser, demoteUser, disapproveUser, getUserData, getUsers, promoteUser, resetUserPassword } from "../api/user-api";
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody, Button, CircularProgress, Badge, Chip } from "@mui/material";
-import { StyledChip, StyledTableContainer } from "../styles/styles";
+import { Status, StyledChip, StyledTableContainer } from "../styles/styles";
 import { act } from "@testing-library/react";
+import { useSocket } from "../state/socketContext";
 
 
-type User = {
-    _id: string;
-    username: string;
-    email: string;
-    department: string;
-    role: string;
-    isApproved: boolean;
-}
+
 
 const fetchUsers = async () => {
     const users = await getUsers();
@@ -28,17 +22,33 @@ const UserManagementTable = ({onAlert}) => {
 
     const [users, setUsers] = useState<User[]>([]);
     const [activeUser, setActiveUser] = useState<User | null >(null);
+    const [usersOnline, setUsersOnline] = useState<TODO>([])
     const [selectedRow, setSelectedRow] = useState<number | null>(null);
     const [resetUser, setResetUser] = useState<string | null>(null);
+    const socket = useSocket();
 
     useEffect(()=>{
         fetchUsers().then(
             (data)=>setUsers(data)
         )
-          getUserData().then(
-            (data)=>setActiveUser(data)
-          );
+        getUserData().then(
+          (data)=>setActiveUser(data)
+        );
+        handleRequestOnlineUsers()
     },[])
+
+    useEffect(()=>{
+      //@ts-expect-error
+      socket?.on("receive_active_users", (data: TODO) => {
+        setUsersOnline(data)
+      })
+    },[socket])
+
+    const handleRequestOnlineUsers = () =>{
+      //@ts-expect-error
+      socket?.emit('get_active_users')
+    }
+
     const handleApproveUser = async (username: string) => {
         if (username === activeUser?.username){
           onAlert("selfEdit")
@@ -51,6 +61,7 @@ const UserManagementTable = ({onAlert}) => {
             )
         }
     }
+
     const handleDisapproveUser = async (username: string) => {
       if (username === activeUser?.username){
         onAlert("selfEdit")
@@ -148,6 +159,7 @@ const UserManagementTable = ({onAlert}) => {
               }}
             >
               <TableCell component="th" scope="row">
+              <Status color={usersOnline.includes(row._id) ? 'green' :'grey'}></Status>
                 {row.username} &nbsp;
                 {
                   resetUser === row.username ? <StyledChip label="Reset!" /> : null
