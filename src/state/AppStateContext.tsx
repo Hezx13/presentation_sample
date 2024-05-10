@@ -6,7 +6,7 @@ import {
   List,
   Task
 } from "./appStateReducer"
-import { Action } from "./actions"
+import { Action, resetRequests } from "./actions"
 import { withInitialState } from "../utils/withInitialState"
 import { debounce } from "throttle-debounce-ts"
 import { save } from "../api"
@@ -15,6 +15,13 @@ import { DragItem } from "../components/DragItem"
 type AppStateContextProps = {
     lists: List[]
     archive: List[]
+    listsToAdd: TODO
+    archiveToAdd: TODO
+    listsToRemove: TODO
+    archiveToRemove: TODO
+    listsToUpdate: TODO
+    archiveToUpdate: TODO
+    processSave: boolean
     role: string
     getTasksByListId(id: string): Task[]
     getTasksByArchiveId(id: string) : Task[]
@@ -39,15 +46,29 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     const debouncedSave = useCallback(debounce(500, (currentState, prevState) => {
       save(currentState, prevState);
       prevStateRef.current = currentState;
+      // dispatch(resetRequests())
     }), []);
     
     useEffect(() => {
       if(!!localStorage.getItem('token'))
       debouncedSave(state, prevStateRef.current);
+      
     }, [state, debouncedSave]);
     
 
-    const { lists, archive, role } = state;
+    const { 
+    lists, 
+    listsToAdd,
+    archiveToAdd,
+    listsToRemove,
+    archiveToRemove,
+    listsToUpdate,
+    archiveToUpdate,
+    archive,
+    role 
+  } = state;
+
+  console.log(state)
     const getTasksByListId = (id: string) => {
       return lists.find((list) => list.id === id)?.tasks || [];
     };
@@ -57,7 +78,12 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
 
     return (
       <AppStateContext.Provider
-        value={{ lists, archive, role, getTasksByListId, getTasksByArchiveId, dispatch }}
+        value={{ lists, archive,listsToAdd,
+          archiveToAdd,
+          listsToRemove,
+          archiveToRemove,
+          listsToUpdate,
+          archiveToUpdate, role, getTasksByListId, getTasksByArchiveId, dispatch }}
       >
         {children}
       </AppStateContext.Provider>

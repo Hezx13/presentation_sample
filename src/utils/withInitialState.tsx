@@ -40,6 +40,12 @@ export function withInitialState<TProps>(
   return (props: PropsWithoutInjected<TProps>) => {
     const [initialState, setInitialState] = useState<AppState>({
       lists: [],
+      listsToAdd: {},
+      archiveToAdd: {},
+      listsToRemove: {},
+      archiveToRemove: {},
+      listsToUpdate: {},
+      archiveToUpdate: {},
       archive: [],
       role: 'User',
     });
@@ -51,7 +57,12 @@ export function withInitialState<TProps>(
         setIsLoading(true);
         try {
           const data = await load();
-          setInitialState(data);
+          setInitialState({...data, listsToAdd: {},
+            archiveToAdd: {},
+            listsToRemove: {},
+            archiveToRemove: {},
+            listsToUpdate: {},
+            archiveToUpdate: {}});
         } catch (e) {
           if (e instanceof Error) {
             setError(e);

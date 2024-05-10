@@ -6,6 +6,7 @@ import { getCurrentDateAndTime } from "../utils/timeUtils"
 import { BreakfastDiningOutlined } from "@mui/icons-material"
 
 export type Task = {
+  _id?: string;
   id: string;
   text: string;
   article: string;
@@ -22,6 +23,7 @@ export type Task = {
 
 
 export type List = {
+  _id?: string
   id: string
   text: string
   department: string,
@@ -31,6 +33,12 @@ export type List = {
 export type AppState = {
   lists: List[]
   archive: List[]
+  listsToAdd: TODO
+  archiveToAdd: TODO
+  listsToRemove: TODO
+  archiveToRemove: TODO
+  listsToUpdate: TODO
+  archiveToUpdate: TODO
   role: string
 }
 
@@ -41,57 +49,49 @@ export const appStateReducer = (
   switch (action.type) {
     case "ADD_LIST": {
       const {text, department} = action.payload;
-      draft.lists.push({
+      const newList = {
         id: nanoid(),
         department: department,
         text: text,
         tasks: []
-      })
+      }
+      draft.lists.push(newList)
+      draft.listsToAdd[newList.id] = newList
       break
     }
     case "ADD_TASK": {
       const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
-      let targetListIndex = findItemIndexById(draft.lists, listId);
+      let targetListIndex: number = findItemIndexById(draft.lists, listId);
+      const newTask: Task =  {
+        id: nanoid(),
+        text,
+        article,
+        price,
+        quantity,
+        date,
+        unit,
+        comment,
+        deliveryDate,
+        orderedBy,
+        status,
+        payment,
+      }
+
       if (targetListIndex !== -1) {
-        draft.lists[targetListIndex].tasks.push({
-          id: nanoid(),
-          text,
-          article,
-          price,
-          quantity,
-          date,
-          unit,
-          comment,
-          deliveryDate,
-          orderedBy,
-          status,
-          payment,
-        });
+        draft.lists[targetListIndex].tasks.push(newTask);
+        draft.listsToUpdate[draft.lists[targetListIndex]._id!] = draft.lists[targetListIndex].tasks
       }
       else {
         targetListIndex = findItemIndexById(draft.archive, listId);
         if (targetListIndex === -1)
           return ;
-        draft.archive[targetListIndex].tasks.push({
-          id: nanoid(),
-          text,
-          article,
-          price,
-          quantity,
-          date,
-          unit,
-          comment,
-          deliveryDate,
-          orderedBy,
-          status,
-          payment,
-        });
+        draft.archive[targetListIndex].tasks.push(newTask);
+        draft.archiveToUpdate[draft.archive[targetListIndex]._id!] = draft.archive[targetListIndex].tasks
       }
       break;
     }
     case "EDIT_TASK": {
       const { id, listId, text,article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
-      const targetListIndex = findItemIndexById(draft.lists, listId);
       const { location, listIndex, taskIndex }= findTaskIndex(id, draft)
 
       if (taskIndex !== -1 && listIndex !== -1) {
@@ -115,7 +115,11 @@ export const appStateReducer = (
         if (isTextChanged || isArticleChanged) {
           const currentDate = getCurrentDateAndTime();
           task.date = currentDate;
-      } 
+        }
+        
+        location === 'lists' 
+        ? draft.listsToUpdate[draft.lists[listIndex]._id!] = draft.lists[listIndex].tasks
+        : draft.archiveToUpdate[draft.lists[listIndex]._id!] = draft.archive[listIndex].tasks
       }
       break;
     }
@@ -123,8 +127,16 @@ export const appStateReducer = (
 
     case "REMOVE_LIST": {
         const { listId } = action.payload
-        draft.lists = draft.lists.filter(list => list.id !== listId);
-        draft.archive = draft.archive.filter(list => list.id !== listId);
+        const targetListIndex = findItemIndexById(draft.lists, listId);
+
+        if (targetListIndex !== -1){
+          draft.lists = draft.lists.filter(list => list.id !== listId);
+          draft.listsToRemove[draft.lists[targetListIndex]._id!] = 1
+        } else {
+          const targetListIndex = findItemIndexById(draft.archive, listId);
+          draft.archive = draft.archive.filter(list => list.id !== listId);
+          draft.archiveToRemove[draft.archive[targetListIndex]._id!] = 1;
+        }
         break;
       }
     case "MOVE_TO_ARCHIVE":{
@@ -136,6 +148,10 @@ export const appStateReducer = (
       const listToArchive = draft.lists[listIndex];
       draft.archive.push(listToArchive); // Add the list to archive
       draft.lists.splice(listIndex, 1); // Remove the list from lists
+
+      draft.listsToRemove[draft.lists[listIndex]._id!] = 1;
+      draft.archiveToAdd[draft.lists[listIndex]._id!] = draft.lists[listIndex];
+      
       break;
 
     }
@@ -147,6 +163,10 @@ export const appStateReducer = (
       const listFromArchive = draft.archive[listIndex];
       draft.lists.push(listFromArchive); // Add the list to archive
       draft.archive.splice(listIndex, 1); // Remove the list from lists
+
+      draft.archiveToRemove[draft.archive[listIndex]._id!] = 1;
+      draft.listsToAdd[draft.archive[listIndex]._id!] = draft.archive[listIndex];
+
       break;
 
     }
@@ -155,11 +175,13 @@ export const appStateReducer = (
           let targetListIndex = findItemIndexById(draft.lists, listId);
           if (targetListIndex > -1) {
             draft.lists[targetListIndex].tasks = draft.lists[targetListIndex].tasks.filter(task => task.id !== taskId);
+            draft.listsToUpdate[draft.lists[targetListIndex]._id!] = draft.lists[targetListIndex].tasks
           }
           else {
             targetListIndex = findItemIndexById(draft.archive, listId);
             if (targetListIndex === -1) return;
             draft.archive[targetListIndex].tasks = draft.archive[targetListIndex].tasks.filter(task => task.id !== taskId);
+            draft.archiveToUpdate[draft.archive[targetListIndex]._id!] = draft.archiveToAdd[targetListIndex].tasks
           }
           break;
         
@@ -167,6 +189,15 @@ export const appStateReducer = (
       case "ADD_SAVED_TASK_TO_PROJECT": {
         const {projectId, materialId} = action.payload
         let targetListIndex = findItemIndexById(draft.lists, projectId);
+        break;
+      }
+      case "RESET_REQUESTS": {
+        draft.listsToAdd = {}
+        draft.listsToRemove = {}
+        draft.listsToUpdate = {}
+        draft.archiveToAdd = {}
+        draft.archiveToRemove = {}
+        draft.archiveToUpdate = {}
         break;
       }
     default: {

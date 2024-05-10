@@ -2,50 +2,57 @@ import http from './api/http';
 import hash from 'object-hash';
 import Cookies from 'js-cookie';
 import { AppState, List } from "./state/appStateReducer";
+import { hasNonEmptyObject } from './utils/arrayUtils';
+const keysToCheck = ['listsToUpdate', 'listsToAdd', 'listsToRemove', 'archiveToAdd', 'archiveToRemove', 'archiveToUpdate'  ];
 
 export const save = async (payload: AppState, old: AppState) => {
-    const oldListIds = new Set(old.lists.map(list => list.id));
-    const oldArchiveIds = new Set(old.archive.map(archive => archive.id));
-    const oldListTasksHash = new Map(old.lists.map(list => [list.id, hash(list.tasks)]));
-    const oldArchiveTasksHash = new Map(old.archive.map(list => [list.id, hash(list.tasks)]));
-    let updates = 0
-    const listsToAdd: List[] = [];
-    const archiveToAdd: List[] = [];
-    const listsToRemove: string[] = [];
-    const archiveToRemove: string[] = [];
-    const listsToUpdate: List[] = [];
-    const archiveToUpdate: List[] = [];
-  
-    for (const newList of payload.lists) {
-      if (!oldListIds.has(newList.id)) {
-        listsToAdd.push(newList);
-        updates++;
-      } else if (oldListTasksHash.get(newList.id) !== hash(newList.tasks)) {
-        listsToUpdate.push(newList);
-        updates++;
-      }
+  console.log(payload);
+    if (!hasNonEmptyObject(payload, keysToCheck)) {
+      return
     }
+    // const oldListIds = new Set(old.lists.map(list => list.id));
+    // const oldArchiveIds = new Set(old.archive.map(archive => archive.id));
+    // const oldListTasksHash = new Map(old.lists.map(list => [list.id, hash(list.tasks)]));
+    // const oldArchiveTasksHash = new Map(old.archive.map(list => [list.id, hash(list.tasks)]));
+    // let updates = 0
+    // const listsToAdd: List[] = [];
+    // const archiveToAdd: List[] = [];
+    // const listsToRemove: string[] = [];
+    // const archiveToRemove: string[] = [];
+    // const listsToUpdate: List[] = [];
+    // const archiveToUpdate: List[] = [];
   
-    for (const newArchive of payload.archive) {
-      if (!oldArchiveIds.has(newArchive.id)) {
-        archiveToAdd.push(newArchive);
-        updates++;
-      } else if (oldArchiveTasksHash.get(newArchive.id) !== hash(newArchive.tasks)) {
-        archiveToUpdate.push(newArchive);
-        updates++;
-      }
-    }
+    // for (const newList of payload.lists) {
+    //   if (!oldListIds.has(newList.id)) {
+    //     listsToAdd.push(newList);
+    //     updates++;
+    //   } else if (oldListTasksHash.get(newList.id) !== hash(newList.tasks)) {
+    //     listsToUpdate.push(newList);
+    //     updates++;
+    //   }
+    // }
   
-    listsToRemove.push(...Array.from(oldListIds).filter(id => !payload.lists.some(list => list.id === id)));
-    archiveToRemove.push(...Array.from(oldArchiveIds).filter(id => !payload.archive.some(archive => archive.id === id)));
-    if (!listsToRemove.length && !archiveToRemove.length && !updates)  return
+    // for (const newArchive of payload.archive) {
+    //   if (!oldArchiveIds.has(newArchive.id)) {
+    //     archiveToAdd.push(newArchive);
+    //     updates++;
+    //   } else if (oldArchiveTasksHash.get(newArchive.id) !== hash(newArchive.tasks)) {
+    //     archiveToUpdate.push(newArchive);
+    //     updates++;
+    //   }
+    // }
+  
+    // listsToRemove.push(...Array.from(oldListIds).filter(id => !payload.lists.some(list => list.id === id)));
+    // archiveToRemove.push(...Array.from(oldArchiveIds).filter(id => !payload.archive.some(archive => archive.id === id)));
+    // if (!listsToRemove.length && !archiveToRemove.length && !updates)  return
+    
     const processedPayload = {
-      listsToAdd,
-      archiveToAdd,
-      listsToRemove,
-      archiveToRemove,
-      listsToUpdate,
-      archiveToUpdate
+      listsToAdd: payload.listsToAdd,
+      archiveToAdd: payload.archiveToAdd,
+      listsToRemove: payload.listsToRemove,
+      archiveToRemove: payload.archiveToRemove,
+      listsToUpdate: payload.listsToUpdate,
+      archiveToUpdate: payload.archiveToUpdate
     };
     try {
       const response = await http.post(`/save`, processedPayload, {
@@ -55,8 +62,7 @@ export const save = async (payload: AppState, old: AppState) => {
         },
         
       });
-  
-      return response.data;
+      return response.status;
     } catch (error: any) {
       throw new Error(`Error while saving the state: ${error.message}`);
     }

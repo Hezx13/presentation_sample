@@ -73,6 +73,10 @@ export type Action =
       type: "REMOVE_TASK"
       payload: { listId: string; taskId: string;}
     }
+  | {
+    type: "RESET_REQUESTS",
+    payload: {}
+  }
 
 export const addTask = (
     text: string,
@@ -170,4 +174,9 @@ export const removeTask = (listId: string, taskId: string): Action => ({
   listId,
   taskId
   }
+})
+
+export const resetRequests = (): Action => ({
+  type: "RESET_REQUESTS",
+  payload: {}
 })
