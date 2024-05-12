@@ -1,15 +1,15 @@
 import http from './api/http';
 import hash from 'object-hash';
 import Cookies from 'js-cookie';
-import { AppState, List } from "./state/appStateReducer";
 import { hasNonEmptyObject } from './utils/arrayUtils';
 const keysToCheck = ['listsToUpdate', 'listsToAdd', 'listsToRemove', 'archiveToAdd', 'archiveToRemove', 'archiveToUpdate'  ];
 
 export const save = async (payload: AppState, old: AppState) => {
+  if (!hasNonEmptyObject(payload, keysToCheck)) {
+    return
+  }
+  console.log("SAVE")
   console.log(payload);
-    if (!hasNonEmptyObject(payload, keysToCheck)) {
-      return
-    }
     // const oldListIds = new Set(old.lists.map(list => list.id));
     // const oldArchiveIds = new Set(old.archive.map(archive => archive.id));
     // const oldListTasksHash = new Map(old.lists.map(list => [list.id, hash(list.tasks)]));

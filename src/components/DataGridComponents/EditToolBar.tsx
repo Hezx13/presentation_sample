@@ -1,4 +1,4 @@
-import { Action } from "../../state/actions"
+import { Action, resetRequests } from "../../state/actions"
 import {
     GridRowsProp,
     GridRowModesModel,
@@ -131,6 +131,9 @@ interface EditToolbarProps {
         {isSaved && <Alert sx={{padding: '0px 15px'}} variant="outlined" severity="success">
             Success
         </Alert> }
+        <Button color="primary" startIcon={<SaveAltOutlined/>} onClick={()=>dispatch(resetRequests())}>
+          reset
+        </Button>
       </GridToolbarContainer>
     );
   }

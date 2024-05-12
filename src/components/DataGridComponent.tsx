@@ -32,7 +32,6 @@ import {
 } from '@mui/x-data-grid';
 import EditToolbar from './DataGridComponents/EditToolBar';
 import { useAppState } from '../state/AppStateContext';
-import { Task } from '../state/appStateReducer';
 import { MenuItem, Select, TextField } from '@mui/material';
 import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 import dayjs from 'dayjs';
@@ -150,6 +149,8 @@ function FullFeaturedCrudGrid({tableId}) {
       newRow.payment
       ))
       let newrows = rows.map((row) => (row.id === newRow.id ? updatedRow : row)) as Task[]
+      //@ts-expect-error
+      socket?.emit('send_updated_materials', {projectId: tableId, material: updatedRow})
     setRows(newrows);
     setIsSaving(false);
     return updatedRow;

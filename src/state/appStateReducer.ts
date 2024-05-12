@@ -5,42 +5,6 @@ import {findItemIndexById, findTaskIndex, moveItem, removeItemAtIndex} from "../
 import { getCurrentDateAndTime } from "../utils/timeUtils"
 import { BreakfastDiningOutlined } from "@mui/icons-material"
 
-export type Task = {
-  _id?: string;
-  id: string;
-  text: string;
-  article: string;
-  price: string;
-  quantity: number;
-  date: Date;
-  unit: string;
-  comment: string;
-  deliveryDate: Date;
-  orderedBy: string;
-  status: string;
-  payment: string;
-}
-
-
-export type List = {
-  _id?: string
-  id: string
-  text: string
-  department: string,
-  tasks: Task[]
-}
-
-export type AppState = {
-  lists: List[]
-  archive: List[]
-  listsToAdd: TODO
-  archiveToAdd: TODO
-  listsToRemove: TODO
-  archiveToRemove: TODO
-  listsToUpdate: TODO
-  archiveToUpdate: TODO
-  role: string
-}
 
 export const appStateReducer = (
   draft: AppState,
@@ -48,7 +12,8 @@ export const appStateReducer = (
 ): AppState | void => {
   switch (action.type) {
     case "ADD_LIST": {
-      const {text, department} = action.payload;
+      const {text, department, processSave} = action.payload;
+      draft.processSave = processSave;
       const newList = {
         id: nanoid(),
         department: department,
@@ -60,7 +25,8 @@ export const appStateReducer = (
       break
     }
     case "ADD_TASK": {
-      const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
+      const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment, processSave} = action.payload;
+      draft.processSave = processSave;
       let targetListIndex: number = findItemIndexById(draft.lists, listId);
       const newTask: Task =  {
         id: nanoid(),
@@ -91,9 +57,9 @@ export const appStateReducer = (
       break;
     }
     case "EDIT_TASK": {
-      const { id, listId, text,article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment } = action.payload;
+      const { id, listId, text,article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment, processSave } = action.payload;
       const { location, listIndex, taskIndex }= findTaskIndex(id, draft)
-
+      draft.processSave = processSave;
       if (taskIndex !== -1 && listIndex !== -1) {
         const task = location === 'lists' ? draft.lists[listIndex].tasks[taskIndex] : draft.archive[listIndex].tasks[taskIndex];
         
@@ -126,52 +92,57 @@ export const appStateReducer = (
 
 
     case "REMOVE_LIST": {
-        const { listId } = action.payload
+        const { listId, processSave } = action.payload
+        draft.processSave = processSave;
         const targetListIndex = findItemIndexById(draft.lists, listId);
 
         if (targetListIndex !== -1){
-          draft.lists = draft.lists.filter(list => list.id !== listId);
           draft.listsToRemove[draft.lists[targetListIndex]._id!] = 1
+          draft.lists = draft.lists.filter(list => list.id !== listId);
         } else {
           const targetListIndex = findItemIndexById(draft.archive, listId);
-          draft.archive = draft.archive.filter(list => list.id !== listId);
           draft.archiveToRemove[draft.archive[targetListIndex]._id!] = 1;
+          draft.archive = draft.archive.filter(list => list.id !== listId);
         }
         break;
       }
     case "MOVE_TO_ARCHIVE":{
-      const {listId} = action.payload
-
+      const {listId, processSave} = action.payload
+      draft.processSave = processSave
       const listIndex  = findItemIndexById(draft.lists, listId);
       if (listIndex < 0) return; // If list not found, exit the case
 
       const listToArchive = draft.lists[listIndex];
+
+      draft.archiveToAdd[draft.lists[listIndex]._id!] = draft.lists[listIndex];
+      draft.listsToRemove[draft.lists[listIndex]._id!] = 1;
+
       draft.archive.push(listToArchive); // Add the list to archive
       draft.lists.splice(listIndex, 1); // Remove the list from lists
-
-      draft.listsToRemove[draft.lists[listIndex]._id!] = 1;
-      draft.archiveToAdd[draft.lists[listIndex]._id!] = draft.lists[listIndex];
       
       break;
 
     }
     case "MOVE_FROM_ARCHIVE":{
-      const {listId} = action.payload
-
+      const {listId, processSave} = action.payload
+      draft.processSave = processSave;
       const listIndex  = findItemIndexById(draft.archive, listId);
       if (listIndex < 0) return; // If list not found, exit the case
       const listFromArchive = draft.archive[listIndex];
-      draft.lists.push(listFromArchive); // Add the list to archive
-      draft.archive.splice(listIndex, 1); // Remove the list from lists
 
       draft.archiveToRemove[draft.archive[listIndex]._id!] = 1;
       draft.listsToAdd[draft.archive[listIndex]._id!] = draft.archive[listIndex];
+
+      draft.lists.push(listFromArchive); // Add the list to archive
+      draft.archive.splice(listIndex, 1); // Remove the list from lists
+
 
       break;
 
     }
       case "REMOVE_TASK": {
-        const { listId, taskId } = action.payload;
+        const { listId, taskId, processSave } = action.payload;
+        draft.processSave = processSave;
           let targetListIndex = findItemIndexById(draft.lists, listId);
           if (targetListIndex > -1) {
             draft.lists[targetListIndex].tasks = draft.lists[targetListIndex].tasks.filter(task => task.id !== taskId);
