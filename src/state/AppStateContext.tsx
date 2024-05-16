@@ -20,9 +20,11 @@ export const AppStateProvider = withInitialState<AppStateProviderProps>(
     const prevStateRef = useRef(initialState);
     const socket = useSocket()
     const debouncedSave = useCallback(debounce(500, (currentState, prevState) => {
-      save(currentState, prevState);
+      save(currentState, prevState).then((res)=>{
+        if(res === 200)
+          dispatch(resetRequests())
+      });
       prevStateRef.current = currentState;
-      dispatch(resetRequests())
     }), []);
     
     useEffect(() => {

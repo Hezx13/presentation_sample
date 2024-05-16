@@ -45,14 +45,14 @@ export const appStateReducer = (
 
       if (targetListIndex !== -1) {
         draft.lists[targetListIndex].tasks.push(newTask);
-        draft.listsToUpdate[draft.lists[targetListIndex]._id!] = draft.lists[targetListIndex].tasks
+        draft.listsToUpdate[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = draft.lists[targetListIndex].tasks
       }
       else {
         targetListIndex = findItemIndexById(draft.archive, listId);
         if (targetListIndex === -1)
           return ;
         draft.archive[targetListIndex].tasks.push(newTask);
-        draft.archiveToUpdate[draft.archive[targetListIndex]._id!] = draft.archive[targetListIndex].tasks
+        draft.archiveToUpdate[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = draft.archive[targetListIndex].tasks
       }
       break;
     }
@@ -84,8 +84,8 @@ export const appStateReducer = (
         }
         
         location === 'lists' 
-        ? draft.listsToUpdate[draft.lists[listIndex]._id!] = draft.lists[listIndex].tasks
-        : draft.archiveToUpdate[draft.lists[listIndex]._id!] = draft.archive[listIndex].tasks
+        ? draft.listsToUpdate[draft.lists[listIndex]._id || draft.lists[listIndex].id] = draft.lists[listIndex].tasks
+        : draft.archiveToUpdate[draft.archive[listIndex]._id || draft.archive[listIndex].id] = draft.archive[listIndex].tasks
       }
       break;
     }
@@ -97,11 +97,11 @@ export const appStateReducer = (
         const targetListIndex = findItemIndexById(draft.lists, listId);
 
         if (targetListIndex !== -1){
-          draft.listsToRemove[draft.lists[targetListIndex]._id!] = 1
+          draft.listsToRemove[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = 1
           draft.lists = draft.lists.filter(list => list.id !== listId);
         } else {
           const targetListIndex = findItemIndexById(draft.archive, listId);
-          draft.archiveToRemove[draft.archive[targetListIndex]._id!] = 1;
+          draft.archiveToRemove[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = 1;
           draft.archive = draft.archive.filter(list => list.id !== listId);
         }
         break;
@@ -114,8 +114,8 @@ export const appStateReducer = (
 
       const listToArchive = draft.lists[listIndex];
 
-      draft.archiveToAdd[draft.lists[listIndex]._id!] = draft.lists[listIndex];
-      draft.listsToRemove[draft.lists[listIndex]._id!] = 1;
+      draft.archiveToAdd[draft.lists[listIndex]._id || draft.lists[listIndex].id] = draft.lists[listIndex];
+      draft.listsToRemove[draft.lists[listIndex]._id || draft.lists[listIndex].id] = 1;
 
       draft.archive.push(listToArchive); // Add the list to archive
       draft.lists.splice(listIndex, 1); // Remove the list from lists
@@ -130,12 +130,11 @@ export const appStateReducer = (
       if (listIndex < 0) return; // If list not found, exit the case
       const listFromArchive = draft.archive[listIndex];
 
-      draft.archiveToRemove[draft.archive[listIndex]._id!] = 1;
-      draft.listsToAdd[draft.archive[listIndex]._id!] = draft.archive[listIndex];
+      draft.archiveToRemove[draft.archive[listIndex]._id || draft.archive[listIndex].id ] = 1;
+      draft.listsToAdd[draft.archive[listIndex]._id || draft.archive[listIndex].id] = draft.archive[listIndex];
 
       draft.lists.push(listFromArchive); // Add the list to archive
       draft.archive.splice(listIndex, 1); // Remove the list from lists
-
 
       break;
 
@@ -146,13 +145,13 @@ export const appStateReducer = (
           let targetListIndex = findItemIndexById(draft.lists, listId);
           if (targetListIndex > -1) {
             draft.lists[targetListIndex].tasks = draft.lists[targetListIndex].tasks.filter(task => task.id !== taskId);
-            draft.listsToUpdate[draft.lists[targetListIndex]._id!] = draft.lists[targetListIndex].tasks
+            draft.listsToUpdate[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = draft.lists[targetListIndex].tasks
           }
           else {
             targetListIndex = findItemIndexById(draft.archive, listId);
             if (targetListIndex === -1) return;
             draft.archive[targetListIndex].tasks = draft.archive[targetListIndex].tasks.filter(task => task.id !== taskId);
-            draft.archiveToUpdate[draft.archive[targetListIndex]._id!] = draft.archiveToAdd[targetListIndex].tasks
+            draft.archiveToUpdate[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = draft.archiveToAdd[targetListIndex].tasks
           }
           break;
         

@@ -8,44 +8,7 @@ export const save = async (payload: AppState, old: AppState) => {
   if (!hasNonEmptyObject(payload, keysToCheck)) {
     return
   }
-  console.log("SAVE")
-  console.log(payload);
-    // const oldListIds = new Set(old.lists.map(list => list.id));
-    // const oldArchiveIds = new Set(old.archive.map(archive => archive.id));
-    // const oldListTasksHash = new Map(old.lists.map(list => [list.id, hash(list.tasks)]));
-    // const oldArchiveTasksHash = new Map(old.archive.map(list => [list.id, hash(list.tasks)]));
-    // let updates = 0
-    // const listsToAdd: List[] = [];
-    // const archiveToAdd: List[] = [];
-    // const listsToRemove: string[] = [];
-    // const archiveToRemove: string[] = [];
-    // const listsToUpdate: List[] = [];
-    // const archiveToUpdate: List[] = [];
-  
-    // for (const newList of payload.lists) {
-    //   if (!oldListIds.has(newList.id)) {
-    //     listsToAdd.push(newList);
-    //     updates++;
-    //   } else if (oldListTasksHash.get(newList.id) !== hash(newList.tasks)) {
-    //     listsToUpdate.push(newList);
-    //     updates++;
-    //   }
-    // }
-  
-    // for (const newArchive of payload.archive) {
-    //   if (!oldArchiveIds.has(newArchive.id)) {
-    //     archiveToAdd.push(newArchive);
-    //     updates++;
-    //   } else if (oldArchiveTasksHash.get(newArchive.id) !== hash(newArchive.tasks)) {
-    //     archiveToUpdate.push(newArchive);
-    //     updates++;
-    //   }
-    // }
-  
-    // listsToRemove.push(...Array.from(oldListIds).filter(id => !payload.lists.some(list => list.id === id)));
-    // archiveToRemove.push(...Array.from(oldArchiveIds).filter(id => !payload.archive.some(archive => archive.id === id)));
-    // if (!listsToRemove.length && !archiveToRemove.length && !updates)  return
-    
+    console.log(payload)
     const processedPayload = {
       listsToAdd: payload.listsToAdd,
       archiveToAdd: payload.archiveToAdd,
