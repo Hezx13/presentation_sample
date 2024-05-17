@@ -69,6 +69,18 @@ function FullFeaturedCrudGrid({tableId}) {
             user: localStorage.getItem('token')
           } )
         }
+
+        return () => {
+          //@ts-expect-error
+          socket?.emit(
+            "selected_project",
+          {
+          id: tableId,
+          materials: lists[id_l].tasks,
+          user: localStorage.getItem('token')
+        } )
+        }
+
     }, [tableId,lists]);
 
     useEffect(() =>{

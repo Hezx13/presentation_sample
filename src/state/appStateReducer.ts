@@ -4,6 +4,7 @@ import { DragItem } from "../components/DragItem"
 import {findItemIndexById, findTaskIndex, moveItem, removeItemAtIndex} from "../utils/arrayUtils"
 import { getCurrentDateAndTime } from "../utils/timeUtils"
 import { BreakfastDiningOutlined } from "@mui/icons-material"
+import { eventEmitter } from "./EventEmitter"
 
 
 export const appStateReducer = (
@@ -12,24 +13,29 @@ export const appStateReducer = (
 ): AppState | void => {
   switch (action.type) {
     case "ADD_LIST": {
-      const {text, department, processSave} = action.payload;
+      const {text, department, processSave, id} = action.payload;
       draft.processSave = processSave;
       const newList = {
-        id: nanoid(),
+        id: id || nanoid(),
         department: department,
         text: text,
         tasks: []
       }
-      draft.lists.push(newList)
-      draft.listsToAdd[newList.id] = newList
-      break
+
+      draft.lists.unshift(newList)
+
+      if (processSave){
+        eventEmitter.emit('added_list', newList)
+        draft.listsToAdd[newList.id] = newList
+      }
+        break
     }
     case "ADD_TASK": {
-      const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment, processSave} = action.payload;
+      const { text, listId, article, price, quantity, date, unit, comment, deliveryDate, orderedBy, status, payment, processSave, id} = action.payload;
       draft.processSave = processSave;
       let targetListIndex: number = findItemIndexById(draft.lists, listId);
       const newTask: Task =  {
-        id: nanoid(),
+        id: id || nanoid(),
         text,
         article,
         price,
@@ -45,14 +51,20 @@ export const appStateReducer = (
 
       if (targetListIndex !== -1) {
         draft.lists[targetListIndex].tasks.push(newTask);
+        if (processSave) {
         draft.listsToUpdate[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = draft.lists[targetListIndex].tasks
+        eventEmitter.emit('added_material', {projectId: listId, material: newTask})
+        }
       }
       else {
         targetListIndex = findItemIndexById(draft.archive, listId);
         if (targetListIndex === -1)
           return ;
         draft.archive[targetListIndex].tasks.push(newTask);
+        if (processSave){
         draft.archiveToUpdate[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = draft.archive[targetListIndex].tasks
+        eventEmitter.emit('added_material', {projectId: listId, material: newTask})
+        }
       }
       break;
     }
@@ -82,7 +94,7 @@ export const appStateReducer = (
           const currentDate = getCurrentDateAndTime();
           task.date = currentDate;
         }
-        
+        if (!processSave) break
         location === 'lists' 
         ? draft.listsToUpdate[draft.lists[listIndex]._id || draft.lists[listIndex].id] = draft.lists[listIndex].tasks
         : draft.archiveToUpdate[draft.archive[listIndex]._id || draft.archive[listIndex].id] = draft.archive[listIndex].tasks
@@ -97,11 +109,17 @@ export const appStateReducer = (
         const targetListIndex = findItemIndexById(draft.lists, listId);
 
         if (targetListIndex !== -1){
-          draft.listsToRemove[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = 1
+          if (processSave){ 
+            draft.listsToRemove[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = 1
+            eventEmitter.emit("remove_list", listId)
+          }
           draft.lists = draft.lists.filter(list => list.id !== listId);
         } else {
           const targetListIndex = findItemIndexById(draft.archive, listId);
-          draft.archiveToRemove[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = 1;
+          if (processSave){ 
+            draft.archiveToRemove[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = 1;
+            eventEmitter.emit("remove_list", listId)
+          }
           draft.archive = draft.archive.filter(list => list.id !== listId);
         }
         break;
@@ -113,10 +131,11 @@ export const appStateReducer = (
       if (listIndex < 0) return; // If list not found, exit the case
 
       const listToArchive = draft.lists[listIndex];
-
-      draft.archiveToAdd[draft.lists[listIndex]._id || draft.lists[listIndex].id] = draft.lists[listIndex];
-      draft.listsToRemove[draft.lists[listIndex]._id || draft.lists[listIndex].id] = 1;
-
+      if (processSave){
+        draft.archiveToAdd[draft.lists[listIndex]._id || draft.lists[listIndex].id] = draft.lists[listIndex];
+        draft.listsToRemove[draft.lists[listIndex]._id || draft.lists[listIndex].id] = 1; 
+        eventEmitter.emit("move_to_archive", listId)
+      }
       draft.archive.push(listToArchive); // Add the list to archive
       draft.lists.splice(listIndex, 1); // Remove the list from lists
       
@@ -129,11 +148,12 @@ export const appStateReducer = (
       const listIndex  = findItemIndexById(draft.archive, listId);
       if (listIndex < 0) return; // If list not found, exit the case
       const listFromArchive = draft.archive[listIndex];
-
-      draft.archiveToRemove[draft.archive[listIndex]._id || draft.archive[listIndex].id ] = 1;
-      draft.listsToAdd[draft.archive[listIndex]._id || draft.archive[listIndex].id] = draft.archive[listIndex];
-
-      draft.lists.push(listFromArchive); // Add the list to archive
+      if (processSave){
+        draft.archiveToRemove[draft.archive[listIndex]._id || draft.archive[listIndex].id ] = 1;
+        draft.listsToAdd[draft.archive[listIndex]._id || draft.archive[listIndex].id] = draft.archive[listIndex];
+        eventEmitter.emit('move_from_archive',listId)
+      }
+      draft.lists.unshift(listFromArchive); // Add the list to archive
       draft.archive.splice(listIndex, 1); // Remove the list from lists
 
       break;
@@ -145,13 +165,19 @@ export const appStateReducer = (
           let targetListIndex = findItemIndexById(draft.lists, listId);
           if (targetListIndex > -1) {
             draft.lists[targetListIndex].tasks = draft.lists[targetListIndex].tasks.filter(task => task.id !== taskId);
-            draft.listsToUpdate[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = draft.lists[targetListIndex].tasks
+            if (processSave) {
+              draft.listsToUpdate[draft.lists[targetListIndex]._id || draft.lists[targetListIndex].id] = draft.lists[targetListIndex].tasks
+              eventEmitter.emit('removed_material', {projectId: listId, material: taskId})
+            }
           }
           else {
             targetListIndex = findItemIndexById(draft.archive, listId);
             if (targetListIndex === -1) return;
             draft.archive[targetListIndex].tasks = draft.archive[targetListIndex].tasks.filter(task => task.id !== taskId);
-            draft.archiveToUpdate[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = draft.archiveToAdd[targetListIndex].tasks
+            if (processSave){ 
+              draft.archiveToUpdate[draft.archive[targetListIndex]._id || draft.archive[targetListIndex].id] = draft.archiveToAdd[targetListIndex].tasks
+              eventEmitter.emit('removed_material', {projectId: listId, material: taskId})
+            }
           }
           break;
         

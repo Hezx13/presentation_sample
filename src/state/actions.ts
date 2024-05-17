@@ -4,7 +4,8 @@ export type Action =
       payload: {
         text: string,
         department: string,
-        processSave?: boolean
+        processSave?: boolean,
+        id?: string
       }
     }
   | {
@@ -52,6 +53,7 @@ export type Action =
         status: string,
         payment: string,
         processSave?: boolean
+        id?: string
       }
     }
 
@@ -102,7 +104,8 @@ export const addTask = (
     orderedBy: string,
     status: string,
     payment: string,
-    processSave: boolean = true
+    processSave: boolean = true,
+    id?: string
 ): Action => ({
   type: "ADD_TASK",
   payload: {
@@ -118,7 +121,8 @@ export const addTask = (
     orderedBy,
     status,
     payment,
-    processSave
+    processSave,
+    id
   }
 });
 
@@ -158,12 +162,13 @@ export const editTask = (
 });
 
 
-export const addList = (text: string, department: string, processSave: boolean=true): Action => ({
+export const addList = (text: string, department: string, processSave: boolean=true, id?: string): Action => ({
   type: "ADD_LIST",
   payload: {
     text,
     department,
-    processSave
+    processSave,
+    id
   }
 })
 
@@ -175,9 +180,9 @@ export const removeList = (listId: string, processSave: boolean = true): Action 
   }
 })
 
-export const moveToArchive = (listId: string) : Action => ({
+export const moveToArchive = (listId: string, processSave: boolean = true) : Action => ({
   type: "MOVE_TO_ARCHIVE",
-  payload: {listId},
+  payload: {listId, processSave},
 });
 
 export const moveFromArchive = (listId: string, processSave: boolean = true) : Action => ({

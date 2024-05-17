@@ -50,10 +50,27 @@ export default function VerticalTabs() {
     const {lists, getTasksByListId, getTasksByArchiveId, dispatch } = useAppState()
     const matches = useMediaQuery('(max-width:1280px)');
 
-    const [value, setValue] = React.useState(0);
+    const [value, setValue] = React.useState<number>(0);
+    const [selected, setSelected] = React.useState<string | null>(null)
 
-    const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        setValue(newValue);
+    React.useEffect(()=>{
+        try{
+
+            if (selected && lists){
+                setValue(lists.findIndex((list) => list.text === selected))
+            } else {
+                setSelected(lists[0]?.text)
+                setValue(0)
+            }
+        } catch (err) {
+            setSelected(lists[0]?.text)
+            setValue(0)
+        }
+
+    },[lists, selected])
+
+    const handleChange = (event: any, newValue: number) => {
+        setSelected(event.target.childNodes[0].data);
     };
 
     return (
@@ -67,7 +84,7 @@ export default function VerticalTabs() {
                 variant="scrollable"
                 value={value}
                 onChange={handleChange}
-                aria-label="Vertical tabs example"
+                aria-label="Vertical tabs"
                 sx={{ borderRight: 1, borderColor: 'divider'}}
             >
                 {lists.map((list, index)=>(
