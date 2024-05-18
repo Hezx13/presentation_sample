@@ -8,7 +8,6 @@ export const save = async (payload: AppState, old: AppState) => {
   if (!hasNonEmptyObject(payload, keysToCheck)) {
     return
   }
-    console.log(payload)
     const processedPayload = {
       listsToAdd: payload.listsToAdd,
       archiveToAdd: payload.archiveToAdd,

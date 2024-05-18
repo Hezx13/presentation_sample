@@ -47,6 +47,7 @@ const UserManagementTable = ({onAlert}) => {
       })
       //@ts-expect-error
       socket?.on("user_in_project", (data: TODO) => {
+        console.log(data)
         setUsersInProjects(data)
       })
     },[socket])

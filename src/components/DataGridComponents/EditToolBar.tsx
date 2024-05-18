@@ -29,6 +29,7 @@ import DoneIcon from '@mui/icons-material/Done';
 import { saveMaterial } from "../../api/materials-api";
 import { Alert } from "@mui/material";
 import { useAppState } from "../../state/AppStateContext";
+import { useSocket } from "../../state/socketContext";
 
 
 interface EditToolbarProps {
@@ -46,6 +47,7 @@ interface EditToolbarProps {
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
+    const socket = useSocket();
 
     function createMailToLink(email: string, subject: string, body:string) {
       return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
@@ -60,7 +62,7 @@ interface EditToolbarProps {
         message += entry.article + '-' + entry.text + '-Quantity: ' + entry.quantity + '\n';
     });
     const email = 'example@example.com';
-      const subject = 'Order';
+    const subject = 'Order';
     const link = createMailToLink(email,subject,message)
     window.location.href = link;
     }

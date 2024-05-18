@@ -22,7 +22,6 @@ export const SocketProvider = ({ children }) => {
       });
 
       newSocket.on('connect', () => {
-        console.log('Connected to socket server');
         newSocket.emit('join_room', role);
       });
       //@ts-ignore
@@ -58,7 +57,6 @@ export const SocketProvider = ({ children }) => {
       };
 
       const handleNewMaterial = (data) => {
-        console.log(data);
         dispatch(addTask(
           data.material.text,
           data.projectId,
@@ -163,6 +161,12 @@ export const SocketProvider = ({ children }) => {
       socket?.emit('send_remove_list', listId);
     }
 
+    const unSelectedProject = () => {
+      console.log("fbewu")
+      //@ts-expect-error
+      socket?.emit('unselected_project', {});
+    }
+
     
     eventEmitter.on('added_list', addedListListener);
     eventEmitter.on('added_material', addedMaterialListener);
@@ -170,6 +174,7 @@ export const SocketProvider = ({ children }) => {
     eventEmitter.on('move_to_archive', moveToArchiveListener)
     eventEmitter.on('move_from_archive', moveFromArchiveListener)
     eventEmitter.on('remove_list', removeListListener)
+    eventEmitter.on('unselected_project', unSelectedProject)
     return () => {
       eventEmitter.off('added_list', addedListListener);
       eventEmitter.off('added_material', addedMaterialListener);
@@ -177,6 +182,7 @@ export const SocketProvider = ({ children }) => {
       eventEmitter.off('move_to_archive', moveToArchiveListener)
       eventEmitter.off('move_from_archive', moveFromArchiveListener)
       eventEmitter.off('remove_list', removeListListener)
+      eventEmitter.off('unselected_project', unSelectedProject)
     };
   }, [socket]); // Ensure socket is part of the dependency array if used in the listener
 

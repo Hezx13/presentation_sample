@@ -36,19 +36,18 @@ import { MenuItem, Select, TextField } from '@mui/material';
 import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 import dayjs from 'dayjs';
 import { useSocket } from '../state/socketContext';
+import { eventEmitter } from '../state/EventEmitter';
 
 const statuses = ["Done", "In process", "Waiting for approval", "Waiting for payment", "Pending"]
 const payments = ["Cash", "Credit", "Pemo Card", "Bank Transfer", ""]
 
 
-function FullFeaturedCrudGrid({tableId}) {
+function FullFeaturedCrudGrid({tableId, userData, users}) {
   const [rows, setRows] = React.useState<Task[]>([]);
   const [isSaving, setIsSaving] = React.useState(false)
   const [rowModesModel, setRowModesModel] = React.useState<GridRowModesModel>({});
   const { lists, archive,role, dispatch } = useAppState()
-  const [userData,setUserData] = useState< {username: string} | null>(null);
   const fileInput = useRef<HTMLInputElement>(null);
-  const [users, setUsers] = useState<User[]>([]);
   const socket = useSocket();
   
   useEffect(() => {
@@ -70,35 +69,13 @@ function FullFeaturedCrudGrid({tableId}) {
           } )
         }
 
-        return () => {
-          //@ts-expect-error
-          socket?.emit(
-            "selected_project",
-          {
-          id: tableId,
-          materials: lists[id_l].tasks,
-          user: localStorage.getItem('token')
-        } )
-        }
-
     }, [tableId,lists]);
 
     useEffect(() =>{
-      try{
-          getUserData().then(user => {
-              const userData = {
-                  username: user.username
-              }
-              setUserData(userData);
-          })
-          if (role === "Admin"){
-            getUsers().then(usrs => {
-              setUsers(usrs);
-            })
-          }
-      } catch(error) {
-          setUserData(null);
-      }        
+
+      return () => {
+        eventEmitter.emit("unselected_project")
+      }      
   },[]);
 
   const handleRowEditStop: GridEventListener<'rowEditStop'> = (params, event) => {
