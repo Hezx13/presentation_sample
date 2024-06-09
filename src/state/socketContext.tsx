@@ -162,7 +162,6 @@ export const SocketProvider = ({ children }) => {
     }
 
     const unSelectedProject = () => {
-      console.log("fbewu")
       //@ts-expect-error
       socket?.emit('unselected_project', {});
     }

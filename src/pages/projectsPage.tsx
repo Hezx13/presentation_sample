@@ -11,6 +11,7 @@ import {AddNewItem} from "../components/AddNewItem";
 import {StyledTab} from "../styles/styles";
 import useMediaQuery from '@mui/material/useMediaQuery';
 import FullFeaturedCrudGrid from '../components/DataGridComponent';
+import { useUser } from '../state/userContext';
 
 
 interface TabPanelProps {
@@ -52,6 +53,7 @@ export default function VerticalTabs() {
 
     const [value, setValue] = React.useState<number>(0);
     const [selected, setSelected] = React.useState<string | null>(null)
+    const {currentUser, users} = useUser()
 
     React.useEffect(()=>{
         try{
@@ -104,7 +106,11 @@ export default function VerticalTabs() {
             >
             {lists.map((list, index)=>(
                 <TabPanel key={index} value={value} index={index}>
-                    <FullFeaturedCrudGrid tableId={list.id}/>
+                    <FullFeaturedCrudGrid 
+                        userData={currentUser}
+                        users={users}
+                        tableId={list.id}
+                        />
                 </TabPanel>
             ))}
         </Box>
@@ -140,7 +146,11 @@ export default function VerticalTabs() {
                 >
                 {lists.map((list, index)=>(
                     <TabPanel key={index} value={value} index={index}>
-                        <FullFeaturedCrudGrid tableId={list.id}/>
+                        <FullFeaturedCrudGrid
+                            userData={currentUser}
+                            users={users}
+                            tableId={list.id}
+                        />
                     </TabPanel>
                 ))}
             </Box>

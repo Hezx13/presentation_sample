@@ -6,9 +6,6 @@ import { act } from "@testing-library/react";
 import { useSocket } from "../state/socketContext";
 import { useAppState } from "../state/AppStateContext";
 
-
-
-
 const fetchUsers = async () => {
     const users = await getUsers();
     return users

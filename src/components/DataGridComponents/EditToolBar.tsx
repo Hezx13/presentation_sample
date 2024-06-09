@@ -22,7 +22,7 @@ import {addTask, editTask, moveFromArchive, removeTask} from "../../state/action
 import SendOutlinedIcon from '@mui/icons-material/SendOutlined';
 import { getCurrentDateAndTime } from "../../utils/timeUtils";
 import { AddItemButton } from "../../styles/styles";
-import { useRef, useState } from "react";
+import { memo, useRef, useState } from "react";
 import { onUploadSingle } from "../../api";
 import { SaveAltOutlined } from "@mui/icons-material";
 import DoneIcon from '@mui/icons-material/Done';
@@ -35,6 +35,7 @@ import { useSocket } from "../../state/socketContext";
 interface EditToolbarProps {
     tableId: string,
     dispatch: React.Dispatch<Action>,
+    isOccupied: boolean
     userData: {username: string} | null,
       setRowModesModel: (
       newModel: (oldModel: GridRowModesModel) => GridRowModesModel,
@@ -43,7 +44,7 @@ interface EditToolbarProps {
   
   function EditToolbar(props: EditToolbarProps) {
     const {role} = useAppState();
-    const {dispatch,tableId,userData } = props;
+    const {dispatch,tableId,userData, isOccupied } = props;
     const [isSaving, setIsSaving] = useState(false);
     const [isSaved, setIsSaved] = useState(false);
     const fileInput = useRef<HTMLInputElement>(null);
@@ -133,11 +134,11 @@ interface EditToolbarProps {
         {isSaved && <Alert sx={{padding: '0px 15px'}} variant="outlined" severity="success">
             Success
         </Alert> }
-        <Button color="primary" startIcon={<SaveAltOutlined/>} onClick={()=>dispatch(resetRequests())}>
-          reset
-        </Button>
+        {
+          isOccupied ? <Alert severity="warning">Another person is working in this project</Alert> : null
+        }
       </GridToolbarContainer>
     );
   }
 
-export default EditToolbar;
+export default memo(EditToolbar);
