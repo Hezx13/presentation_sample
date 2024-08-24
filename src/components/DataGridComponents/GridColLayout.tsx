@@ -16,7 +16,7 @@ const statuses = ["Done", "In process", "Waiting for approval", "Waiting for pay
 const payments = ["Cash", "Credit", "Pemo Card", "Bank Transfer", ""]
 
 
-export let columns: GridColDef[] = [
+export let renderColumns = (props): GridColDef[] => [
     { 
     field: 'date', 
     headerName: 'Date ordered', 
@@ -122,7 +122,7 @@ export let columns: GridColDef[] = [
           }}
           fullWidth
         >
-          {users.map((usr) => (
+          {props.users.map((usr) => (
             <MenuItem key={usr.email} value={usr.username}>
               {usr.username}
             </MenuItem>
@@ -195,23 +195,23 @@ export let columns: GridColDef[] = [
       width: 120,
        cellClassName: 'actions',
       getActions: ({ id, row }) => {
-        const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+        const isInEditMode = props.rowModesModel[id]?.mode === GridRowModes.Edit;
 
         if (isInEditMode)
           return [
             <GridActionsCellItem
-              icon={ isSaving ? <HourglassBottomOutlinedIcon/> : <SaveIcon />}
+              icon={ props.isSaving ? <HourglassBottomOutlinedIcon/> : <SaveIcon />}
               label="Save"
               sx={{
                 color: 'primary.main',
               }}
-              onClick={handleSaveClick(id)}
+              onClick={props.handleSaveClick(id)}
             />,
             <GridActionsCellItem
               icon={<CancelIcon />}
               label="Cancel"
               className="textPrimary"
-              onClick={handleCancelClick(id)}
+              onClick={props.handleCancelClick(id)}
               color="inherit"
             />,
           ];
@@ -220,13 +220,13 @@ export let columns: GridColDef[] = [
               icon={<EditIcon />}
               label="Edit"
               className="textPrimary"
-              onClick={handleEditClick(id)}
+              onClick={props.handleEditClick(id)}
               color="inherit"
             />,
             <GridActionsCellItem
               icon={<DeleteIcon />}
               label="Delete"
-              onClick={handleDeleteClick(id, row)}
+              onClick={props.handleDeleteClick(id, row)}
               color="inherit"
             />,
           ];

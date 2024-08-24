@@ -123,7 +123,7 @@ export const SocketProvider = ({ children }) => {
         //@ts-expect-error
         socket?.off('receive_moved_to_archive', handleMoveToArchive);
         //@ts-expect-error
-        socket?.of('receive_moved_from_archive', handleMoveFromArchive);
+        socket?.off('receive_moved_from_archive', handleMoveFromArchive);
         //@ts-expect-error
         socket?.off('receive_removed_list', handleRemoveList);
       };

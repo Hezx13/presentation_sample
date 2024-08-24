@@ -28,7 +28,7 @@ import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 import dayjs from 'dayjs';
 import { useSocket } from '../state/socketContext';
 import { eventEmitter } from '../state/EventEmitter';
-import { columns, userColumns } from './DataGridComponents/GridColLayout';
+import { renderColumns, userColumns } from './DataGridComponents/GridColLayout';
 
 function FullFeaturedCrudGrid({tableId, userData, users}) {
   const [rows, setRows] = React.useState<Task[]>([]);
