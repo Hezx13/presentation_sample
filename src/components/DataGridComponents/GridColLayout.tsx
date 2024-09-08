@@ -234,7 +234,7 @@ export let renderColumns = (props): GridColDef[] => [
     },
   ];
 
-export  let userColumns: GridColDef[] = [
+export const userColumns: GridColDef[] = [
     { field: 'date', 
     headerName: 'Date ordered', 
     width: 160, 

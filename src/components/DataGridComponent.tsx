@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, memo, useCallback} from 'react';
+import React, {useEffect, useState, useRef, memo, useCallback, useMemo} from 'react';
 import Box from '@mui/material/Box';
 
 import {findItemIndexById} from "../utils/arrayUtils";
@@ -28,7 +28,7 @@ import NoDataPlaceholder from './DataGridComponents/NoDataPlaceholder';
 import dayjs from 'dayjs';
 import { useSocket } from '../state/socketContext';
 import { eventEmitter } from '../state/EventEmitter';
-import { renderColumns, userColumns } from './DataGridComponents/GridColLayout';
+import { renderColumns , userColumns } from './DataGridComponents/GridColLayout';
 
 function FullFeaturedCrudGrid({tableId, userData, users}) {
   const [rows, setRows] = React.useState<Task[]>([]);
@@ -177,6 +177,8 @@ function FullFeaturedCrudGrid({tableId, userData, users}) {
     editable: true,
   }
 
+
+  const columns = useMemo(()=>renderColumns({rowModesModel, handleCancelClick, handleSaveClick, handleEditClick, handleDeleteClick, isSaving, users}), [])
 
   const formattedColumns = role === 'Admin' ? 
   hasArticle ? [...columns.slice(0, 1), articleColumn,...columns.slice(1),] : 
